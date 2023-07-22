@@ -1,0 +1,24 @@
+{
+  "name": "pet-store",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "concurrently \"npm run start:be\" \"npm run start:vanilla-js\"",
+    "start:be": "nodemon server.js",
+    "start:vanilla-js": "cd ./pet-store-vanilla-js/ && lite-server",
+    "format": "prettier --cache --write ."
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0",
+    "connect-history-api-fallback": "^2.0.0",
+    "http-proxy-middleware": "^2.0.6",
+    "lite-server": "^2.6.1",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.0"
+  }
+}
