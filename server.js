@@ -5,11 +5,11 @@ const cors = require('cors');
 const PORT = 5150;
 const RESPONSE_DELAY = 1500;
 
-let petIdState = 42;
-const generateId = () => petIdState++;
-
 const delay = (timeout) =>
   new Promise((resolve) => setTimeout(resolve, timeout));
+
+let petIdState = 42;
+const generateId = () => petIdState++;
 
 const petList = [
   {
@@ -42,18 +42,9 @@ const petList = [
 ];
 
 const petKinds = [
-  {
-    displayName: 'Cat',
-    value: 1,
-  },
-  {
-    displayName: 'Dog',
-    value: 2,
-  },
-  {
-    displayName: 'Parrot',
-    value: 3,
-  },
+  { displayName: 'Cat', value: 1 },
+  { displayName: 'Dog', value: 2 },
+  { displayName: 'Parrot', value: 3 },
 ];
 
 const app = express();
