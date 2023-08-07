@@ -1,0 +1,247 @@
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Itim&family=Lobster&family=Raleway:ital,wght@1,500&family=Rubik+Wet+Paint&family=Yanone+Kaffeesatz:wght@300&display=swap');
+
+:root {
+    --primary: #4279E2;
+    --success: #2CB83A;
+    --warning: #D09234;
+    --danger: #B91F1F;
+    --header: #6461FE;
+    --secondary: #8A8686;
+    --white: #FFFFFF;
+    --black: #000000;
+}
+
+body {
+    font-family: 'Itim', cursive;
+}
+
+/* BUTTONS */
+.btn {
+    border: 1px solid var(--black);
+    border-radius: 5px;
+    padding: 8px 20px;
+    cursor: pointer;
+    color: var(--white);
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+}
+
+.btn-success {
+    background-color: var(--success);
+}
+
+.btn-warning {
+    background-color: var(--warning);
+}
+
+.btn-danger {
+    background-color: var(--danger);
+}
+
+.btn-secondary {
+    background-color: var(--secondary);
+}
+
+/* BUTTONS */
+
+
+/* DATA CARD */
+.data-card {
+    border: 1px solid black;
+    max-width: 700px;
+    margin: 3rem auto;
+    border-radius: 5px;
+}
+
+.data-card-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 15px;
+    background-color: var(--header);
+    color: var(--white);
+    font-family: 'Itim' !important;
+}
+
+.data-card-header>div:nth-of-type(1) {
+    font-size: 30px;
+}
+
+.data-card-body {
+    padding: 10px 10px;
+}
+
+/* DATA CARD */
+
+
+
+
+
+/* TABLE */
+table {
+    width: 100%;
+}
+
+table,
+th,
+td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    font-weight: normal;
+}
+
+td {
+    padding: 3px 10px;
+}
+
+td>button {
+    font-size: 10px;
+}
+
+td>button:nth-of-type(1) {
+    float: left;
+}
+
+td>button:nth-of-type(2) {
+    float: right;
+}
+
+tr>th:nth-of-type(1) {
+    width: 5%;
+}
+
+tr>th:nth-of-type(2) {
+    width: 20%;
+}
+
+tr>th:nth-of-type(3) {
+    width: 25%;
+}
+
+tr>th:nth-of-type(4) {
+    width: 15%;
+}
+
+/* TABLE */
+
+
+/* PET MODAL */
+.pet-modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 10rem;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(1px);
+}
+
+.pet-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--header);
+    color: var(--white);
+    font-size: 30px;
+    padding: 2px 15px;
+}
+
+.pet-modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    border: 1px solid #888;
+    max-width: 30rem;
+}
+
+.pet-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-row-date {
+    display: flex;
+}
+
+.form-row-date>input:nth-of-type(1) {
+    flex: 1;
+}
+
+.form-row>input {
+    flex: 1;
+}
+
+.pet-modal-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.pet-modal-buttons>button:nth-of-type(1) {
+    width: 200px;
+}
+
+.pet-modal-close {
+    color: var(--black);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.validation {
+    color: red;
+}
+
+/* PET MODAL */
+
+
+/* HACK */
+#addedDatePicker {
+    width: 16px;
+}
+
+/* SPINNER */
+.submit-spinner {
+    display: none;
+    width: 10px;
+    height: 10px;
+}
+
+.submit-spinner:after {
+    content: " ";
+    display: block;
+    margin-top: -3px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 6px solid #fff;
+    border-color: #fff transparent #fff transparent;
+    animation: submit-spinner-animation 1.2s linear infinite;
+}
+
+@keyframes submit-spinner-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+/* SPINNER */

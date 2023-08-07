@@ -1,8 +1,87 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  </head>
-  <body></body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer type="module"></script>
+</head>
+
+<body>
+  <div class="data-card">
+    <div class="data-card-header">
+      <div>Pet store</div>
+      <button id="add-pet-btn" class="btn btn-success">Add pet</button>
+    </div>
+    <div class="data-card-body">
+      <table id="table">
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Added date</th>
+            <th>Kind</th>
+            <th colspan="2"></th>
+          </tr>
+          <tbody>
+          </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="pet-modal" class="pet-modal">
+    <div class="pet-modal-content">
+      <div class="pet-modal-header">
+        <div id="pet-modal-title"></div>
+        <span id="pet-modal-close" class="pet-modal-close">X</span>
+      </div>
+
+      <form id="pet-modal-form" class="pet-modal-form">
+        <input style="display: none" id="petId" name="petId">
+        <div class="form-row">
+          <label>Name:</label>
+          <input type="text" id="petName" name="petName">
+          <div id="petName-validation" class="validation" hidden>Name is required</div>
+        </div>
+        <div class="form-row">
+          <label>Kind:</label>
+          <select id="kind" name="kind">
+            <option value=""></option>
+          </select>
+          <div id="kind-validation" class="validation" hidden>Kind is required</div>
+        </div>
+        <div class="form-row">
+          <label>Age:</label>
+          <input type="number" id="age" name="age">
+          <div id="age-validation" class="validation" hidden>Age is required</div>
+        </div>
+        <div>
+          <input type="checkbox" id="healthProblems" name="healthProblems">
+          <label>Has health problems</label>
+        </div>
+        <div class="form-row">
+          <label>Notes:</label>
+          <textarea name="notes" id="notes" rows="5"></textarea>
+        </div>
+        <div class="form-row">
+          <label>Added date</label>
+          <div class="form-row-date">
+            <input type="text" readonly id="addedDateText">
+            <input type="date" id="addedDatePicker" name="addedDate"/>
+          </div>
+          <div id="addedDate-validation" class="validation" hidden>Added date is required</div>
+        </div>
+        <div class="pet-modal-buttons">
+          <button id="form-save-btn" class="btn btn-primary" type="submit">
+            Save <span id="submit-spinner" class="submit-spinner"></span>
+          </button>
+          <button id="form-delete-btn" class="btn btn-danger" type="button">Delete</button>
+          <button id="form-cancel-btn" class="btn btn-secondary" type="button">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+
 </html>
