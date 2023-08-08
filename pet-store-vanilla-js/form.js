@@ -36,7 +36,7 @@ document.getElementById('pet-modal-form').addEventListener('submit', async funct
     const formData = new FormData(e.target);
     const pet = Object.fromEntries(formData.entries());
 
-    const triggeredValidationsElements = validateForm(pet);
+    const triggeredValidationsElements = validateFormInput(pet);
     if (triggeredValidationsElements.length > 0) {
         for (let validationElement of triggeredValidationsElements) {
             if (validationElement.hasAttribute('hidden')) {
@@ -117,12 +117,11 @@ export function unlockFormFields(isNewPet) {
 
     if (isNewPet) {
         unlockInputField(formElements.kind);
-        unlockInputField(formElements.addedDateText);
         unlockInputField(formElements.addedDatePicker);
     }
 };
 
-function validateForm(pet) {
+function validateFormInput(pet) {
     const triggeredValidationsElements = [];
 
     if (isNullOrWhitespace(pet.petName)) {
