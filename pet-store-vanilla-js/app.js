@@ -1,23 +1,16 @@
-import api from './api.js';
-import formElements from './formElements.js';
 import {
-    setDatePrototypeFormating,
-    ValidateForm,
-    HideFormValidations,
-    hidePetModal,
-    setFormAddedDate,
-    showPetFormSubmitSpinner,
-    hidePetFormSubmitSpinner,
-    configureFormEditModal,
+    showPetModalSpinner, 
+    hidePetModalSpinner, 
+    configureFormEditModal, 
     configureFormNewModal,
-    unlockFormModal,
     showDeleteModal,
-    hideDeleteModal,
-    showPetModalSpinner,
-    hidePetModalSpinner
-} from './utils.js';
+    hidePetModal,
+    hideDeleteModal
+} from './modals.js';
 
-const petModalForm = document.getElementById('pet-modal-form');
+import api from './api.js';
+import {setDatePrototypeFormating} from './utils.js';
+import {setFormAddedDate} from './form.js';
 
 export const petKinds = {};
 window.addEventListener("DOMContentLoaded", async () => {
@@ -154,51 +147,3 @@ document.getElementById('form-cancel-btn').onclick = function hidePetModalFromBu
 document.getElementById('delete-modal-cancel-btn').onclick = function hideDeleteModalFromButton() {
     hideDeleteModal();
 }
-
-petModalForm.addEventListener('submit', async function handleFormSubmit(e) {
-    e.preventDefault();
-    const isFormLocked = document.getElementById('pet-modal-form').getAttribute('isLocked');
-    if (isFormLocked == 'true') {
-        unlockFormModal();
-        return;
-    }
-
-    showPetFormSubmitSpinner();
-    HideFormValidations();
-
-    const formData = new FormData(petModalForm);
-    const pet = Object.fromEntries(formData.entries());
-    
-    const triggeredValidations = ValidateForm(pet);
-    if (triggeredValidations.length > 0) {
-        for (let validationId of triggeredValidations) {
-            const validationDiv = document.getElementById(validationId)
-            if (validationDiv.hasAttribute('hidden')) {
-                validationDiv.removeAttribute('hidden');
-            }
-        }
-
-        formElements.saveButton.disabled = false;
-        hidePetFormSubmitSpinner();
-        return
-    }
-
-    let response;
-    if (Number(pet.petId) > 0) {
-        response = await api.editPet(pet);
-    } else {
-        response = await api.addPet(pet);
-    }
-
-    if (response.isFailed) {
-        // show the error
-        return;
-    }
-
-    hidePetModal();
-
-    formElements.saveButton.disabled = false;
-    hidePetFormSubmitSpinner();
-
-    await refreshPets();
-})

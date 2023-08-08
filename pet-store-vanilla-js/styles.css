@@ -304,7 +304,7 @@ tr>th:nth-of-type(4) {
 }
 
 .spinner-wrapper {
-    display: flex;
+    display: none;
     justify-content: center;
     margin: 15px;
 }
