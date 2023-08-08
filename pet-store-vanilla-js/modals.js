@@ -54,6 +54,14 @@ export function hidePetModalSpinner() {
     document.getElementById('pet-modal-spinner').style.display = 'none';
     document.getElementById('pet-modal-form').style.display = 'flex';
 };
+
+document.getElementById('pet-modal-close').onclick = function hidePetModalFromHeader() {
+    hidePetModal();
+}
+
+document.getElementById('form-cancel-btn').onclick = function hidePetModalFromButton() {
+    hidePetModal();
+}
 // PET MODAL //
 
 
@@ -132,4 +140,12 @@ function hideDeleteModalSpinner() {
     document.getElementById('delete-modal-spinner').style.display = 'none';
     document.getElementById('delete-modal-buttons').style.display = 'flex';
 };
+
+document.getElementById('delete-modal-close').onclick = function hideDeleteModalFromHeader() {
+    hideDeleteModal();
+}
+
+document.getElementById('delete-modal-cancel-btn').onclick = function hideDeleteModalFromButton() {
+    hideDeleteModal();
+}
 // DELETE MODAL //

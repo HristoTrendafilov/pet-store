@@ -4,8 +4,6 @@ import {
     configureFormEditModal, 
     configureFormNewModal,
     showDeleteModal,
-    hidePetModal,
-    hideDeleteModal
 } from './modals.js';
 
 import api from './api.js';
@@ -35,7 +33,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     await refreshPets();
 });
 
-// REFRESH PETS //
+
 export async function refreshPets() {
     const petsResp = await api.getAllPets();
     if (petsResp.isFailed) {
@@ -122,28 +120,6 @@ function createDeleteButton(petId) {
     return deleteButton;
 }
 
-// REFRESH PETS //
-
 document.getElementById('add-pet-btn').onclick = function showPetModalNew() {
     configureFormNewModal();
-}
-
-document.getElementById('addedDatePicker').onchange = function handleDateChange() {
-    setFormAddedDate(new Date(addedDatePicker.value));
-}
-
-document.getElementById('pet-modal-close').onclick = function hidePetModalFromHeader() {
-    hidePetModal();
-}
-
-document.getElementById('delete-modal-close').onclick = function hideDeleteModalFromHeader() {
-    hideDeleteModal();
-}
-
-document.getElementById('form-cancel-btn').onclick = function hidePetModalFromButton() {
-    hidePetModal();
-}
-
-document.getElementById('delete-modal-cancel-btn').onclick = function hideDeleteModalFromButton() {
-    hideDeleteModal();
 }

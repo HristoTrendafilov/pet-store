@@ -80,6 +80,9 @@ export function lockForm() {
     lockInputField(formElements.addedDatePicker);
     lockInputField(formElements.addedDateText);
 
+    formElements.deleteButton.style.opacity = '1';
+    formElements.deleteButton.disabled = false;
+
     document.getElementById('pet-modal-form').setAttribute('isLocked', 'true');
 };
 
@@ -94,10 +97,13 @@ export function unlockForm() {
     const petId = modalTitle.textContent.split(' ').pop();
     modalTitle.textContent = `Edit pet ${petId}`;
 
+    formElements.deleteButton.style.opacity = '0.5';
+    formElements.deleteButton.disabled = true;
+
     document.getElementById('pet-modal-form').setAttribute('isLocked', 'false');
 };
 
-export function unlockFormFields(isNew) {
+export function unlockFormFields(isNewPet) {
     function unlockInputField(element) {
         element.removeAttribute('readonly');
         element.style.pointerEvents = "auto";
@@ -109,7 +115,7 @@ export function unlockFormFields(isNew) {
     unlockInputField(formElements.notes);
     unlockInputField(formElements.healthProblems);
 
-    if (isNew) {
+    if (isNewPet) {
         unlockInputField(formElements.kind);
         unlockInputField(formElements.addedDateText);
         unlockInputField(formElements.addedDatePicker);
@@ -163,3 +169,7 @@ export function setFormAddedDate(date) {
     document.getElementById('addedDateText').value = date.getFormattedDate();
     document.getElementById('addedDatePicker').valueAsDate = date;
 };
+
+document.getElementById('addedDatePicker').onchange = function handleDateChange() {
+    setFormAddedDate(new Date(addedDatePicker.value));
+}
