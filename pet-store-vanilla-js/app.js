@@ -35,14 +35,14 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 
 export async function refreshPets() {
+    const tableBody = document.getElementById('table').tBodies[1];
+    tableBody.innerHTML = '';
+
     const petsResp = await api.getAllPets();
     if (petsResp.isFailed) {
         // show the error
         return;
     }
-
-    const tableBody = document.getElementById('table').tBodies[1];
-    tableBody.innerHTML = '';
 
     for (let pet of petsResp.payload.sort((a, b) => b.petId - a.petId)) {
         const tr = document.createElement('tr');

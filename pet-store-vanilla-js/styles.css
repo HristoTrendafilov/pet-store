@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Itim&family=Lobster&family=Raleway:ital,wght@1,500&family=Rubik+Wet+Paint&family=Yanone+Kaffeesatz:wght@300&display=swap');
 
+/* Global */
 :root {
     --primary: #4279E2;
     --success: #2CB83A;
@@ -16,7 +17,7 @@ body {
     font-family: 'Itim', cursive;
 }
 
-/* BUTTONS */
+/* Buttons */
 .btn {
     border: 1px solid var(--black);
     border-radius: 5px;
@@ -49,10 +50,9 @@ body {
     background-color: var(--secondary);
 }
 
-/* BUTTONS */
 
 
-/* DATA CARD */
+/* Main page data card */
 .data-card {
     border: 1px solid black;
     max-width: 700px;
@@ -79,13 +79,9 @@ body {
     padding: 10px 10px;
 }
 
-/* DATA CARD */
 
 
-
-
-
-/* TABLE */
+/* Table */
 table {
     width: 100%;
 }
@@ -130,10 +126,9 @@ tr>th:nth-of-type(4) {
     width: 15%;
 }
 
-/* TABLE */
 
 
-/* PET MODAL */
+/* Add/View/Edit pet modal */
 .pet-modal {
     padding-top: 10rem;
 }
@@ -178,11 +173,9 @@ tr>th:nth-of-type(4) {
     color: red;
 }
 
-/* PET MODAL */
 
 
-
-/* DELETE MODAL */
+/* Delete modal */
 .delete-modal {
     padding-top: 17rem;
 }
@@ -203,12 +196,9 @@ tr>th:nth-of-type(4) {
     width: 150px;
 }
 
-/* DELETE MODAL */
 
 
-
-
-/* COMMON FOR MODALS */
+/* Base modal */
 .modal {
     display: none;
     position: fixed;
@@ -245,14 +235,16 @@ tr>th:nth-of-type(4) {
     cursor: pointer;
 }
 
-/* COMMON FOR MODALS */
+
 
 /* HACK */
 #addedDatePicker {
     width: 16px;
 }
 
-/* SPINNER */
+
+
+/* Submit spinner */
 .submit-spinner {
     width: 10px;
     height: 10px;
@@ -272,8 +264,13 @@ tr>th:nth-of-type(4) {
 }
 
 
-/* SPINNER */
 
+/* Loading content spinner */
+.spinner-wrapper {
+    display: none;
+    justify-content: center;
+    margin: 15px;
+}
 
 .loading-spinner {
     display: inline-block;
@@ -293,6 +290,7 @@ tr>th:nth-of-type(4) {
     animation: spinner-animation 1.2s linear infinite;
 }
 
+/* Spinners animation */
 @keyframes spinner-animation {
     0% {
         transform: rotate(0deg);
@@ -301,10 +299,4 @@ tr>th:nth-of-type(4) {
     100% {
         transform: rotate(360deg);
     }
-}
-
-.spinner-wrapper {
-    display: none;
-    justify-content: center;
-    margin: 15px;
 }

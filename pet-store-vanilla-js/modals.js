@@ -122,13 +122,13 @@ export function hideDeleteModal() {
 function showDeleteModalSubmitSpinner() {
     const deleteButton = document.getElementById('delete-modal-delete-btn');
     deleteButton.disabled = true;
-    deleteButton.appendChild(createSubmitSpinner('delete-modal-spinner'));
+    deleteButton.appendChild(createSubmitSpinner('delete-modal-submit-spinner'));
 };
 
 function hideDeleteModalSubmitSpinner() {
     const deleteButton = document.getElementById('delete-modal-delete-btn');
     deleteButton.disabled = false;
-    document.getElementById('delete-modal-spinner').style.display = 'none';
+    document.getElementById('delete-modal-submit-spinner').remove();
 };
 
 function showDeleteModalSpinner() {
