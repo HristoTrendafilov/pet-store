@@ -35,7 +35,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 
 export async function refreshPets() {
-    const tableBody = document.getElementById('table').tBodies[1];
+    const tableBody = document.getElementById('data-table').tBodies[1];
     tableBody.innerHTML = '';
 
     const petsResp = await api.getAllPets();
