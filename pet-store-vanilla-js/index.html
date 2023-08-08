@@ -17,24 +17,28 @@
     </div>
     <div class="data-card-body">
       <table id="table">
-          <tr>
-            <th>#</th>
-            <th>Name</th>
-            <th>Added date</th>
-            <th>Kind</th>
-            <th colspan="2"></th>
-          </tr>
-          <tbody>
-          </tbody>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Added date</th>
+          <th>Kind</th>
+          <th colspan="2"></th>
+        </tr>
+        <tbody>
+        </tbody>
       </table>
     </div>
   </div>
 
-  <div id="pet-modal" class="pet-modal">
-    <div class="pet-modal-content">
-      <div class="pet-modal-header">
+  <div id="pet-modal" class="modal pet-modal">
+    <div class="modal-content">
+      <div class="modal-header">
         <div id="pet-modal-title"></div>
-        <span id="pet-modal-close" class="pet-modal-close">X</span>
+        <span id="pet-modal-close" class="modal-close">X</span>
+      </div>
+
+      <div id="pet-modal-spinner" class="spinner-wrapper">
+        <div class="loading-spinner"></div>
       </div>
 
       <form id="pet-modal-form" class="pet-modal-form">
@@ -68,18 +72,38 @@
           <label>Added date</label>
           <div class="form-row-date">
             <input type="text" readonly id="addedDateText">
-            <input type="date" id="addedDatePicker" name="addedDate"/>
+            <input type="date" id="addedDatePicker" name="addedDate" />
           </div>
           <div id="addedDate-validation" class="validation" hidden>Added date is required</div>
         </div>
         <div class="pet-modal-buttons">
           <button id="form-save-btn" class="btn btn-primary" type="submit">
-            Save <span id="submit-spinner" class="submit-spinner"></span>
+            Save
           </button>
           <button id="form-delete-btn" class="btn btn-danger" type="button">Delete</button>
           <button id="form-cancel-btn" class="btn btn-secondary" type="button">Cancel</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <div id="delete-modal" class="modal delete-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div id="delete-modal-title"></div>
+        <span id="delete-modal-close" class="modal-close">X</span>
+      </div>
+      <div class="delete-modal-body">
+        <div id="delete-modal-spinner" class="spinner-wrapper">
+          <div class="loading-spinner"></div>
+        </div>
+        <div id="delete-modal-pet-info">
+        </div>
+        <div id="delete-modal-buttons" class="delete-modal-buttons">
+          <button id="delete-modal-cancel-btn" class="btn btn-secondary" type="button">Cancel</button>
+          <button id="delete-modal-delete-btn" class="btn btn-danger" type="submit">Delete</button>
+        </div>
+      </div>
     </div>
   </div>
 </body>

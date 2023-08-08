@@ -9,6 +9,7 @@
     --secondary: #8A8686;
     --white: #FFFFFF;
     --black: #000000;
+    --locked: #EDE8E8;
 }
 
 body {
@@ -24,6 +25,8 @@ body {
     color: var(--white);
     letter-spacing: 2px;
     text-align: center;
+    display: flex;
+    justify-content: center;
 }
 
 .btn-primary {
@@ -132,34 +135,7 @@ tr>th:nth-of-type(4) {
 
 /* PET MODAL */
 .pet-modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
     padding-top: 10rem;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(1px);
-}
-
-.pet-modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--header);
-    color: var(--white);
-    font-size: 30px;
-    padding: 2px 15px;
-}
-
-.pet-modal-content {
-    background-color: #fefefe;
-    margin: auto;
-    border: 1px solid #888;
-    max-width: 30rem;
 }
 
 .pet-modal-form {
@@ -198,18 +174,78 @@ tr>th:nth-of-type(4) {
     width: 200px;
 }
 
-.pet-modal-close {
-    color: var(--black);
-    text-decoration: none;
-    cursor: pointer;
-}
-
 .validation {
     color: red;
 }
 
 /* PET MODAL */
 
+
+
+/* DELETE MODAL */
+.delete-modal {
+    padding-top: 17rem;
+}
+
+.delete-modal-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row-reverse;
+    gap: 30px;
+    margin-top: 10px;
+}
+
+.delete-modal-body {
+    padding: 5px 15px;
+}
+
+.delete-modal-buttons>button:nth-of-type(2) {
+    width: 150px;
+}
+
+/* DELETE MODAL */
+
+
+
+
+/* COMMON FOR MODALS */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(1px);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--header);
+    color: var(--white);
+    font-size: 30px;
+    padding: 2px 15px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    border: 1px solid #888;
+    max-width: 30rem;
+}
+
+.modal-close {
+    color: var(--black);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* COMMON FOR MODALS */
 
 /* HACK */
 #addedDatePicker {
@@ -218,9 +254,9 @@ tr>th:nth-of-type(4) {
 
 /* SPINNER */
 .submit-spinner {
-    display: none;
     width: 10px;
     height: 10px;
+    margin-left: 10px;
 }
 
 .submit-spinner:after {
@@ -232,10 +268,32 @@ tr>th:nth-of-type(4) {
     border-radius: 50%;
     border: 6px solid #fff;
     border-color: #fff transparent #fff transparent;
-    animation: submit-spinner-animation 1.2s linear infinite;
+    animation: spinner-animation 1.2s linear infinite;
 }
 
-@keyframes submit-spinner-animation {
+
+/* SPINNER */
+
+
+.loading-spinner {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}
+
+.loading-spinner:after {
+    content: " ";
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 6px solid black;
+    border-color: black transparent black transparent;
+    animation: spinner-animation 1.2s linear infinite;
+}
+
+@keyframes spinner-animation {
     0% {
         transform: rotate(0deg);
     }
@@ -244,4 +302,9 @@ tr>th:nth-of-type(4) {
         transform: rotate(360deg);
     }
 }
-/* SPINNER */
+
+.spinner-wrapper {
+    display: flex;
+    justify-content: center;
+    margin: 15px;
+}

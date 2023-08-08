@@ -1,19 +1,25 @@
 import api from './api.js';
+import formElements from './formElements.js';
 import {
     setDatePrototypeFormating,
     ValidateForm,
     HideFormValidations,
     hidePetModal,
-    showPetModal,
     setFormAddedDate,
-    showSubmitSpinner,
-    hideSubmitSpinner,
-    ResetFormModal
+    showPetFormSubmitSpinner,
+    hidePetFormSubmitSpinner,
+    configureFormEditModal,
+    configureFormNewModal,
+    unlockFormModal,
+    showDeleteModal,
+    hideDeleteModal,
+    showPetModalSpinner,
+    hidePetModalSpinner
 } from './utils.js';
 
 const petModalForm = document.getElementById('pet-modal-form');
 
-const petKinds = {};
+export const petKinds = {};
 window.addEventListener("DOMContentLoaded", async () => {
     setDatePrototypeFormating();
 
@@ -37,7 +43,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 });
 
 // REFRESH PETS //
-async function refreshPets() {
+export async function refreshPets() {
     const petsResp = await api.getAllPets();
     if (petsResp.isFailed) {
         // show the error
@@ -81,13 +87,12 @@ function createViewEditButton(petId) {
     viewEditButton.classList.add('btn', 'btn-warning');
 
     viewEditButton.onclick = async function editPet() {
-        ResetFormModal();
-        document.getElementById('pet-modal-title').textContent = `View pet #${petId}`;
-        showPetModal();
+        showPetModalSpinner();
+        configureFormEditModal(petId);
 
         const getPetResp = await api.getPet(petId);
         if (getPetResp.isFailed) {
-            // show the error
+            hidePetModalSpinner();
             return;
         }
 
@@ -105,6 +110,8 @@ function createViewEditButton(petId) {
                 }
             }
         }
+
+        hidePetModalSpinner();
     };
 
     return viewEditButton;
@@ -115,44 +122,53 @@ function createDeleteButton(petId) {
     deleteButton.textContent = 'Delete';
     deleteButton.classList.add('btn', 'btn-danger',);
 
+    deleteButton.onclick = function deletePet() {
+        showDeleteModal(petId);
+    };
+
     return deleteButton;
 }
 
 // REFRESH PETS //
 
 document.getElementById('add-pet-btn').onclick = function showPetModalNew() {
-    ResetFormModal();
-
-    document.getElementById('form-delete-btn').style.display = 'none';
-    document.getElementById('pet-modal-title').textContent = 'Add pet';
-    setFormAddedDate(new Date());
-
-    showPetModal();
+    configureFormNewModal();
 }
 
 document.getElementById('addedDatePicker').onchange = function handleDateChange() {
     setFormAddedDate(new Date(addedDatePicker.value));
 }
 
-document.getElementById('pet-modal-close').onclick = function hideModalFromHeader() {
+document.getElementById('pet-modal-close').onclick = function hidePetModalFromHeader() {
     hidePetModal();
 }
 
-document.getElementById('form-cancel-btn').onclick = function hideModalFromButton() {
+document.getElementById('delete-modal-close').onclick = function hideDeleteModalFromHeader() {
+    hideDeleteModal();
+}
+
+document.getElementById('form-cancel-btn').onclick = function hidePetModalFromButton() {
     hidePetModal();
+}
+
+document.getElementById('delete-modal-cancel-btn').onclick = function hideDeleteModalFromButton() {
+    hideDeleteModal();
 }
 
 petModalForm.addEventListener('submit', async function handleFormSubmit(e) {
     e.preventDefault();
-    const saveButton = document.getElementById('form-save-btn');
-    saveButton.disabled = true;
+    const isFormLocked = document.getElementById('pet-modal-form').getAttribute('isLocked');
+    if (isFormLocked == 'true') {
+        unlockFormModal();
+        return;
+    }
 
-    showSubmitSpinner();
+    showPetFormSubmitSpinner();
+    HideFormValidations();
 
     const formData = new FormData(petModalForm);
     const pet = Object.fromEntries(formData.entries());
-
-    HideFormValidations();
+    
     const triggeredValidations = ValidateForm(pet);
     if (triggeredValidations.length > 0) {
         for (let validationId of triggeredValidations) {
@@ -162,21 +178,27 @@ petModalForm.addEventListener('submit', async function handleFormSubmit(e) {
             }
         }
 
-        saveButton.disabled = false;
-        hideSubmitSpinner();
+        formElements.saveButton.disabled = false;
+        hidePetFormSubmitSpinner();
         return
     }
 
-    const addPetResp = await api.addPet(pet);
-    if (addPetResp.isFailed) {
+    let response;
+    if (Number(pet.petId) > 0) {
+        response = await api.editPet(pet);
+    } else {
+        response = await api.addPet(pet);
+    }
+
+    if (response.isFailed) {
         // show the error
         return;
     }
 
     hidePetModal();
 
-    saveButton.disabled = false;
-    hideSubmitSpinner();
+    formElements.saveButton.disabled = false;
+    hidePetFormSubmitSpinner();
 
     await refreshPets();
 })
