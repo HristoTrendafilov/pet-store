@@ -1,33 +1,41 @@
-import {createSubmitSpinner, isNullOrWhitespace} from './utils.js';
-import api from './api.js';
-import {hidePetModal} from './modals.js';
-import {refreshPets} from './app.js';
+import {
+  createSubmitSpinner,
+  isNullOrWhitespace,
+  formatDate,
+} from './utils.js';
+import { editPet, addPet } from './api.js';
+import { hidePetModal } from './modals.js';
+import { refreshPets } from './app.js';
 
 export const formElements = {
-    petName: document.getElementById('petName'),
-    age: document.getElementById('age'),
-    notes: document.getElementById('notes'),
-    kind: document.getElementById('kind'),
-    healthProblems: document.getElementById('healthProblems'),
-    addedDatePicker: document.getElementById('addedDatePicker'),
-    addedDateText: document.getElementById('addedDateText'),
+  petName: document.getElementById('petName'),
+  age: document.getElementById('age'),
+  notes: document.getElementById('notes'),
+  kind: document.getElementById('kind'),
+  healthProblems: document.getElementById('healthProblems'),
+  addedDatePicker: document.getElementById('addedDatePicker'),
+  addedDateText: document.getElementById('addedDateText'),
 
-    saveButton: document.getElementById('form-save-btn'),
-    deleteButton: document.getElementById('form-delete-btn'),
-    cancelButton: document.getElementById('form-cancel-btn'),
+  saveButton: document.getElementById('form-save-btn'),
+  deleteButton: document.getElementById('form-delete-btn'),
+  cancelButton: document.getElementById('form-cancel-btn'),
 
-    petNameVal: document.getElementById('petName-validation'),
-    ageVal: document.getElementById('age-validation'),
-    kindVal: document.getElementById('kind-validation'),
-    addedDateVal: document.getElementById('addedDate-validation'),
+  petNameVal: document.getElementById('petName-validation'),
+  ageVal: document.getElementById('age-validation'),
+  kindVal: document.getElementById('kind-validation'),
+  addedDateVal: document.getElementById('addedDate-validation'),
 };
 
-document.getElementById('pet-modal-form').addEventListener('submit', async function handleFormSubmit(e) {
+document
+  .getElementById('pet-modal-form')
+  .addEventListener('submit', async function handleFormSubmit(e) {
     e.preventDefault();
-    const isFormLocked = document.getElementById('pet-modal-form').getAttribute('isLocked');
+    const isFormLocked = document
+      .getElementById('pet-modal-form')
+      .getAttribute('isLocked');
     if (isFormLocked == 'true') {
-        unlockForm();
-        return;
+      unlockForm();
+      return;
     }
 
     showPetFormSubmitSpinner();
@@ -38,137 +46,138 @@ document.getElementById('pet-modal-form').addEventListener('submit', async funct
 
     const triggeredValidationsElements = validateFormInput(pet);
     if (triggeredValidationsElements.length > 0) {
-        for (let validationElement of triggeredValidationsElements) {
-            if (validationElement.hasAttribute('hidden')) {
-                validationElement.removeAttribute('hidden');
-            }
+      for (let validationElement of triggeredValidationsElements) {
+        if (validationElement.hasAttribute('hidden')) {
+          validationElement.removeAttribute('hidden');
         }
+      }
 
-        hidePetFormSubmitSpinner();
-        return
+      hidePetFormSubmitSpinner();
+      return;
     }
 
     let response;
     if (Number(pet.petId) > 0) {
-        response = await api.editPet(pet);
+      response = await editPet(pet);
     } else {
-        response = await api.addPet(pet);
+      response = await addPet(pet);
     }
 
     if (response.isFailed) {
-        // show the error
-        return;
+      // show the error
+      return;
     }
 
     hidePetModal();
     hidePetFormSubmitSpinner();
     await refreshPets();
-});
+  });
 
 export function lockForm() {
-    function lockInputField(element) {
-        element.setAttribute('readonly', 'true');
-        element.style.pointerEvents = "none";
-        element.style.background = 'var(--locked)';
-    };
+  function lockInputField(element) {
+    element.setAttribute('readonly', 'true');
+    element.style.pointerEvents = 'none';
+    element.style.background = 'var(--locked)';
+  }
 
-    lockInputField(formElements.petName);
-    lockInputField(formElements.age);
-    lockInputField(formElements.notes);
-    lockInputField(formElements.kind);
-    lockInputField(formElements.healthProblems);
-    lockInputField(formElements.addedDatePicker);
-    lockInputField(formElements.addedDateText);
+  lockInputField(formElements.petName);
+  lockInputField(formElements.age);
+  lockInputField(formElements.notes);
+  lockInputField(formElements.kind);
+  lockInputField(formElements.healthProblems);
+  lockInputField(formElements.addedDatePicker);
+  lockInputField(formElements.addedDateText);
 
-    formElements.deleteButton.style.opacity = '1';
-    formElements.deleteButton.disabled = false;
+  formElements.deleteButton.style.opacity = '1';
+  formElements.deleteButton.disabled = false;
 
-    document.getElementById('pet-modal-form').setAttribute('isLocked', 'true');
-};
+  document.getElementById('pet-modal-form').setAttribute('isLocked', 'true');
+}
 
 export function unlockForm() {
-    unlockFormFields(false);
+  unlockFormFields(false);
 
-    formElements.saveButton.textContent = 'Save';
-    formElements.saveButton.classList.remove('btn-warning');
-    formElements.saveButton.classList.add('btn-primary');
+  formElements.saveButton.textContent = 'Save';
+  formElements.saveButton.classList.remove('btn-warning');
+  formElements.saveButton.classList.add('btn-primary');
 
-    const modalTitle = document.getElementById('pet-modal-title');
-    const petId = modalTitle.textContent.split(' ').pop();
-    modalTitle.textContent = `Edit pet ${petId}`;
+  const modalTitle = document.getElementById('pet-modal-title');
+  const petId = modalTitle.textContent.split(' ').pop();
+  modalTitle.textContent = `Edit pet ${petId}`;
 
-    formElements.deleteButton.style.opacity = '0.5';
-    formElements.deleteButton.disabled = true;
+  formElements.deleteButton.style.opacity = '0.5';
+  formElements.deleteButton.disabled = true;
 
-    document.getElementById('pet-modal-form').setAttribute('isLocked', 'false');
-};
+  document.getElementById('pet-modal-form').setAttribute('isLocked', 'false');
+}
 
 export function unlockFormFields(isNewPet) {
-    function unlockInputField(element) {
-        element.removeAttribute('readonly');
-        element.style.pointerEvents = "auto";
-        element.style.background = 'var(--white)';
-    }
+  function unlockInputField(element) {
+    element.removeAttribute('readonly');
+    element.style.pointerEvents = 'auto';
+    element.style.background = 'var(--white)';
+  }
 
-    unlockInputField(formElements.petName);
-    unlockInputField(formElements.age);
-    unlockInputField(formElements.notes);
-    unlockInputField(formElements.healthProblems);
+  unlockInputField(formElements.petName);
+  unlockInputField(formElements.age);
+  unlockInputField(formElements.notes);
+  unlockInputField(formElements.healthProblems);
 
-    if (isNewPet) {
-        unlockInputField(formElements.kind);
-        unlockInputField(formElements.addedDatePicker);
-    }
-};
+  if (isNewPet) {
+    unlockInputField(formElements.kind);
+    unlockInputField(formElements.addedDatePicker);
+  }
+}
 
 function validateFormInput(pet) {
-    const triggeredValidationsElements = [];
+  const triggeredValidationsElements = [];
 
-    if (isNullOrWhitespace(pet.petName)) {
-        triggeredValidationsElements.push(formElements.petNameVal);
-    }
-    if (isNullOrWhitespace(pet.kind)) {
-        triggeredValidationsElements.push(formElements.kindVal);
-    }
-    if (isNullOrWhitespace(pet.age)) {
-        triggeredValidationsElements.push(formElements.ageVal);
-    }
-    if (isNullOrWhitespace(pet.addedDate)) {
-        triggeredValidationsElements.push(formElements.addedDateVal);
-    }
+  if (isNullOrWhitespace(pet.petName)) {
+    triggeredValidationsElements.push(formElements.petNameVal);
+  }
+  if (isNullOrWhitespace(pet.kind)) {
+    triggeredValidationsElements.push(formElements.kindVal);
+  }
+  if (isNullOrWhitespace(pet.age)) {
+    triggeredValidationsElements.push(formElements.ageVal);
+  }
+  if (isNullOrWhitespace(pet.addedDate)) {
+    triggeredValidationsElements.push(formElements.addedDateVal);
+  }
 
-    return triggeredValidationsElements;
-};
+  return triggeredValidationsElements;
+}
 
 export function hidePetFormSubmitSpinner() {
-    formElements.saveButton.disabled = false;
-    document.getElementById('pet-form-spinner').style.display = 'none';
-};
+  formElements.saveButton.disabled = false;
+  document.getElementById('pet-form-spinner').style.display = 'none';
+}
 
 export function showPetFormSubmitSpinner() {
-    formElements.saveButton.disabled = true;
-    formElements.saveButton.appendChild(createSubmitSpinner('pet-form-spinner'));
-};
+  formElements.saveButton.disabled = true;
+  formElements.saveButton.appendChild(createSubmitSpinner('pet-form-spinner'));
+}
 
 export function hideFormValidations() {
-    const validatioFields = document.querySelectorAll('.validation');
-    for (let validation of validatioFields) {
-        if (!validation.hasAttribute('hidden')) {
-            validation.setAttribute('hidden', true);
-        }
+  const validatioFields = document.querySelectorAll('.validation');
+  for (let validation of validatioFields) {
+    if (!validation.hasAttribute('hidden')) {
+      validation.setAttribute('hidden', true);
     }
-};
+  }
+}
 
 export function resetForm() {
-    document.getElementById('pet-modal-form').reset();
-    hideFormValidations();
-};
+  document.getElementById('pet-modal-form').reset();
+  hideFormValidations();
+}
 
 export function setFormAddedDate(date) {
-    document.getElementById('addedDateText').value = date.getFormattedDate();
-    document.getElementById('addedDatePicker').valueAsDate = date;
-};
-
-document.getElementById('addedDatePicker').onchange = function handleDateChange() {
-    setFormAddedDate(new Date(addedDatePicker.value));
+  document.getElementById('addedDateText').value = formatDate(date);
+  document.getElementById('addedDatePicker').valueAsDate = date;
 }
+
+document.getElementById('addedDatePicker').onchange =
+  function handleDateChange() {
+    setFormAddedDate(new Date(addedDatePicker.value));
+  };
