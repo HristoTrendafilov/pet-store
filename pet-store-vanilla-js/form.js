@@ -150,7 +150,7 @@ function validateFormInput(pet) {
 
 export function hidePetFormSubmitSpinner() {
   formElements.saveButton.disabled = false;
-  document.getElementById('pet-form-spinner').style.display = 'none';
+  document.getElementById('pet-form-spinner').remove();
 }
 
 export function showPetFormSubmitSpinner() {
