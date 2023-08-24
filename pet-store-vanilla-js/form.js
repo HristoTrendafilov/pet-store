@@ -41,8 +41,7 @@ document
     showPetFormSubmitSpinner();
     hideFormValidations();
 
-    const formData = new FormData(e.target);
-    const pet = Object.fromEntries(formData.entries());
+    const pet = getFormValues(e.target);
 
     const triggeredValidationsElements = validateFormInput(pet);
     if (triggeredValidationsElements.length > 0) {
@@ -72,6 +71,22 @@ document
     hidePetFormSubmitSpinner();
     await refreshPets();
   });
+
+function getFormValues(formEl) {
+  const pet = {};
+
+  const inputs = formEl.querySelectorAll('[name]');
+  for (let input of inputs) {
+    const inputName = input.name;
+    if (input.type === 'checkbox') {
+      pet[inputName] = input.checked; 
+    } else {
+      pet[inputName] = input.value;
+    }
+  }
+
+  return pet;
+} 
 
 export function lockForm() {
   function lockInputField(element) {
