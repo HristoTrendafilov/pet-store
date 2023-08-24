@@ -43,6 +43,7 @@ export function configureFormNewModal() {
   formElements.saveButton.classList.remove('btn-warning');
   formElements.saveButton.classList.add('btn-primary');
   setFormAddedDate(new Date());
+  document.getElementById('pet-modal-form').setAttribute('isLocked', 'false');
   showPetModal();
 }
 
