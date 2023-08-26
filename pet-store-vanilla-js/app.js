@@ -12,6 +12,11 @@ import { formatDate } from './utils.js';
 
 export const petKinds = {};
 window.addEventListener('DOMContentLoaded', async () => {
+  // show datepicker when the formatted text input is clicked
+	document.getElementById("addedDateText").onclick = () => {
+    document.getElementById("addedDatePicker").showPicker();
+  }
+    
   const petKindsResp = await getPetKinds();
   if (petKindsResp.isFailed) {
     // show the error
