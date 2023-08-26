@@ -105,6 +105,7 @@ export function lockForm() {
 
   formElements.deleteButton.style.opacity = '1';
   formElements.deleteButton.disabled = false;
+  formElements.deleteButton.style.pointerEvents = 'auto';
 
   document.getElementById('pet-modal-form').setAttribute('isLocked', 'true');
 }
@@ -122,6 +123,7 @@ export function unlockForm() {
 
   formElements.deleteButton.style.opacity = '0.5';
   formElements.deleteButton.disabled = true;
+  formElements.deleteButton.style.pointerEvents = 'none';
 
   document.getElementById('pet-modal-form').setAttribute('isLocked', 'false');
 }
