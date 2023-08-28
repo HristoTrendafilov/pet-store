@@ -1,8 +1,4 @@
-import {
-  createSubmitSpinner,
-  isNullOrWhitespace,
-  formatDate,
-} from './utils.js';
+import { createSubmitSpinner, isNullOrWhitespace } from './utils.js';
 import { editPet, addPet } from './api.js';
 import { hidePetModal } from './modals.js';
 import { refreshPets } from './app.js';
@@ -13,17 +9,11 @@ export const formElements = {
   notes: document.getElementById('notes'),
   kind: document.getElementById('kind'),
   healthProblems: document.getElementById('healthProblems'),
-  addedDatePicker: document.getElementById('addedDatePicker'),
-  addedDateText: document.getElementById('addedDateText'),
+  addedDate: document.getElementById('addedDate'),
 
   saveButton: document.getElementById('form-save-btn'),
   deleteButton: document.getElementById('form-delete-btn'),
   cancelButton: document.getElementById('form-cancel-btn'),
-
-  petNameVal: document.getElementById('petName-validation'),
-  ageVal: document.getElementById('age-validation'),
-  kindVal: document.getElementById('kind-validation'),
-  addedDateVal: document.getElementById('addedDate-validation'),
 };
 
 document
@@ -39,21 +29,8 @@ document
     }
 
     showPetFormSubmitSpinner();
-    hideFormValidations();
 
     const pet = getFormValues(e.target);
-
-    const triggeredValidationsElements = validateFormInput(pet);
-    if (triggeredValidationsElements.length > 0) {
-      for (let validationElement of triggeredValidationsElements) {
-        if (validationElement.hasAttribute('hidden')) {
-          validationElement.removeAttribute('hidden');
-        }
-      }
-
-      hidePetFormSubmitSpinner();
-      return;
-    }
 
     let response;
     if (Number(pet.petId) > 0) {
@@ -79,14 +56,14 @@ function getFormValues(formEl) {
   for (let input of inputs) {
     const inputName = input.name;
     if (input.type === 'checkbox') {
-      pet[inputName] = input.checked; 
+      pet[inputName] = input.checked;
     } else {
       pet[inputName] = input.value;
     }
   }
 
   return pet;
-} 
+}
 
 export function lockForm() {
   function lockInputField(element) {
@@ -100,8 +77,7 @@ export function lockForm() {
   lockInputField(formElements.notes);
   lockInputField(formElements.kind);
   lockInputField(formElements.healthProblems);
-  lockInputField(formElements.addedDatePicker);
-  lockInputField(formElements.addedDateText);
+  lockInputField(formElements.addedDate);
 
   formElements.deleteButton.style.opacity = '1';
   formElements.deleteButton.disabled = false;
@@ -142,27 +118,8 @@ export function unlockFormFields(isNewPet) {
 
   if (isNewPet) {
     unlockInputField(formElements.kind);
-    unlockInputField(formElements.addedDatePicker);
+    unlockInputField(formElements.addedDate);
   }
-}
-
-function validateFormInput(pet) {
-  const triggeredValidationsElements = [];
-
-  if (isNullOrWhitespace(pet.petName)) {
-    triggeredValidationsElements.push(formElements.petNameVal);
-  }
-  if (isNullOrWhitespace(pet.kind)) {
-    triggeredValidationsElements.push(formElements.kindVal);
-  }
-  if (isNullOrWhitespace(pet.age)) {
-    triggeredValidationsElements.push(formElements.ageVal);
-  }
-  if (isNullOrWhitespace(pet.addedDate)) {
-    triggeredValidationsElements.push(formElements.addedDateVal);
-  }
-
-  return triggeredValidationsElements;
 }
 
 export function hidePetFormSubmitSpinner() {
@@ -175,26 +132,6 @@ export function showPetFormSubmitSpinner() {
   formElements.saveButton.appendChild(createSubmitSpinner('pet-form-spinner'));
 }
 
-export function hideFormValidations() {
-  const validatioFields = document.querySelectorAll('.validation');
-  for (let validation of validatioFields) {
-    if (!validation.hasAttribute('hidden')) {
-      validation.setAttribute('hidden', true);
-    }
-  }
-}
-
 export function resetForm() {
   document.getElementById('pet-modal-form').reset();
-  hideFormValidations();
 }
-
-export function setFormAddedDate(date) {
-  document.getElementById('addedDateText').value = formatDate(date);
-  document.getElementById('addedDatePicker').valueAsDate = date;
-}
-
-document.getElementById('addedDatePicker').onchange =
-  function handleDateChange() {
-    setFormAddedDate(new Date(addedDatePicker.value));
-  };

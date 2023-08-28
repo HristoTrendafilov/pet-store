@@ -6,7 +6,6 @@ import {
   showDeleteModal,
 } from './modals.js';
 
-import { setFormAddedDate } from './form.js';
 import { getPetKinds, getAllPets, getPet } from './api.js';
 import { formatDate } from './utils.js';
 
@@ -99,18 +98,13 @@ function createViewEditButton(petId) {
       return;
     }
 
-    var dateRegex = /(\d{4})(-{1})(\d{2})(-{1})(\d{2})/g;
     for (const [key, value] of Object.entries(getPetResp.payload)) {
       const formEl = document.getElementById(key);
-      if (dateRegex.test(value)) {
-        setFormAddedDate(new Date(value));
-      } else if (formEl) {
-        if (formEl.type == 'checkbox') {
+        if (formEl.type === 'checkbox') {
           formEl.checked = value;
         } else {
           formEl.value = value;
         }
-      }
     }
 
     hidePetModalSpinner();

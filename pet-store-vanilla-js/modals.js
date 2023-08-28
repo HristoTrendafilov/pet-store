@@ -2,7 +2,6 @@ import {
   resetForm,
   unlockFormFields,
   formElements,
-  setFormAddedDate,
   lockForm,
 } from './form.js';
 
@@ -42,8 +41,8 @@ export function configureFormNewModal() {
   formElements.saveButton.textContent = 'Save';
   formElements.saveButton.classList.remove('btn-warning');
   formElements.saveButton.classList.add('btn-primary');
-  setFormAddedDate(new Date());
   document.getElementById('pet-modal-form').setAttribute('isLocked', 'false');
+  document.getElementById("addedDate").valueAsDate = new Date();
   showPetModal();
 }
 
