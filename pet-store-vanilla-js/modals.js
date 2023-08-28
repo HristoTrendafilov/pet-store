@@ -3,6 +3,7 @@ import {
   unlockFormFields,
   formElements,
   lockForm,
+  fillFormInputs
 } from './form.js';
 
 import { getPet, deletePet } from './api.js';
@@ -20,9 +21,8 @@ export function showPetModal() {
 
 export async function configureFormEditModal(petId) {
   document.getElementById('pet-modal-title').textContent = `View pet #${petId}`;
-
   resetForm();
-  lockForm();
+
   disablePetModalElementsEvents();
   showPetModal();
   showPetModalSpinner();
@@ -33,27 +33,9 @@ export async function configureFormEditModal(petId) {
     return;
   }
 
-  function fillFormInputs() {
-    for (const [key, value] of Object.entries(getPetResp.payload)) {
-      const formEl = document.getElementById(key);
-      if (formEl.type === 'checkbox') {
-        formEl.checked = value;
-      } else {
-        formEl.value = value;
-      }
-    }
-  }
-  fillFormInputs();
-
-  // When i use addEventListener, it triggers the event for every pet even thought there should be only 1
-  formElements.deleteButton.onclick = async function () {
-    await showDeleteModal(getPetResp.payload);
-  };
-
-  formElements.lockButton.addEventListener('click', () => {
-    fillFormInputs();
-    lockForm();
-  });
+  const pet = getPetResp.payload;
+  fillFormInputs(pet);
+  lockForm.call(pet);
 
   hidePetModalSpinner();
   enablePetModalElementsEvents();
@@ -138,7 +120,7 @@ export async function showDeleteModal(pet) {
 
   document.getElementById('delete-modal').style.display = 'block';
 
-  document.getElementById('delete-modal-delete-btn').addEventListener('click', async () => {
+  document.getElementById('delete-modal-delete-btn').onclick = async function (){
     showDeleteModalSubmitSpinner();
     disableDeleteModalElementsEvents();
 
@@ -155,7 +137,7 @@ export async function showDeleteModal(pet) {
     hidePetModal();
 
     await refreshPets();
-  })
+  };
 }
 
 export function hideDeleteModal() {

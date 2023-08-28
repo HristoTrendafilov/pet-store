@@ -5,7 +5,8 @@ import {
   enablePetModalElementsEvents,
   disablePetModalElementsEvents,
   disableModalBackdropClosing,
-  enableModalBackdropClosing } from './modals.js';
+  enableModalBackdropClosing, showDeleteModal
+} from './modals.js';
 import { refreshPets } from './app.js';
 
 export const formElements = {
@@ -49,8 +50,9 @@ document
       return;
     }
 
-    hidePetModal();
     hidePetFormSubmitSpinner();
+    fillFormInputs(response.payload);
+    lockForm.call(response.payload);
     enablePetModalElementsEvents();
     await refreshPets();
   });
@@ -72,7 +74,10 @@ function getFormValues(formEl) {
 }
 
 export function lockForm() {
+  document.getElementById('pet-modal-title').textContent = `View pet #${this.petId}`;
   enableModalBackdropClosing();
+
+  const pet = this;
 
   formElements.lockButton.style.display = 'none';
   formElements.deleteButton.style.display = 'block';
@@ -96,6 +101,16 @@ export function lockForm() {
   lockInputField(formElements.addedDate);
 
   document.getElementById('pet-modal-form').dataset.isLocked = "true";
+
+  // When i use addEventListener, it triggers the event for every pet even thought there should be only 1
+  formElements.deleteButton.onclick = async function () {
+    await showDeleteModal(pet);
+  };
+
+  formElements.lockButton.onclick = function () {
+    fillFormInputs(pet);
+    lockForm.call(pet);
+  };
 }
 
 export function unlockForm() {
@@ -144,4 +159,15 @@ export function showPetFormSubmitSpinner() {
 
 export function resetForm() {
   document.getElementById('pet-modal-form').reset();
+}
+
+export function fillFormInputs(pet) {
+  for (const [key, value] of Object.entries(pet)) {
+    const formEl = document.getElementById(key);
+    if (formEl.type === 'checkbox') {
+      formEl.checked = value;
+    } else {
+      formEl.value = value;
+    }
+  }
 }
