@@ -18,7 +18,7 @@ export function showPetModal() {
   document.getElementById('pet-modal').style.display = 'block';
 }
 
-export function configureFormEditModal(petId) {
+export async function configureFormEditModal(petId) {
   resetForm();
   document.getElementById('pet-modal-title').textContent = `View pet #${petId}`;
   formElements.deleteButton.style.display = 'block';
@@ -27,7 +27,32 @@ export function configureFormEditModal(petId) {
   formElements.saveButton.classList.add('btn-warning');
 
   lockForm();
+  disablePetModalElementsEvents();
   showPetModal();
+  showPetModalSpinner();
+
+  const getPetResp = await getPet(petId);
+  if (getPetResp.isFailed) {
+    hidePetModalSpinner();
+    return;
+  }
+
+  for (const [key, value] of Object.entries(getPetResp.payload)) {
+    const formEl = document.getElementById(key);
+    if (formEl.type === 'checkbox') {
+      formEl.checked = value;
+    } else {
+      formEl.value = value;
+    }
+  }
+
+  // When i use addEventListener, it triggers the event for every pet even thought there should be only 1
+  document.getElementById('form-delete-btn').onclick = async function () {
+    await showDeleteModal(getPetResp.payload);
+  };
+
+  hidePetModalSpinner();
+  enablePetModalElementsEvents();
 }
 
 export function configureFormNewModal() {
@@ -134,12 +159,20 @@ document.getElementById('delete-modal-cancel-btn').addEventListener('click', () 
   hideDeleteModal();
 });
 
-export function enableModalsOnOutsideClick() {
-  document.addEventListener("click", closeModalsOnOutsideClick);
+export function disablePetModalElementsEvents() {
+  document.removeEventListener("click", closeModalsOnOutsideClick)
+  document.getElementById('pet-modal-close').style.pointerEvents = 'none';
+  formElements.saveButton.disabled = true;
+  formElements.deleteButton.disabled = true;
+  formElements.cancelButton.disabled = true;
 }
 
-export function disableModalsOnOutsideClick() {
-  document.removeEventListener("click", closeModalsOnOutsideClick);
+export function enablePetModalElementsEvents() {
+  document.addEventListener("click", closeModalsOnOutsideClick);
+  document.getElementById('pet-modal-close').style.pointerEvents = 'auto';
+  formElements.saveButton.disabled = false;
+  formElements.deleteButton.disabled = false;
+  formElements.cancelButton.disabled = false;
 }
 
 function closeModalsOnOutsideClick(e) {

@@ -1,6 +1,6 @@
 import { createSubmitSpinner } from './utils.js';
 import { editPet, addPet } from './api.js';
-import { hidePetModal } from './modals.js';
+import { hidePetModal, enablePetModalElementsEvents, disablePetModalElementsEvents } from './modals.js';
 import { refreshPets } from './app.js';
 
 export const formElements = {
@@ -28,6 +28,7 @@ document
       return;
     }
 
+    disablePetModalElementsEvents();
     showPetFormSubmitSpinner();
 
     const pet = getFormValues(e.target);
@@ -46,6 +47,7 @@ document
 
     hidePetModal();
     hidePetFormSubmitSpinner();
+    enablePetModalElementsEvents();
     await refreshPets();
   });
 
@@ -123,12 +125,10 @@ export function unlockFormFields(isNewPet) {
 }
 
 export function hidePetFormSubmitSpinner() {
-  formElements.saveButton.disabled = false;
   document.getElementById('pet-form-spinner').remove();
 }
 
 export function showPetFormSubmitSpinner() {
-  formElements.saveButton.disabled = true;
   formElements.saveButton.appendChild(createSubmitSpinner('pet-form-spinner'));
 }
 

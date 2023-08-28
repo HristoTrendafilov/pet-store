@@ -1,6 +1,4 @@
 import {
-  showPetModalSpinner,
-  hidePetModalSpinner,
   configureFormEditModal,
   configureFormNewModal,
   showDeleteModal,
@@ -19,14 +17,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   addPetBtn.disabled = false;
   addPetBtn.style.opacity = '1';
-
-
 });
-
-
-
-
-
 
 async function fetchAndCachePetKinds() {
   const petKindsResp = await getPetKinds();
@@ -96,30 +87,7 @@ function createViewEditButton(petId) {
   viewEditButton.classList.add('btn', 'btn-warning');
 
   viewEditButton.addEventListener('click', async () => {
-    showPetModalSpinner();
-    configureFormEditModal(petId);
-
-    const getPetResp = await getPet(petId);
-    if (getPetResp.isFailed) {
-      hidePetModalSpinner();
-      return;
-    }
-
-    for (const [key, value] of Object.entries(getPetResp.payload)) {
-      const formEl = document.getElementById(key);
-        if (formEl.type === 'checkbox') {
-          formEl.checked = value;
-        } else {
-          formEl.value = value;
-        }
-    }
-
-    // When i use addEventListener, it triggers the event for every pet even thought there should be only 1
-    document.getElementById('form-delete-btn').onclick = async function () {
-      await showDeleteModal(getPetResp.payload);
-    };
-
-    hidePetModalSpinner();
+    await configureFormEditModal(petId);
   });
 
   return viewEditButton;
