@@ -56,7 +56,7 @@ export async function refreshPets() {
     tr.appendChild(createPetTableColumn(pet.petName));
     tr.appendChild(createPetTableColumn(formatDate(new Date(pet.addedDate))));
     tr.appendChild(createPetTableColumn(petKinds[pet.kind]));
-    tr.appendChild(createPetTableButtons(pet.petId));
+    tr.appendChild(createPetTableButtons(pet));
 
     tableBody.appendChild(tr);
   }
@@ -71,13 +71,13 @@ function createPetTableColumn(textContent) {
   return td;
 }
 
-function createPetTableButtons(petId) {
+function createPetTableButtons(pet) {
   const td = document.createElement('td');
   td.setAttribute('colspan', '2');
 
   const flexWrapperDiv = document.createElement('div');
-  flexWrapperDiv.appendChild(createViewEditButton(petId));
-  flexWrapperDiv.appendChild(createDeleteButton(petId));
+  flexWrapperDiv.appendChild(createViewEditButton(pet.petId));
+  flexWrapperDiv.appendChild(createDeleteButton(pet));
 
   td.appendChild(flexWrapperDiv);
   return td;
@@ -107,19 +107,24 @@ function createViewEditButton(petId) {
         }
     }
 
+    // When i use addEventListener, it triggers the event for every pet even thought there should be only 1
+    document.getElementById('form-delete-btn').onclick = async function () {
+      await showDeleteModal(getPetResp.payload);
+    };
+
     hidePetModalSpinner();
   });
 
   return viewEditButton;
 }
 
-function createDeleteButton(petId) {
+function createDeleteButton(pet) {
   const deleteButton = document.createElement('button');
   deleteButton.textContent = 'Delete';
   deleteButton.classList.add('btn', 'btn-danger');
 
   deleteButton.addEventListener('click', async () => {
-    await showDeleteModal(petId);
+    await showDeleteModal(pet);
   })
 
   return deleteButton;

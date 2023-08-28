@@ -25,9 +25,6 @@ export function configureFormEditModal(petId) {
   formElements.saveButton.textContent = 'Edit';
   formElements.saveButton.classList.remove('btn-primary');
   formElements.saveButton.classList.add('btn-warning');
-  document.getElementById('form-delete-btn').addEventListener('click', async () => {
-    await showDeleteModal(petId);
-  });
 
   lockForm();
   showPetModal();
@@ -66,23 +63,12 @@ document.getElementById('form-cancel-btn').addEventListener('click', () => {
 
 
 // Delete modal
-export async function showDeleteModal(petId) {
+export async function showDeleteModal(pet) {
   document.getElementById(
     'delete-modal-title'
-  ).textContent = `Delete pet #${petId}`;
+  ).textContent = `Delete pet #${pet.petId}`;
   const petInfoEl = document.getElementById('delete-modal-pet-info');
   petInfoEl.innerHTML = '';
-
-  document.getElementById('delete-modal').style.display = 'block';
-  showDeleteModalSpinner();
-
-  const getPetResp = await getPet(petId);
-  if (getPetResp.isFailed) {
-    // show the error
-    return;
-  }
-
-  const pet = getPetResp.payload;
 
   function createDeleteModalPetInfoElement(textContent) {
     const div = document.createElement('div');
@@ -91,33 +77,26 @@ export async function showDeleteModal(petId) {
     return div;
   }
 
-  petInfoEl.appendChild(
-    createDeleteModalPetInfoElement(`Name: ${pet.petName}`)
-  );
-  petInfoEl.appendChild(
-    createDeleteModalPetInfoElement(`Kind: ${petKinds[pet.kind]}`)
-  );
-  petInfoEl.appendChild(createDeleteModalPetInfoElement(`Age: ${pet.age}`));
-  petInfoEl.appendChild(
-    createDeleteModalPetInfoElement(
-      `Has health problems: ${pet.healthProblems}`
-    )
-  );
-  petInfoEl.appendChild(
-    createDeleteModalPetInfoElement(`Notes: ${pet.notes ? pet.notes : ''}`)
-  );
-  petInfoEl.appendChild(
-    createDeleteModalPetInfoElement(
-      `Date added: ${formatDate(new Date(pet.addedDate))}`
-    )
-  );
+  petInfoEl.appendChild(createDeleteModalPetInfoElement(`Name: ${pet.petName}`));
+  petInfoEl.appendChild(createDeleteModalPetInfoElement(`Kind: ${petKinds[pet.kind]}`));
+  if (pet.hasOwnProperty('age')) {
+    petInfoEl.appendChild(createDeleteModalPetInfoElement(`Age: ${pet.age}`));
+  }
+  if (pet.hasOwnProperty('notes')) {
+    petInfoEl.appendChild(createDeleteModalPetInfoElement(`Notes: ${pet.notes ? pet.notes : ''}`));
+  }
+  if (pet.hasOwnProperty('age')) {
+    petInfoEl.appendChild(createDeleteModalPetInfoElement(`Has health problems: ${pet.healthProblems ? 'yes' : 'no'}`));
+  }
 
-  hideDeleteModalSpinner();
+  petInfoEl.appendChild(createDeleteModalPetInfoElement(`Date added: ${formatDate(new Date(pet.addedDate))}`));
+
+  document.getElementById('delete-modal').style.display = 'block';
 
   document.getElementById('delete-modal-delete-btn').addEventListener('click', async () => {
     showDeleteModalSubmitSpinner();
 
-    const deleteResp = await deletePet(petId);
+    const deleteResp = await deletePet(pet.petId);
     if (deleteResp.isFailed) {
       // show the error
       hideDeleteModalSubmitSpinner();
@@ -146,16 +125,6 @@ function hideDeleteModalSubmitSpinner() {
   const deleteButton = document.getElementById('delete-modal-delete-btn');
   deleteButton.disabled = false;
   document.getElementById('delete-modal-submit-spinner').remove();
-}
-
-function showDeleteModalSpinner() {
-  document.getElementById('delete-modal-spinner').style.display = 'flex';
-  document.getElementById('delete-modal-buttons').style.display = 'none';
-}
-
-function hideDeleteModalSpinner() {
-  document.getElementById('delete-modal-spinner').style.display = 'none';
-  document.getElementById('delete-modal-buttons').style.display = 'flex';
 }
 
 document.getElementById('delete-modal-close').addEventListener('click', () => {
