@@ -19,16 +19,15 @@ export const formElements = {
   saveButton: document.getElementById('form-save-btn'),
   deleteButton: document.getElementById('form-delete-btn'),
   cancelButton: document.getElementById('form-cancel-btn'),
+  lockButton: document.getElementById('form-lock-btn'),
 };
 
 document
   .getElementById('pet-modal-form')
   .addEventListener('submit', async function handleFormSubmit(e) {
     e.preventDefault();
-    const isFormLocked = document
-      .getElementById('pet-modal-form')
-      .getAttribute('isLocked');
-    if (isFormLocked == 'true') {
+    const isFormLocked = e.target.dataset.isLocked;
+    if (isFormLocked === 'true') {
       unlockForm();
       return;
     }
@@ -73,12 +72,21 @@ function getFormValues(formEl) {
 }
 
 export function lockForm() {
+  enableModalBackdropClosing();
+
+  formElements.lockButton.style.display = 'none';
+  formElements.deleteButton.style.display = 'block';
+
+  formElements.deleteButton.style.display = 'block';
+  formElements.saveButton.textContent = 'Edit';
+  formElements.saveButton.classList.remove('btn-primary');
+  formElements.saveButton.classList.add('btn-warning');
+
   function lockInputField(element) {
     element.setAttribute('readonly', 'true');
     element.style.pointerEvents = 'none';
     element.style.background = 'var(--locked)';
   }
-  enableModalBackdropClosing();
 
   lockInputField(formElements.petName);
   lockInputField(formElements.age);
@@ -87,11 +95,7 @@ export function lockForm() {
   lockInputField(formElements.healthProblems);
   lockInputField(formElements.addedDate);
 
-  formElements.deleteButton.style.opacity = '1';
-  formElements.deleteButton.disabled = false;
-  formElements.deleteButton.style.pointerEvents = 'auto';
-
-  document.getElementById('pet-modal-form').setAttribute('isLocked', 'true');
+  document.getElementById('pet-modal-form').dataset.isLocked = "true";
 }
 
 export function unlockForm() {
@@ -102,15 +106,14 @@ export function unlockForm() {
   formElements.saveButton.classList.remove('btn-warning');
   formElements.saveButton.classList.add('btn-primary');
 
+  formElements.lockButton.style.display = 'block';
+  formElements.deleteButton.style.display = 'none';
+
   const modalTitle = document.getElementById('pet-modal-title');
   const petId = modalTitle.textContent.split(' ').pop();
   modalTitle.textContent = `Edit pet ${petId}`;
 
-  formElements.deleteButton.style.opacity = '0.5';
-  formElements.deleteButton.disabled = true;
-  formElements.deleteButton.style.pointerEvents = 'none';
-
-  document.getElementById('pet-modal-form').setAttribute('isLocked', 'false');
+  document.getElementById('pet-modal-form').dataset.isLocked = "false";
 }
 
 export function unlockFormFields(isNewPet) {

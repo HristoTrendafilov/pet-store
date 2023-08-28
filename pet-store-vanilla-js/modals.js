@@ -19,13 +19,9 @@ export function showPetModal() {
 }
 
 export async function configureFormEditModal(petId) {
-  resetForm();
   document.getElementById('pet-modal-title').textContent = `View pet #${petId}`;
-  formElements.deleteButton.style.display = 'block';
-  formElements.saveButton.textContent = 'Edit';
-  formElements.saveButton.classList.remove('btn-primary');
-  formElements.saveButton.classList.add('btn-warning');
 
+  resetForm();
   lockForm();
   disablePetModalElementsEvents();
   showPetModal();
@@ -37,19 +33,27 @@ export async function configureFormEditModal(petId) {
     return;
   }
 
-  for (const [key, value] of Object.entries(getPetResp.payload)) {
-    const formEl = document.getElementById(key);
-    if (formEl.type === 'checkbox') {
-      formEl.checked = value;
-    } else {
-      formEl.value = value;
+  function fillFormInputs() {
+    for (const [key, value] of Object.entries(getPetResp.payload)) {
+      const formEl = document.getElementById(key);
+      if (formEl.type === 'checkbox') {
+        formEl.checked = value;
+      } else {
+        formEl.value = value;
+      }
     }
   }
+  fillFormInputs();
 
   // When i use addEventListener, it triggers the event for every pet even thought there should be only 1
-  document.getElementById('form-delete-btn').onclick = async function () {
+  formElements.deleteButton.onclick = async function () {
     await showDeleteModal(getPetResp.payload);
   };
+
+  formElements.lockButton.addEventListener('click', () => {
+    fillFormInputs();
+    lockForm();
+  });
 
   hidePetModalSpinner();
   enablePetModalElementsEvents();
@@ -63,8 +67,9 @@ export function configureFormNewModal() {
   formElements.saveButton.textContent = 'Save';
   formElements.saveButton.classList.remove('btn-warning');
   formElements.saveButton.classList.add('btn-primary');
-  document.getElementById('pet-modal-form').setAttribute('isLocked', 'false');
-  document.getElementById("addedDate").valueAsDate = new Date();
+  formElements.lockButton.style.display = 'none';
+  formElements.addedDate.valueAsDate = new Date();
+  document.getElementById('pet-modal-form').dataset.isLocked = "false";
   showPetModal();
 }
 
@@ -85,6 +90,22 @@ document.getElementById('pet-modal-close').addEventListener('click', () => {
 document.getElementById('form-cancel-btn').addEventListener('click', () => {
   hidePetModal();
 });
+
+export function disablePetModalElementsEvents() {
+  disableModalBackdropClosing();
+  document.getElementById('pet-modal-close').style.pointerEvents = 'none';
+  formElements.saveButton.disabled = true;
+  formElements.deleteButton.disabled = true;
+  formElements.cancelButton.disabled = true;
+}
+
+export function enablePetModalElementsEvents() {
+  enableModalBackdropClosing();
+  document.getElementById('pet-modal-close').style.pointerEvents = 'auto';
+  formElements.saveButton.disabled = false;
+  formElements.deleteButton.disabled = false;
+  formElements.cancelButton.disabled = false;
+}
 
 
 // Delete modal
@@ -119,6 +140,7 @@ export async function showDeleteModal(pet) {
 
   document.getElementById('delete-modal-delete-btn').addEventListener('click', async () => {
     showDeleteModalSubmitSpinner();
+    disableDeleteModalElementsEvents();
 
     const deleteResp = await deletePet(pet.petId);
     if (deleteResp.isFailed) {
@@ -128,6 +150,7 @@ export async function showDeleteModal(pet) {
     }
 
     hideDeleteModalSubmitSpinner();
+    enableDeleteModalElementsEvents();
     hideDeleteModal();
     hidePetModal();
 
@@ -140,14 +163,10 @@ export function hideDeleteModal() {
 }
 
 function showDeleteModalSubmitSpinner() {
-  const deleteButton = document.getElementById('delete-modal-delete-btn');
-  deleteButton.disabled = true;
-  deleteButton.appendChild(createSubmitSpinner('delete-modal-submit-spinner'));
+  document.getElementById('delete-modal-delete-btn').appendChild(createSubmitSpinner('delete-modal-submit-spinner'));
 }
 
 function hideDeleteModalSubmitSpinner() {
-  const deleteButton = document.getElementById('delete-modal-delete-btn');
-  deleteButton.disabled = false;
   document.getElementById('delete-modal-submit-spinner').remove();
 }
 
@@ -159,22 +178,22 @@ document.getElementById('delete-modal-cancel-btn').addEventListener('click', () 
   hideDeleteModal();
 });
 
-export function disablePetModalElementsEvents() {
-  disableModalBackdropClosing();
-  document.getElementById('pet-modal-close').style.pointerEvents = 'none';
-  formElements.saveButton.disabled = true;
-  formElements.deleteButton.disabled = true;
-  formElements.cancelButton.disabled = true;
-}
-
-export function enablePetModalElementsEvents() {
+export function enableDeleteModalElementsEvents() {
   enableModalBackdropClosing();
-  document.getElementById('pet-modal-close').style.pointerEvents = 'auto';
-  formElements.saveButton.disabled = false;
-  formElements.deleteButton.disabled = false;
-  formElements.cancelButton.disabled = false;
+  document.getElementById('delete-modal-close').style.pointerEvents = 'auto';
+  document.getElementById('delete-modal-cancel-btn').disabled = false;
+  document.getElementById('delete-modal-delete-btn').disabled = false;
 }
 
+export function disableDeleteModalElementsEvents() {
+  disableModalBackdropClosing();
+  document.getElementById('delete-modal-close').style.pointerEvents = 'none';
+  document.getElementById('delete-modal-cancel-btn').disabled = true;
+  document.getElementById('delete-modal-delete-btn').disabled = true;
+}
+
+
+// Common
 function closeModalsOnOutsideClick(e) {
   const petModal = document.getElementById('pet-modal');
   const deleteModal = document.getElementById('delete-modal');
