@@ -1,3 +1,6 @@
+const apiBaseUrl = 'http://localhost:5150';
+const apiWaitTimeout = 5000;
+
 export function getPet(petId) {
   return fetchFromApi(`/pet/${petId}`, 'GET');
 }
@@ -23,24 +26,27 @@ export function getPetKinds() {
 }
 
 async function fetchFromApi(endPoint, method, body) {
-  const response = {
-    payload: {},
-    isFailed: false,
-    error: '',
-  };
+  let apiResponse;
+  try {
+     apiResponse = await fetch(`${apiBaseUrl}${endPoint}`, {
+      method: method,
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: body,
+       signal: AbortSignal.timeout(apiWaitTimeout)
+    });
+  } catch (err) {
+    console.log(err);
+  }
 
-  const apiResponse = await fetch(`http://localhost:5150${endPoint}`, {
-    method: method,
-    headers: {
-      'Content-type': 'application/json',
-    },
-    body: body,
-  });
-
-  if (!apiResponse.ok) {
+  if (apiResponse && !apiResponse.ok) {
     throw new Error(`Web error! Status code: ${apiResponse.status}`);
   }
 
-  response.payload = await apiResponse.json();
-  return response;
+  try {
+    return apiResponse.json();
+  } catch (err) {
+    console.log(err);
+  }
 }

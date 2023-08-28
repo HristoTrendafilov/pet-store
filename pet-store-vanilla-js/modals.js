@@ -7,7 +7,7 @@ import {
 } from './form.js';
 
 import { getPet, deletePet } from './api.js';
-import { petKinds, refreshPets } from './app.js';
+import { petKindsEnum, refreshPets } from './app.js';
 import { createSubmitSpinner, formatDate } from './utils.js';
 
 // Pet modal
@@ -27,13 +27,7 @@ export async function configureFormEditModal(petId) {
   showPetModal();
   showPetModalSpinner();
 
-  const getPetResp = await getPet(petId);
-  if (getPetResp.isFailed) {
-    hidePetModalSpinner();
-    return;
-  }
-
-  const pet = getPetResp.payload;
+  const pet = await getPet(petId);
   fillFormInputs(pet);
   lockForm.call(pet);
 
@@ -106,7 +100,7 @@ export async function showDeleteModal(pet) {
   }
 
   petInfoEl.appendChild(createDeleteModalPetInfoElement(`Name: ${pet.petName}`));
-  petInfoEl.appendChild(createDeleteModalPetInfoElement(`Kind: ${petKinds[pet.kind]}`));
+  petInfoEl.appendChild(createDeleteModalPetInfoElement(`Kind: ${petKindsEnum[pet.kind]}`));
   if (pet.hasOwnProperty('age')) {
     petInfoEl.appendChild(createDeleteModalPetInfoElement(`Age: ${pet.age}`));
   }
@@ -124,12 +118,7 @@ export async function showDeleteModal(pet) {
     showDeleteModalSubmitSpinner();
     disableDeleteModalElementsEvents();
 
-    const deleteResp = await deletePet(pet.petId);
-    if (deleteResp.isFailed) {
-      // show the error
-      hideDeleteModalSubmitSpinner();
-      return;
-    }
+    await deletePet(pet.petId);
 
     hideDeleteModalSubmitSpinner();
     enableDeleteModalElementsEvents();

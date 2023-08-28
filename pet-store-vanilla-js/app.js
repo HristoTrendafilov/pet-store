@@ -7,7 +7,7 @@ import {
 import { getPetKinds, getAllPets, getPet } from './api.js';
 import { formatDate } from './utils.js';
 
-export const petKinds = {};
+export const petKindsEnum = {};
 window.addEventListener('DOMContentLoaded', async () => {
   const addPetBtn = document.getElementById('add-pet-btn');
   addPetBtn.disabled = true;
@@ -20,15 +20,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function fetchAndCachePetKinds() {
-  const petKindsResp = await getPetKinds();
-  if (petKindsResp.isFailed) {
-    // show the error
-    return;
-  }
+  const petKinds = await getPetKinds();
 
   const petKindSelect = document.getElementById('kind');
-  for (let kind of petKindsResp.payload) {
-    petKinds[kind.value] = kind.displayName;
+  for (let kind of petKinds) {
+    petKindsEnum[kind.value] = kind.displayName;
 
     const petKindOption = document.createElement('option');
     petKindOption.innerText = kind.displayName;
@@ -42,18 +38,14 @@ export async function refreshPets() {
   const tableBody = document.getElementById('data-table').tBodies[1];
   tableBody.innerHTML = '';
 
-  const petsResp = await getAllPets();
-  if (petsResp.isFailed) {
-    // show the error
-    return;
-  }
+  const pets = await getAllPets();
 
-  for (let pet of petsResp.payload.sort((a, b) => b.petId - a.petId)) {
+  for (let pet of pets.sort((a, b) => b.petId - a.petId)) {
     const tr = document.createElement('tr');
     tr.appendChild(createPetTableColumn(pet.petId));
     tr.appendChild(createPetTableColumn(pet.petName));
     tr.appendChild(createPetTableColumn(formatDate(new Date(pet.addedDate))));
-    tr.appendChild(createPetTableColumn(petKinds[pet.kind]));
+    tr.appendChild(createPetTableColumn(petKindsEnum[pet.kind]));
     tr.appendChild(createPetTableButtons(pet));
 
     tableBody.appendChild(tr);

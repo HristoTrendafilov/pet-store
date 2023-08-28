@@ -1,7 +1,6 @@
 import { createSubmitSpinner } from './utils.js';
 import { editPet, addPet } from './api.js';
 import {
-  hidePetModal,
   enablePetModalElementsEvents,
   disablePetModalElementsEvents,
   disableModalBackdropClosing,
@@ -38,21 +37,16 @@ document
 
     const pet = getFormValues(e.target);
 
-    let response;
+    let petResponse;
     if (Number(pet.petId) > 0) {
-      response = await editPet(pet);
+      petResponse = await editPet(pet);
     } else {
-      response = await addPet(pet);
-    }
-
-    if (response.isFailed) {
-      // show the error
-      return;
+      petResponse = await addPet(pet);
     }
 
     hidePetFormSubmitSpinner();
-    fillFormInputs(response.payload);
-    lockForm.call(response.payload);
+    fillFormInputs(petResponse);
+    lockForm.call(petResponse);
     enablePetModalElementsEvents();
     await refreshPets();
   });
