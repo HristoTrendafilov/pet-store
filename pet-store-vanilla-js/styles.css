@@ -13,6 +13,9 @@
 
 /* Buttons */
 .btn {
+  display: flex;
+  justify-content: center;
+
   border: 1px solid var(--black);
   border-radius: 5px;
   padding: 8px 20px;

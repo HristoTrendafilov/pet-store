@@ -12,9 +12,14 @@ import { formatDate } from './utils.js';
 
 export const petKinds = {};
 window.addEventListener('DOMContentLoaded', async () => {
-  document.getElementById('add-pet-btn').disabled = true;
-  await Promise.all([fetchAndCachePetKinds(), refreshPets()])
-  document.getElementById('add-pet-btn').disabled = false;
+  const addPetBtn = document.getElementById('add-pet-btn');
+  addPetBtn.disabled = true;
+  addPetBtn.style.opacity = '0.5'
+
+  await Promise.all([fetchAndCachePetKinds(), refreshPets()]);
+
+  addPetBtn.disabled = false;
+  addPetBtn.style.opacity = '1';
 });
 
 async function fetchAndCachePetKinds() {
@@ -84,7 +89,7 @@ function createViewEditButton(petId) {
   viewEditButton.textContent = 'View / Edit';
   viewEditButton.classList.add('btn', 'btn-warning');
 
-  viewEditButton.onclick = async function editPet() {
+  viewEditButton.addEventListener('click', async () => {
     showPetModalSpinner();
     configureFormEditModal(petId);
 
@@ -109,7 +114,7 @@ function createViewEditButton(petId) {
     }
 
     hidePetModalSpinner();
-  };
+  });
 
   return viewEditButton;
 }
@@ -119,16 +124,16 @@ function createDeleteButton(petId) {
   deleteButton.textContent = 'Delete';
   deleteButton.classList.add('btn', 'btn-danger');
 
-  deleteButton.onclick = function deletePet() {
-    showDeleteModal(petId);
-  };
+  deleteButton.addEventListener('click', async () => {
+    await showDeleteModal(petId);
+  })
 
   return deleteButton;
 }
 
-document.getElementById('add-pet-btn').onclick = function showPetModalNew() {
+document.getElementById('add-pet-btn').addEventListener('click', () => {
   configureFormNewModal();
-};
+});
 
 function showLoadingPetsSpinner() {
   document.getElementById('loading-pets-spinner').style.display = 'flex';

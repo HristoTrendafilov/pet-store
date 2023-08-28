@@ -10,7 +10,7 @@ import { getPet, deletePet } from './api.js';
 import { petKinds, refreshPets } from './app.js';
 import { createSubmitSpinner, formatDate } from './utils.js';
 
-// PET MODAL //
+// Pet modal
 export function hidePetModal() {
   document.getElementById('pet-modal').style.display = 'none';
 }
@@ -26,10 +26,10 @@ export function configureFormEditModal(petId) {
   formElements.saveButton.textContent = 'Edit';
   formElements.saveButton.classList.remove('btn-primary');
   formElements.saveButton.classList.add('btn-warning');
-  document.getElementById('form-delete-btn').onclick =
-    function showDeleteModalFromButton() {
-      showDeleteModal(petId);
-    };
+  document.getElementById('form-delete-btn').addEventListener('click', async () => {
+    await showDeleteModal(petId);
+  });
+
   lockForm();
   showPetModal();
 }
@@ -57,18 +57,16 @@ export function hidePetModalSpinner() {
   document.getElementById('pet-modal-form').style.display = 'flex';
 }
 
-document.getElementById('pet-modal-close').onclick =
-  function hidePetModalFromHeader() {
-    hidePetModal();
-  };
+document.getElementById('pet-modal-close').addEventListener('click', () => {
+  hidePetModal();
+});
 
-document.getElementById('form-cancel-btn').onclick =
-  function hidePetModalFromButton() {
-    hidePetModal();
-  };
-// PET MODAL //
+document.getElementById('form-cancel-btn').addEventListener('click', () => {
+  hidePetModal();
+});
 
-// DELETE MODAL //
+
+// Delete modal
 export async function showDeleteModal(petId) {
   document.getElementById(
     'delete-modal-title'
@@ -117,9 +115,9 @@ export async function showDeleteModal(petId) {
 
   hideDeleteModalSpinner();
 
-  const deleteButton = document.getElementById('delete-modal-delete-btn');
-  deleteButton.onclick = async function deletePetFromButton() {
+  document.getElementById('delete-modal-delete-btn').addEventListener('click', async () => {
     showDeleteModalSubmitSpinner();
+
     const deleteResp = await deletePet(petId);
     if (deleteResp.isFailed) {
       // show the error
@@ -130,8 +128,9 @@ export async function showDeleteModal(petId) {
     hideDeleteModalSubmitSpinner();
     hideDeleteModal();
     hidePetModal();
+
     await refreshPets();
-  };
+  })
 }
 
 export function hideDeleteModal() {
@@ -160,13 +159,10 @@ function hideDeleteModalSpinner() {
   document.getElementById('delete-modal-buttons').style.display = 'flex';
 }
 
-document.getElementById('delete-modal-close').onclick =
-  function hideDeleteModalFromHeader() {
-    hideDeleteModal();
-  };
+document.getElementById('delete-modal-close').addEventListener('click', () => {
+  hideDeleteModal();
+});
 
-document.getElementById('delete-modal-cancel-btn').onclick =
-  function hideDeleteModalFromButton() {
-    hideDeleteModal();
-  };
-// DELETE MODAL //
+document.getElementById('delete-modal-cancel-btn').addEventListener('click', () => {
+  hideDeleteModal();
+});
