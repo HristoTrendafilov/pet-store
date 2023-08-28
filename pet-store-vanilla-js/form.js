@@ -1,6 +1,11 @@
 import { createSubmitSpinner } from './utils.js';
 import { editPet, addPet } from './api.js';
-import { hidePetModal, enablePetModalElementsEvents, disablePetModalElementsEvents } from './modals.js';
+import {
+  hidePetModal,
+  enablePetModalElementsEvents,
+  disablePetModalElementsEvents,
+  disableModalBackdropClosing,
+  enableModalBackdropClosing } from './modals.js';
 import { refreshPets } from './app.js';
 
 export const formElements = {
@@ -73,6 +78,7 @@ export function lockForm() {
     element.style.pointerEvents = 'none';
     element.style.background = 'var(--locked)';
   }
+  enableModalBackdropClosing();
 
   lockInputField(formElements.petName);
   lockInputField(formElements.age);
@@ -90,6 +96,7 @@ export function lockForm() {
 
 export function unlockForm() {
   unlockFormFields(false);
+  disableModalBackdropClosing();
 
   formElements.saveButton.textContent = 'Save';
   formElements.saveButton.classList.remove('btn-warning');

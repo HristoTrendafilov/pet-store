@@ -160,7 +160,7 @@ document.getElementById('delete-modal-cancel-btn').addEventListener('click', () 
 });
 
 export function disablePetModalElementsEvents() {
-  document.removeEventListener("click", closeModalsOnOutsideClick)
+  disableModalBackdropClosing();
   document.getElementById('pet-modal-close').style.pointerEvents = 'none';
   formElements.saveButton.disabled = true;
   formElements.deleteButton.disabled = true;
@@ -168,7 +168,7 @@ export function disablePetModalElementsEvents() {
 }
 
 export function enablePetModalElementsEvents() {
-  document.addEventListener("click", closeModalsOnOutsideClick);
+  enableModalBackdropClosing();
   document.getElementById('pet-modal-close').style.pointerEvents = 'auto';
   formElements.saveButton.disabled = false;
   formElements.deleteButton.disabled = false;
@@ -183,5 +183,13 @@ function closeModalsOnOutsideClick(e) {
   } else if (e.target === deleteModal) {
     deleteModal.style.display = 'none';
   }
+}
+
+export function disableModalBackdropClosing() {
+  document.removeEventListener("click", closeModalsOnOutsideClick)
+}
+
+export function enableModalBackdropClosing() {
+  document.addEventListener("click", closeModalsOnOutsideClick);
 }
 
