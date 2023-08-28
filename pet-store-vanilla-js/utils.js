@@ -1,7 +1,3 @@
-export function isNullOrWhitespace(value) {
-  return value == null || value.trim().length == 0;
-}
-
 export function createSubmitSpinner(id) {
   const spinner = document.createElement('span');
   spinner.id = id;

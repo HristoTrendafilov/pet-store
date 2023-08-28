@@ -1,4 +1,4 @@
-import { createSubmitSpinner, isNullOrWhitespace } from './utils.js';
+import { createSubmitSpinner } from './utils.js';
 import { editPet, addPet } from './api.js';
 import { hidePetModal } from './modals.js';
 import { refreshPets } from './app.js';

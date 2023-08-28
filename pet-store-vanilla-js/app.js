@@ -19,7 +19,14 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   addPetBtn.disabled = false;
   addPetBtn.style.opacity = '1';
+
+
 });
+
+
+
+
+
 
 async function fetchAndCachePetKinds() {
   const petKindsResp = await getPetKinds();
