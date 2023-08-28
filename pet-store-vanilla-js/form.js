@@ -4,7 +4,8 @@ import {
   enablePetModalElementsEvents,
   disablePetModalElementsEvents,
   disableModalBackdropClosing,
-  enableModalBackdropClosing, showDeleteModal
+  enableModalBackdropClosing,
+  showDeleteModal,
 } from './modals.js';
 import { refreshPets } from './app.js';
 
@@ -68,7 +69,9 @@ function getFormValues(formEl) {
 }
 
 export function lockForm() {
-  document.getElementById('pet-modal-title').textContent = `View pet #${this.petId}`;
+  document.getElementById(
+    'pet-modal-title'
+  ).textContent = `View pet #${this.petId}`;
   enableModalBackdropClosing();
 
   const pet = this;
@@ -94,7 +97,7 @@ export function lockForm() {
   lockInputField(formElements.healthProblems);
   lockInputField(formElements.addedDate);
 
-  document.getElementById('pet-modal-form').dataset.isLocked = "true";
+  document.getElementById('pet-modal-form').dataset.isLocked = 'true';
 
   // When i use addEventListener, it triggers the event for every pet even thought there should be only 1
   formElements.deleteButton.onclick = async function () {
@@ -122,7 +125,7 @@ export function unlockForm() {
   const petId = modalTitle.textContent.split(' ').pop();
   modalTitle.textContent = `Edit pet ${petId}`;
 
-  document.getElementById('pet-modal-form').dataset.isLocked = "false";
+  document.getElementById('pet-modal-form').dataset.isLocked = 'false';
 }
 
 export function unlockFormFields(isNewPet) {

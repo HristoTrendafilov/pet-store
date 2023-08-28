@@ -3,7 +3,7 @@ import {
   unlockFormFields,
   formElements,
   lockForm,
-  fillFormInputs
+  fillFormInputs,
 } from './form.js';
 
 import { getPet, deletePet } from './api.js';
@@ -45,7 +45,7 @@ export function configureFormNewModal() {
   formElements.saveButton.classList.add('btn-primary');
   formElements.lockButton.style.display = 'none';
   formElements.addedDate.valueAsDate = new Date();
-  document.getElementById('pet-modal-form').dataset.isLocked = "false";
+  document.getElementById('pet-modal-form').dataset.isLocked = 'false';
   showPetModal();
 }
 
@@ -83,7 +83,6 @@ export function enablePetModalElementsEvents() {
   formElements.cancelButton.disabled = false;
 }
 
-
 // Delete modal
 export async function showDeleteModal(pet) {
   document.getElementById(
@@ -99,34 +98,49 @@ export async function showDeleteModal(pet) {
     return div;
   }
 
-  petInfoEl.appendChild(createDeleteModalPetInfoElement(`Name: ${pet.petName}`));
-  petInfoEl.appendChild(createDeleteModalPetInfoElement(`Kind: ${petKindsEnum[pet.kind]}`));
+  petInfoEl.appendChild(
+    createDeleteModalPetInfoElement(`Name: ${pet.petName}`)
+  );
+  petInfoEl.appendChild(
+    createDeleteModalPetInfoElement(`Kind: ${petKindsEnum[pet.kind]}`)
+  );
   if (pet.hasOwnProperty('age')) {
     petInfoEl.appendChild(createDeleteModalPetInfoElement(`Age: ${pet.age}`));
   }
   if (pet.hasOwnProperty('notes')) {
-    petInfoEl.appendChild(createDeleteModalPetInfoElement(`Notes: ${pet.notes ? pet.notes : ''}`));
+    petInfoEl.appendChild(
+      createDeleteModalPetInfoElement(`Notes: ${pet.notes ? pet.notes : ''}`)
+    );
   }
   if (pet.hasOwnProperty('healthProblems')) {
-    petInfoEl.appendChild(createDeleteModalPetInfoElement(`Has health problems: ${pet.healthProblems ? 'yes' : 'no'}`));
+    petInfoEl.appendChild(
+      createDeleteModalPetInfoElement(
+        `Has health problems: ${pet.healthProblems ? 'yes' : 'no'}`
+      )
+    );
   }
-  petInfoEl.appendChild(createDeleteModalPetInfoElement(`Date added: ${formatDate(new Date(pet.addedDate))}`));
+  petInfoEl.appendChild(
+    createDeleteModalPetInfoElement(
+      `Date added: ${formatDate(new Date(pet.addedDate))}`
+    )
+  );
 
   document.getElementById('delete-modal').style.display = 'block';
 
-  document.getElementById('delete-modal-delete-btn').onclick = async function (){
-    showDeleteModalSubmitSpinner();
-    disableDeleteModalElementsEvents();
+  document.getElementById('delete-modal-delete-btn').onclick =
+    async function () {
+      showDeleteModalSubmitSpinner();
+      disableDeleteModalElementsEvents();
 
-    await deletePet(pet.petId);
+      await deletePet(pet.petId);
 
-    hideDeleteModalSubmitSpinner();
-    enableDeleteModalElementsEvents();
-    hideDeleteModal();
-    hidePetModal();
+      hideDeleteModalSubmitSpinner();
+      enableDeleteModalElementsEvents();
+      hideDeleteModal();
+      hidePetModal();
 
-    await refreshPets();
-  };
+      await refreshPets();
+    };
 }
 
 export function hideDeleteModal() {
@@ -134,7 +148,9 @@ export function hideDeleteModal() {
 }
 
 function showDeleteModalSubmitSpinner() {
-  document.getElementById('delete-modal-delete-btn').appendChild(createSubmitSpinner('delete-modal-submit-spinner'));
+  document
+    .getElementById('delete-modal-delete-btn')
+    .appendChild(createSubmitSpinner('delete-modal-submit-spinner'));
 }
 
 function hideDeleteModalSubmitSpinner() {
@@ -145,9 +161,11 @@ document.getElementById('delete-modal-close').addEventListener('click', () => {
   hideDeleteModal();
 });
 
-document.getElementById('delete-modal-cancel-btn').addEventListener('click', () => {
-  hideDeleteModal();
-});
+document
+  .getElementById('delete-modal-cancel-btn')
+  .addEventListener('click', () => {
+    hideDeleteModal();
+  });
 
 export function enableDeleteModalElementsEvents() {
   enableModalBackdropClosing();
@@ -163,7 +181,6 @@ export function disableDeleteModalElementsEvents() {
   document.getElementById('delete-modal-delete-btn').disabled = true;
 }
 
-
 // Common
 function closeModalsOnOutsideClick(e) {
   const petModal = document.getElementById('pet-modal');
@@ -176,10 +193,9 @@ function closeModalsOnOutsideClick(e) {
 }
 
 export function disableModalBackdropClosing() {
-  document.removeEventListener("click", closeModalsOnOutsideClick)
+  document.removeEventListener('click', closeModalsOnOutsideClick);
 }
 
 export function enableModalBackdropClosing() {
-  document.addEventListener("click", closeModalsOnOutsideClick);
+  document.addEventListener('click', closeModalsOnOutsideClick);
 }
-

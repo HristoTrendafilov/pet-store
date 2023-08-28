@@ -11,7 +11,7 @@ export const petKindsEnum = {};
 window.addEventListener('DOMContentLoaded', async () => {
   const addPetBtn = document.getElementById('add-pet-btn');
   addPetBtn.disabled = true;
-  addPetBtn.style.opacity = '0.5'
+  addPetBtn.style.opacity = '0.5';
 
   await Promise.all([fetchAndCachePetKinds(), refreshPets()]);
 
@@ -92,7 +92,7 @@ function createDeleteButton(pet) {
 
   deleteButton.addEventListener('click', async () => {
     await showDeleteModal(pet);
-  })
+  });
 
   return deleteButton;
 }

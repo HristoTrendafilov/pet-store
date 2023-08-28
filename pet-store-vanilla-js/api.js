@@ -28,13 +28,13 @@ export function getPetKinds() {
 async function fetchFromApi(endPoint, method, body) {
   let apiResponse;
   try {
-     apiResponse = await fetch(`${apiBaseUrl}${endPoint}`, {
+    apiResponse = await fetch(`${apiBaseUrl}${endPoint}`, {
       method: method,
       headers: {
         'Content-type': 'application/json',
       },
       body: body,
-       signal: AbortSignal.timeout(apiWaitTimeout)
+      signal: AbortSignal.timeout(apiWaitTimeout),
     });
   } catch (err) {
     console.log(err);
