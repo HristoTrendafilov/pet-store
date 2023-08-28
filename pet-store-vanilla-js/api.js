@@ -26,6 +26,8 @@ export function getPetKinds() {
 }
 
 async function fetchFromApi(endPoint, method, body) {
+  const apiErrorInfo = `endpoint: ${endPoint} | method: ${method}`;
+
   let apiResponse;
   try {
     apiResponse = await fetch(`${apiBaseUrl}${endPoint}`, {
@@ -37,16 +39,18 @@ async function fetchFromApi(endPoint, method, body) {
       signal: AbortSignal.timeout(apiWaitTimeout),
     });
   } catch (err) {
-    console.log(err);
+    console.log(`Fetch error. ${apiErrorInfo}\n${err}`);
+    return;
   }
 
   if (apiResponse && !apiResponse.ok) {
-    throw new Error(`Web error! Status code: ${apiResponse.status}`);
+    console.log(`Received non successfull status code: ${apiResponse.status}. ${apiErrorInfo}`);
+    return;
   }
 
   try {
     return apiResponse.json();
   } catch (err) {
-    console.log(err);
+    console.log(`Error parsing JSON response. ${apiErrorInfo}\n${err}`);
   }
 }
