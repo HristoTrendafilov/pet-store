@@ -82,16 +82,15 @@ td {
   padding: 3px 10px;
 }
 
-td > button {
-  font-size: 10px;
+td:nth-child(5) > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-td > button:nth-of-type(1) {
-  float: left;
-}
-
-td > button:nth-of-type(2) {
-  float: right;
+td:nth-child(5) > div > button {
+  width: 100%;
+  font-size: 12px;
 }
 
 tr > th:nth-of-type(1) {

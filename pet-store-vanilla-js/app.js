@@ -69,16 +69,19 @@ function createPetTableColumn(textContent) {
 
 function createPetTableButtons(petId) {
   const td = document.createElement('td');
-  td.setAttribute('cospan', '2');
-  td.appendChild(createViewEditButton(petId));
-  td.appendChild(createDeleteButton(petId));
+  td.setAttribute('colspan', '2');
 
+  const flexWrapperDiv = document.createElement('div');
+  flexWrapperDiv.appendChild(createViewEditButton(petId));
+  flexWrapperDiv.appendChild(createDeleteButton(petId));
+
+  td.appendChild(flexWrapperDiv);
   return td;
 }
 
 function createViewEditButton(petId) {
   const viewEditButton = document.createElement('button');
-  viewEditButton.textContent = 'View/Edit';
+  viewEditButton.textContent = 'View / Edit';
   viewEditButton.classList.add('btn', 'btn-warning');
 
   viewEditButton.onclick = async function editPet() {
