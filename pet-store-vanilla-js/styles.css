@@ -11,10 +11,6 @@
   --locked: #ede8e8;
 }
 
-body {
-  font-family: 'Itim', cursive;
-}
-
 /* Buttons */
 .btn {
   border: 1px solid var(--black);
@@ -22,10 +18,6 @@ body {
   padding: 8px 20px;
   cursor: pointer;
   color: var(--white);
-  letter-spacing: 2px;
-  text-align: center;
-  display: flex;
-  justify-content: center;
 }
 
 .btn-primary {

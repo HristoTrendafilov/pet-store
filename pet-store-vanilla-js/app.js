@@ -12,11 +12,12 @@ import { formatDate } from './utils.js';
 
 export const petKinds = {};
 window.addEventListener('DOMContentLoaded', async () => {
-  // show datepicker when the formatted text input is clicked
-	document.getElementById("addedDateText").onclick = () => {
-    document.getElementById("addedDatePicker").showPicker();
-  }
-    
+  document.getElementById('add-pet-btn').disabled = true;
+  await Promise.all([fetchAndCachePetKinds(), refreshPets()])
+  document.getElementById('add-pet-btn').disabled = false;
+});
+
+async function fetchAndCachePetKinds() {
   const petKindsResp = await getPetKinds();
   if (petKindsResp.isFailed) {
     // show the error
@@ -32,9 +33,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     petKindOption.value = kind.value;
     petKindSelect.append(petKindOption);
   }
-
-  await refreshPets();
-});
+}
 
 export async function refreshPets() {
   showLoadingPetsSpinner();
