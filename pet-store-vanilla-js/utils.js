@@ -17,8 +17,12 @@ export function formatDate(date) {
 }
 
 export function showError(elementId) {
-  const mainPageError = document.getElementById(elementId);
-  mainPageError.style.display = 'flex';
-  mainPageError.textContent = systemErrorText;
-  mainPageError.classList.add('system-error-message');
+  const errorEl = document.getElementById(elementId);
+  errorEl.style.display = 'flex';
+  errorEl.textContent = systemErrorText;
+  errorEl.classList.add('system-error-message');
+}
+
+export function hideError(elementId) {
+  document.getElementById(elementId).style.display = 'none';
 }

@@ -4,8 +4,8 @@ import {
   showDeleteModal,
 } from './modals.js';
 
-import { getPetKinds, getAllPets, getPet } from './api.js';
-import { formatDate } from './utils.js';
+import { getPetKinds, getAllPets } from './api.js';
+import { formatDate, showError } from './utils.js';
 
 export const petKindsEnum = {};
 window.addEventListener('DOMContentLoaded', async () => {
@@ -13,14 +13,19 @@ window.addEventListener('DOMContentLoaded', async () => {
   addPetBtn.disabled = true;
   addPetBtn.style.opacity = '0.5';
 
-  await Promise.all([fetchAndCachePetKinds(), refreshPets()]);
-
-  addPetBtn.disabled = false;
-  addPetBtn.style.opacity = '1';
+  const [fetchedKinds, refreshedPets] = await Promise.all([fetchAndCachePetKinds(), refreshPets()]);
+  if (fetchedKinds && refreshedPets) {
+    addPetBtn.disabled = false;
+    addPetBtn.style.opacity = '1';
+  }
 });
 
 async function fetchAndCachePetKinds() {
   const petKinds = await getPetKinds();
+  if (!petKinds) {
+    showError('main-page-error');
+    return false;
+  }
 
   const petKindSelect = document.getElementById('kind');
   for (let kind of petKinds) {
@@ -31,6 +36,8 @@ async function fetchAndCachePetKinds() {
     petKindOption.value = kind.value;
     petKindSelect.append(petKindOption);
   }
+
+  return true;
 }
 
 export async function refreshPets() {
@@ -39,6 +46,11 @@ export async function refreshPets() {
   tableBody.innerHTML = '';
 
   const pets = await getAllPets();
+  if (!pets) {
+    showError('main-page-error');
+    hideLoadingPetsSpinner();
+    return false;
+  }
 
   for (let pet of pets.sort((a, b) => b.petId - a.petId)) {
     const tr = document.createElement('tr');
@@ -52,6 +64,7 @@ export async function refreshPets() {
   }
 
   hideLoadingPetsSpinner();
+  return true;
 }
 
 function createPetTableColumn(textContent) {

@@ -1,4 +1,4 @@
-import { createSubmitSpinner } from './utils.js';
+import { createSubmitSpinner, showError, hideError } from './utils.js';
 import { editPet, addPet } from './api.js';
 import {
   enablePetModalElementsEvents,
@@ -10,6 +10,7 @@ import {
 import { refreshPets } from './app.js';
 
 export const formElements = {
+  form: document.getElementById('pet-modal-form'),
   petName: document.getElementById('petName'),
   age: document.getElementById('age'),
   notes: document.getElementById('notes'),
@@ -23,8 +24,7 @@ export const formElements = {
   lockButton: document.getElementById('form-lock-btn'),
 };
 
-document
-  .getElementById('pet-modal-form')
+formElements.form
   .addEventListener('submit', async function handleFormSubmit(e) {
     e.preventDefault();
     const isFormLocked = e.target.dataset.isLocked;
@@ -33,6 +33,7 @@ document
       return;
     }
 
+    hideError('submit-form-error');
     disablePetModalElementsEvents();
     showPetFormSubmitSpinner();
 
@@ -46,9 +47,16 @@ document
     }
 
     hidePetFormSubmitSpinner();
+    enablePetModalElementsEvents();
+
+    if (!petResponse) {
+      showError('submit-form-error');
+      return;
+    }
+
     fillFormInputs(petResponse);
     lockForm.call(petResponse);
-    enablePetModalElementsEvents();
+
     await refreshPets();
   });
 
@@ -97,7 +105,7 @@ export function lockForm() {
   lockInputField(formElements.healthProblems);
   lockInputField(formElements.addedDate);
 
-  document.getElementById('pet-modal-form').dataset.isLocked = 'true';
+  formElements.form.dataset.isLocked = 'true';
 
   // When i use addEventListener, it triggers the event for every pet even thought there should be only 1
   formElements.deleteButton.onclick = async function () {
@@ -125,7 +133,7 @@ export function unlockForm() {
   const petId = modalTitle.textContent.split(' ').pop();
   modalTitle.textContent = `Edit pet ${petId}`;
 
-  document.getElementById('pet-modal-form').dataset.isLocked = 'false';
+  formElements.form.dataset.isLocked = 'false';
 }
 
 export function unlockFormFields(isNewPet) {
@@ -155,7 +163,7 @@ export function showPetFormSubmitSpinner() {
 }
 
 export function resetForm() {
-  document.getElementById('pet-modal-form').reset();
+  formElements.form.reset();
 }
 
 export function fillFormInputs(pet) {
@@ -167,4 +175,12 @@ export function fillFormInputs(pet) {
       formEl.value = value;
     }
   }
+}
+
+export function showForm() {
+  formElements.form.style.display = 'flex';
+}
+
+export function hideForm() {
+  formElements.form.style.display = 'none';
 }

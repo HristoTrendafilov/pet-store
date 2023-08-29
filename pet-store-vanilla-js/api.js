@@ -44,7 +44,7 @@ async function fetchFromApi(endPoint, method, body) {
   }
 
   if (apiResponse && !apiResponse.ok) {
-    console.log(`Received non successfull status code: ${apiResponse.status}. ${apiErrorInfo}`);
+    console.log(`Received non successful status code: ${apiResponse.status}. ${apiErrorInfo}`);
     return;
   }
 

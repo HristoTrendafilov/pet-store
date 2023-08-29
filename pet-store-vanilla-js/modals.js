@@ -4,11 +4,13 @@ import {
   formElements,
   lockForm,
   fillFormInputs,
+  showForm,
+  hideForm
 } from './form.js';
 
 import { getPet, deletePet } from './api.js';
 import { petKindsEnum, refreshPets } from './app.js';
-import { createSubmitSpinner, formatDate } from './utils.js';
+import { createSubmitSpinner, formatDate, showError, hideError } from './utils.js';
 
 // Pet modal
 export function hidePetModal() {
@@ -17,10 +19,13 @@ export function hidePetModal() {
 
 export function showPetModal() {
   document.getElementById('pet-modal').style.display = 'block';
+  hideError('fetch-pet-error');
+  hideError('submit-form-error');
 }
 
 export async function configureFormEditModal(petId) {
   document.getElementById('pet-modal-title').textContent = `View pet #${petId}`;
+  hideForm();
   resetForm();
 
   disablePetModalElementsEvents();
@@ -28,11 +33,18 @@ export async function configureFormEditModal(petId) {
   showPetModalSpinner();
 
   const pet = await getPet(petId);
+  hidePetModalSpinner();
+  enablePetModalElementsEvents();
+
+  if (!pet) {
+    showError('fetch-pet-error');
+    return;
+  }
+
   fillFormInputs(pet);
   lockForm.call(pet);
 
-  hidePetModalSpinner();
-  enablePetModalElementsEvents();
+  showForm();
 }
 
 export function configureFormNewModal() {
@@ -45,18 +57,16 @@ export function configureFormNewModal() {
   formElements.saveButton.classList.add('btn-primary');
   formElements.lockButton.style.display = 'none';
   formElements.addedDate.valueAsDate = new Date();
-  document.getElementById('pet-modal-form').dataset.isLocked = 'false';
+  formElements.form.dataset.isLocked = 'false';
   showPetModal();
 }
 
 export function showPetModalSpinner() {
   document.getElementById('pet-modal-spinner').style.display = 'flex';
-  document.getElementById('pet-modal-form').style.display = 'none';
 }
 
 export function hidePetModalSpinner() {
   document.getElementById('pet-modal-spinner').style.display = 'none';
-  document.getElementById('pet-modal-form').style.display = 'flex';
 }
 
 document.getElementById('pet-modal-close').addEventListener('click', () => {
@@ -129,13 +139,19 @@ export async function showDeleteModal(pet) {
 
   document.getElementById('delete-modal-delete-btn').onclick =
     async function () {
+      hideError('delete-pet-error');
       showDeleteModalSubmitSpinner();
       disableDeleteModalElementsEvents();
 
-      await deletePet(pet.petId);
-
+      const response = await deletePet(pet.petId);
       hideDeleteModalSubmitSpinner();
       enableDeleteModalElementsEvents();
+
+      if (!response) {
+        showError('delete-pet-error');
+        return;
+      }
+
       hideDeleteModal();
       hidePetModal();
 
