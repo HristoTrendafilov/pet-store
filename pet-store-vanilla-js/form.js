@@ -1,11 +1,13 @@
 import { createSubmitSpinner, showError, hideError } from './utils.js';
 import { editPet, addPet } from './api.js';
 import {
-  enablePetModalElementsEvents,
-  disablePetModalElementsEvents,
-  disableModalBackdropClosing,
-  enableModalBackdropClosing,
+  enablePetModalEvents,
+  disablePetModalEvents,
+  disableModalsBackdropClosing,
+  enableModalsBackdropClosing,
   showDeleteModal,
+  setPetModalHeaderText,
+  petModalElements
 } from './modals.js';
 import { refreshPets } from './app.js';
 
@@ -34,8 +36,8 @@ formElements.form
     }
 
     hideError('submit-form-error');
-    disablePetModalElementsEvents();
-    showPetFormSubmitSpinner();
+    disablePetModalEvents();
+    showFormSubmitSpinner();
 
     const pet = getFormValues(e.target);
 
@@ -46,8 +48,8 @@ formElements.form
       petResponse = await addPet(pet);
     }
 
-    hidePetFormSubmitSpinner();
-    enablePetModalElementsEvents();
+    hideFormSubmitSpinner();
+    enablePetModalEvents();
 
     if (!petResponse) {
       showError('submit-form-error');
@@ -77,10 +79,8 @@ function getFormValues(formEl) {
 }
 
 export function lockForm() {
-  document.getElementById(
-    'pet-modal-title'
-  ).textContent = `View pet #${this.petId}`;
-  enableModalBackdropClosing();
+  setPetModalHeaderText(`View pet #${this.petId}`);
+  enableModalsBackdropClosing();
 
   const pet = this;
 
@@ -92,18 +92,18 @@ export function lockForm() {
   formElements.saveButton.classList.remove('btn-primary');
   formElements.saveButton.classList.add('btn-warning');
 
-  function lockInputField(element) {
+  function lockInput(element) {
     element.setAttribute('readonly', 'true');
     element.style.pointerEvents = 'none';
     element.style.background = 'var(--locked)';
   }
 
-  lockInputField(formElements.petName);
-  lockInputField(formElements.age);
-  lockInputField(formElements.notes);
-  lockInputField(formElements.kind);
-  lockInputField(formElements.healthProblems);
-  lockInputField(formElements.addedDate);
+  lockInput(formElements.petName);
+  lockInput(formElements.age);
+  lockInput(formElements.notes);
+  lockInput(formElements.kind);
+  lockInput(formElements.healthProblems);
+  lockInput(formElements.addedDate);
 
   formElements.form.dataset.isLocked = 'true';
 
@@ -119,8 +119,8 @@ export function lockForm() {
 }
 
 export function unlockForm() {
-  unlockFormFields(false);
-  disableModalBackdropClosing();
+  unlockFormInputs(false);
+  disableModalsBackdropClosing();
 
   formElements.saveButton.textContent = 'Save';
   formElements.saveButton.classList.remove('btn-warning');
@@ -129,36 +129,35 @@ export function unlockForm() {
   formElements.lockButton.style.display = 'block';
   formElements.deleteButton.style.display = 'none';
 
-  const modalTitle = document.getElementById('pet-modal-title');
-  const petId = modalTitle.textContent.split(' ').pop();
-  modalTitle.textContent = `Edit pet ${petId}`;
+  const petId = petModalElements.title.textContent.split(' ').pop();
+  petModalElements.title.textContent = `Edit pet ${petId}`;
 
   formElements.form.dataset.isLocked = 'false';
 }
 
-export function unlockFormFields(isNewPet) {
-  function unlockInputField(element) {
+export function unlockFormInputs(isNewPet) {
+  function unlockInput(element) {
     element.removeAttribute('readonly');
     element.style.pointerEvents = 'auto';
     element.style.background = 'var(--white)';
   }
 
-  unlockInputField(formElements.petName);
-  unlockInputField(formElements.age);
-  unlockInputField(formElements.notes);
-  unlockInputField(formElements.healthProblems);
+  unlockInput(formElements.petName);
+  unlockInput(formElements.age);
+  unlockInput(formElements.notes);
+  unlockInput(formElements.healthProblems);
 
   if (isNewPet) {
-    unlockInputField(formElements.kind);
-    unlockInputField(formElements.addedDate);
+    unlockInput(formElements.kind);
+    unlockInput(formElements.addedDate);
   }
 }
 
-export function hidePetFormSubmitSpinner() {
+export function hideFormSubmitSpinner() {
   document.getElementById('pet-form-spinner').remove();
 }
 
-export function showPetFormSubmitSpinner() {
+export function showFormSubmitSpinner() {
   formElements.saveButton.appendChild(createSubmitSpinner('pet-form-spinner'));
 }
 
