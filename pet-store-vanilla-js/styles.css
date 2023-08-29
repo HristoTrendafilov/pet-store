@@ -69,7 +69,11 @@
 
 /* Table */
 table {
-  width: 100%;
+  width: 680px;
+}
+
+.data-card-body > div:first-child {
+  overflow-x: auto;
 }
 
 table,
