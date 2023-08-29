@@ -42,7 +42,7 @@ async function fetchAndCachePetKinds() {
 
 export async function refreshPets() {
   showLoadingPetsSpinner();
-  const tableBody = document.getElementById('data-table').tBodies[1];
+  const tableBody = document.getElementById('data-table').tBodies[0];
   tableBody.innerHTML = '';
 
   const pets = await getAllPets();

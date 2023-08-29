@@ -69,7 +69,7 @@
 
 /* Table */
 table {
-  width: 680px;
+  width: 100%;
 }
 
 .data-card-body > div:first-child {
@@ -114,6 +114,45 @@ tr > th:nth-of-type(3) {
 tr > th:nth-of-type(4) {
   width: 15%;
 }
+
+@media (max-width: 705px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  thead tr {
+    display: none;
+  }
+
+  tr:not(:last-child) {
+    border-bottom: 1px solid black;
+  }
+
+  td {
+    border: none;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    padding-left: 50%;
+  }
+
+  td:before {
+    position: absolute;
+    left: 6px;
+    width: 45%;
+  }
+
+  td:nth-of-type(1):before { content: "#"; }
+  td:nth-of-type(2):before { content: "Name"; }
+  td:nth-of-type(3):before { content: "Added date"; }
+  td:nth-of-type(4):before { content: "Kind"; }
+}
+
+@media (max-width: 476px) {
+  td:nth-child(5) {
+    padding: 5px 15px;
+  }
+}
+
 
 /* Add/View/Edit pet modal */
 .pet-modal {
@@ -298,3 +337,8 @@ tr > th:nth-of-type(4) {
   font-weight: bold;
   color: var(--danger);
 }
+
+
+
+
+
