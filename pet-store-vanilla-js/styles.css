@@ -245,16 +245,9 @@ tr > th:nth-of-type(4) {
 }
 
 @media (max-width: 400px) {
-  .pet-modal-buttons > button:first-child {
-    flex-basis: 100%;
-    margin-bottom: 15px;
-  }
-
-  .pet-modal-buttons > button:nth-child(2),
-  .pet-modal-buttons > button:nth-child(3),
-  .pet-modal-buttons > button:nth-child(4)
-  {
-    flex-basis: 47%;
+  .pet-modal-buttons {
+    flex-direction: column;
+    gap: 10px;
   }
 
   .delete-modal-buttons button:first-child {
@@ -263,11 +256,6 @@ tr > th:nth-of-type(4) {
 }
 
 @media (max-width: 300px) {
-  .pet-modal-buttons {
-    flex-direction: column;
-    gap: 10px;
-  }
-
   .delete-modal-buttons {
     flex-direction: column;
     gap: 10px;
