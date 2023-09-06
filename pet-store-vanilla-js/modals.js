@@ -53,7 +53,7 @@ export async function configureFormEditModal(petId) {
   }
 
   fillFormInputs(pet);
-  lockForm.call(pet);
+  lockForm(pet);
 
   showForm();
 }

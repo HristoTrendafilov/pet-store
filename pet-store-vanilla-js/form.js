@@ -57,7 +57,7 @@ formElements.form
     }
 
     fillFormInputs(petResponse);
-    lockForm.call(petResponse);
+    lockForm(petResponse);
 
     await refreshPets();
   });
@@ -78,11 +78,9 @@ function getFormValues(formEl) {
   return pet;
 }
 
-export function lockForm() {
-  setPetModalHeaderText(`View pet #${this.petId}`);
+export function lockForm(pet) {
+  setPetModalHeaderText(`View pet #${pet.petId}`);
   enableModalsBackdropClosing();
-
-  const pet = this;
 
   formElements.lockButton.style.display = 'none';
   formElements.deleteButton.style.display = 'block';
@@ -92,18 +90,12 @@ export function lockForm() {
   formElements.saveButton.classList.remove('btn-primary');
   formElements.saveButton.classList.add('btn-warning');
 
-  function lockInput(element) {
-    element.setAttribute('readonly', 'true');
-    element.style.pointerEvents = 'none';
-    element.style.background = 'var(--locked)';
-  }
-
-  lockInput(formElements.petName);
-  lockInput(formElements.age);
-  lockInput(formElements.notes);
-  lockInput(formElements.kind);
-  lockInput(formElements.healthProblems);
-  lockInput(formElements.addedDate);
+  formElements.petName.disabled = true;
+  formElements.age.disabled = true;
+  formElements.notes.disabled = true;
+  formElements.kind.disabled = true;
+  formElements.healthProblems.disabled = true;
+  formElements.addedDate.disabled = true;
 
   formElements.form.dataset.isLocked = 'true';
 
@@ -114,7 +106,7 @@ export function lockForm() {
 
   formElements.lockButton.onclick = function () {
     fillFormInputs(pet);
-    lockForm.call(pet);
+    lockForm(pet);
   };
 }
 
@@ -136,20 +128,14 @@ export function unlockForm() {
 }
 
 export function unlockFormInputs(isNewPet) {
-  function unlockInput(element) {
-    element.removeAttribute('readonly');
-    element.style.pointerEvents = 'auto';
-    element.style.background = 'var(--white)';
-  }
-
-  unlockInput(formElements.petName);
-  unlockInput(formElements.age);
-  unlockInput(formElements.notes);
-  unlockInput(formElements.healthProblems);
+  formElements.petName.disabled = false;
+  formElements.age.disabled = false;
+  formElements.notes.disabled = false;
+  formElements.healthProblems.disabled = false;
 
   if (isNewPet) {
-    unlockInput(formElements.kind);
-    unlockInput(formElements.addedDate);
+    formElements.kind.disabled = false;
+    formElements.addedDate.disabled = false;
   }
 }
 
