@@ -43,19 +43,18 @@ export async function configureFormEditModal(petId) {
   showPetModalSpinner();
   showPetModal();
 
-  const pet = await getPet(petId);
-  hidePetModalSpinner();
-  enablePetModalEvents();
-
-  if (!pet) {
+  try {
+    const pet = await getPet(petId);
+    fillFormInputs(pet);
+    lockForm(pet);
+    showForm();
+  } catch (err) {
+    console.log(err);
     showError('fetch-pet-error');
-    return;
+  } finally {
+    hidePetModalSpinner();
+    enablePetModalEvents();
   }
-
-  fillFormInputs(pet);
-  lockForm(pet);
-
-  showForm();
 }
 
 export function configureFormNewModal() {
@@ -99,6 +98,14 @@ export function disablePetModalEvents() {
   formElements.saveButton.disabled = true;
   formElements.deleteButton.disabled = true;
   formElements.cancelButton.disabled = true;
+  formElements.lockButton.disabled = true;
+
+  formElements.petName.disabled = true;
+  formElements.age.disabled = true;
+  formElements.notes.disabled = true;
+  formElements.kind.disabled = true;
+  formElements.healthProblems.disabled = true;
+  formElements.addedDate.disabled = true;
 }
 
 export function enablePetModalEvents() {
@@ -108,6 +115,7 @@ export function enablePetModalEvents() {
   formElements.saveButton.disabled = false;
   formElements.deleteButton.disabled = false;
   formElements.cancelButton.disabled = false;
+  formElements.lockButton.disabled = false;
 }
 
 // Delete modal
@@ -162,19 +170,18 @@ export async function showDeleteModal(pet) {
       showDeleteModalSubmitSpinner();
       disableDeleteModalEvents();
 
-      const response = await deletePet(pet.petId);
-      hideDeleteModalSubmitSpinner();
-      enableDeleteModalEvents();
-
-      if (!response) {
+      try {
+        await deletePet(pet.petId);
+        hideDeleteModal();
+        hidePetModal();
+        await refreshPets();
+      } catch (err) {
+        console.log(err);
         showError('delete-pet-error');
-        return;
+      } finally {
+        hideDeleteModalSubmitSpinner();
+        enableDeleteModalEvents();
       }
-
-      hideDeleteModal();
-      hidePetModal();
-
-      await refreshPets();
     };
 }
 

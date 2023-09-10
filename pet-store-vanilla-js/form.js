@@ -7,7 +7,7 @@ import {
   enableModalsBackdropClosing,
   showDeleteModal,
   setPetModalHeaderText,
-  petModalElements
+  petModalElements,
 } from './modals.js';
 import { refreshPets } from './app.js';
 
@@ -29,6 +29,7 @@ export const formElements = {
 formElements.form
   .addEventListener('submit', async function handleFormSubmit(e) {
     e.preventDefault();
+
     const isFormLocked = e.target.dataset.isLocked;
     if (isFormLocked === 'true') {
       unlockForm();
@@ -40,26 +41,24 @@ formElements.form
     showFormSubmitSpinner();
 
     const pet = getFormValues(e.target);
-
-    let petResponse;
-    if (Number(pet.petId) > 0) {
-      petResponse = await editPet(pet);
-    } else {
-      petResponse = await addPet(pet);
-    }
-
-    hideFormSubmitSpinner();
-    enablePetModalEvents();
-
-    if (!petResponse) {
+    try {
+      let petResponse;
+      if (Number(pet.petId) > 0) {
+        petResponse = await editPet(pet);
+      } else {
+        petResponse = await addPet(pet);
+      }
+  
+      await refreshPets();
+      fillFormInputs(petResponse);
+      lockForm(petResponse);
+    } catch (err) {
+      console.log(err);
       showError('submit-form-error');
-      return;
+    } finally {
+      hideFormSubmitSpinner();
+      enablePetModalEvents();
     }
-
-    fillFormInputs(petResponse);
-    lockForm(petResponse);
-
-    await refreshPets();
   });
 
 function getFormValues(formEl) {
@@ -90,13 +89,6 @@ export function lockForm(pet) {
   formElements.saveButton.classList.remove('btn-primary');
   formElements.saveButton.classList.add('btn-warning');
 
-  formElements.petName.disabled = true;
-  formElements.age.disabled = true;
-  formElements.notes.disabled = true;
-  formElements.kind.disabled = true;
-  formElements.healthProblems.disabled = true;
-  formElements.addedDate.disabled = true;
-
   formElements.form.dataset.isLocked = 'true';
 
   // When i use addEventListener, it triggers the event for every pet even thought there should be only 1
@@ -122,7 +114,7 @@ export function unlockForm() {
   formElements.deleteButton.style.display = 'none';
 
   const petId = petModalElements.title.textContent.split(' ').pop();
-  petModalElements.title.textContent = `Edit pet ${petId}`;
+  setPetModalHeaderText(`Edit pet ${petId}`);
 
   formElements.form.dataset.isLocked = 'false';
 }
@@ -140,7 +132,10 @@ export function unlockFormInputs(isNewPet) {
 }
 
 export function hideFormSubmitSpinner() {
-  document.getElementById('pet-form-spinner').remove();
+  const petFormSpinner = document.getElementById('pet-form-spinner');
+  if (petFormSpinner) {
+    petFormSpinner.remove();
+  }
 }
 
 export function showFormSubmitSpinner() {

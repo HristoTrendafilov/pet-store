@@ -17,11 +17,15 @@ const mainPageElements = {
 export const petKindsEnum = {};
 window.addEventListener('DOMContentLoaded', async () => {
   disableAddPetButton();
+  showLoadingPetsSpinner();
 
-  const [fetchedKinds, refreshedPets] = await Promise.all([fetchAndCachePetKinds(), refreshPets()]);
-  if (fetchedKinds && refreshedPets) {
+  const fetchedPetKinds = await tryFetchPetKinds();
+  if (fetchedPetKinds) {
+    await refreshPets();
     enableAddPetButton();
   }
+
+  hideLoadingPetsSpinner();
 });
 
 function disableAddPetButton() {
@@ -34,49 +38,52 @@ function enableAddPetButton() {
   mainPageElements.addPetButton.style.opacity = '1';
 }
 
-async function fetchAndCachePetKinds() {
-  const petKinds = await getPetKinds();
-  if (!petKinds) {
+async function tryFetchPetKinds() {
+  let fetchedPetKinds;
+
+  try {
+    const petKinds = await getPetKinds();
+    for (let kind of petKinds) {
+      petKindsEnum[kind.value] = kind.displayName;
+  
+      const petKindOption = document.createElement('option');
+      petKindOption.innerText = kind.displayName;
+      petKindOption.value = kind.value;
+      formElements.kind.append(petKindOption);
+    }
+    fetchedPetKinds = true;
+  } catch (err) {
+    fetchedPetKinds = false;
+    console.log(err);
     showError('main-page-error');
-    return false;
   }
 
-  for (let kind of petKinds) {
-    petKindsEnum[kind.value] = kind.displayName;
-
-    const petKindOption = document.createElement('option');
-    petKindOption.innerText = kind.displayName;
-    petKindOption.value = kind.value;
-    formElements.kind.append(petKindOption);
-  }
-
-  return true;
+  return fetchedPetKinds;
 }
 
 export async function refreshPets() {
   showLoadingPetsSpinner();
   mainPageElements.tableBody.innerHTML = '';
 
-  const pets = await getAllPets();
-  if (!pets) {
+  try {
+    const pets = await getAllPets();
+    for (let pet of pets.sort((a, b) => b.petId - a.petId)) {
+      const tr = document.createElement('tr');
+      tr.appendChild(createTableColumn(pet.petId));
+      tr.appendChild(createTableColumn(pet.petName));
+      tr.appendChild(createTableColumn(formatDate(new Date(pet.addedDate))));
+      tr.appendChild(createTableColumn(petKindsEnum[pet.kind]));
+      tr.appendChild(createPetTableButtons(pet));
+  
+      mainPageElements.tableBody.appendChild(tr);
+    }
+  } catch (err) {
+    console.log(err);
     showError('main-page-error');
+    
+  } finally {
     hideLoadingPetsSpinner();
-    return false;
   }
-
-  for (let pet of pets.sort((a, b) => b.petId - a.petId)) {
-    const tr = document.createElement('tr');
-    tr.appendChild(createTableColumn(pet.petId));
-    tr.appendChild(createTableColumn(pet.petName));
-    tr.appendChild(createTableColumn(formatDate(new Date(pet.addedDate))));
-    tr.appendChild(createTableColumn(petKindsEnum[pet.kind]));
-    tr.appendChild(createPetTableButtons(pet));
-
-    mainPageElements.tableBody.appendChild(tr);
-  }
-
-  hideLoadingPetsSpinner();
-  return true;
 }
 
 function createTableColumn(textContent) {
