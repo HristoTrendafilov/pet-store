@@ -30,6 +30,7 @@ async function fetchFromApi(endPoint, method, body) {
 
   let apiResponse;
   try {
+    // Question: Should i remove the 'Content-type' header if the method is 'GET'?
     apiResponse = await fetch(`${apiBaseUrl}${endPoint}`, {
       method: method,
       headers: {

@@ -50,6 +50,7 @@ formElements.form.addEventListener(
         petResponse = await addPet(pet);
       }
 
+      // Question: Should i refresh the pets on form submission or when the modal is closed?
       await refreshPets();
       fillFormInputs(petResponse);
       lockForm(petResponse);
@@ -93,7 +94,7 @@ export function lockForm(pet) {
 
   formElements.form.dataset.isLocked = 'true';
 
-  // When i use addEventListener, it triggers the event for every pet even thought there should be only 1
+  // Question: When i use addEventListener, it triggers the event for every pet even thought there should be only 1
   formElements.deleteButton.onclick = async function () {
     await showDeleteModal(pet);
   };
