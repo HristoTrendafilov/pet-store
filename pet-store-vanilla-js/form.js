@@ -26,8 +26,9 @@ export const formElements = {
   lockButton: document.getElementById('form-lock-btn'),
 };
 
-formElements.form
-  .addEventListener('submit', async function handleFormSubmit(e) {
+formElements.form.addEventListener(
+  'submit',
+  async function handleFormSubmit(e) {
     e.preventDefault();
 
     const isFormLocked = e.target.dataset.isLocked;
@@ -48,7 +49,7 @@ formElements.form
       } else {
         petResponse = await addPet(pet);
       }
-  
+
       await refreshPets();
       fillFormInputs(petResponse);
       lockForm(petResponse);
@@ -59,7 +60,8 @@ formElements.form
       hideFormSubmitSpinner();
       enablePetModalEvents();
     }
-  });
+  }
+);
 
 function getFormValues(formEl) {
   const pet = {};

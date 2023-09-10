@@ -39,16 +39,18 @@ async function fetchFromApi(endPoint, method, body) {
       signal: AbortSignal.timeout(apiWaitTimeout),
     });
   } catch (err) {
-    throw new Error(`Fetch error. ${apiErrorInfo}`)
+    throw new Error(`Fetch error. ${apiErrorInfo}`);
   }
 
   if (!apiResponse.ok) {
-    throw new Error(`Received non successful status code: ${apiResponse.status}. ${apiErrorInfo}`)
+    throw new Error(
+      `Received non successful status code: ${apiResponse.status}. ${apiErrorInfo}`
+    );
   }
 
   try {
     return apiResponse.json();
   } catch (err) {
-    throw new Error(`Error parsing JSON response. ${apiErrorInfo}`)
+    throw new Error(`Error parsing JSON response. ${apiErrorInfo}`);
   }
 }

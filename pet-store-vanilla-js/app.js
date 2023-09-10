@@ -6,13 +6,13 @@ import {
 
 import { getPetKinds, getAllPets } from './api.js';
 import { formatDate, showError } from './utils.js';
-import { formElements } from './form.js'
+import { formElements } from './form.js';
 
 const mainPageElements = {
   addPetButton: document.getElementById('add-pet-btn'),
   loadingPetsSpinner: document.getElementById('loading-pets-spinner'),
-  tableBody: document.getElementById('data-table').tBodies[0]
-}
+  tableBody: document.getElementById('data-table').tBodies[0],
+};
 
 export const petKindsEnum = {};
 window.addEventListener('DOMContentLoaded', async () => {
@@ -45,7 +45,7 @@ async function tryFetchPetKinds() {
     const petKinds = await getPetKinds();
     for (let kind of petKinds) {
       petKindsEnum[kind.value] = kind.displayName;
-  
+
       const petKindOption = document.createElement('option');
       petKindOption.innerText = kind.displayName;
       petKindOption.value = kind.value;
@@ -74,13 +74,12 @@ export async function refreshPets() {
       tr.appendChild(createTableColumn(formatDate(new Date(pet.addedDate))));
       tr.appendChild(createTableColumn(petKindsEnum[pet.kind]));
       tr.appendChild(createPetTableButtons(pet));
-  
+
       mainPageElements.tableBody.appendChild(tr);
     }
   } catch (err) {
     console.log(err);
     showError('main-page-error');
-    
   } finally {
     hideLoadingPetsSpinner();
   }

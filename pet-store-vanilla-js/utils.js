@@ -1,4 +1,5 @@
-const systemErrorText = 'System error. Please contact the system administrator.';
+const systemErrorText =
+  'System error. Please contact the system administrator.';
 
 export function createSubmitSpinner(id) {
   const spinner = document.createElement('span');

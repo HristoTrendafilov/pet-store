@@ -116,7 +116,12 @@ tr > th:nth-of-type(4) {
 }
 
 @media (max-width: 705px) {
-  table, thead, tbody, th, td, tr {
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
     display: block;
   }
 
@@ -141,10 +146,18 @@ tr > th:nth-of-type(4) {
     width: 45%;
   }
 
-  td:nth-of-type(1):before { content: "#"; }
-  td:nth-of-type(2):before { content: "Name"; }
-  td:nth-of-type(3):before { content: "Added date"; }
-  td:nth-of-type(4):before { content: "Kind"; }
+  td:nth-of-type(1):before {
+    content: '#';
+  }
+  td:nth-of-type(2):before {
+    content: 'Name';
+  }
+  td:nth-of-type(3):before {
+    content: 'Added date';
+  }
+  td:nth-of-type(4):before {
+    content: 'Kind';
+  }
 }
 
 @media (max-width: 476px) {
@@ -152,7 +165,6 @@ tr > th:nth-of-type(4) {
     padding: 5px 15px;
   }
 }
-
 
 /* Add/View/Edit pet modal */
 .pet-modal {
@@ -325,8 +337,3 @@ tr > th:nth-of-type(4) {
   font-weight: bold;
   color: var(--danger);
 }
-
-
-
-
-

@@ -5,12 +5,17 @@ import {
   lockForm,
   fillFormInputs,
   showForm,
-  hideForm
+  hideForm,
 } from './form.js';
 
 import { getPet, deletePet } from './api.js';
 import { petKindsEnum, refreshPets } from './app.js';
-import { createSubmitSpinner, formatDate, showError, hideError } from './utils.js';
+import {
+  createSubmitSpinner,
+  formatDate,
+  showError,
+  hideError,
+} from './utils.js';
 
 // Pet modal
 export const petModalElements = {
@@ -18,7 +23,7 @@ export const petModalElements = {
   title: document.getElementById('pet-modal-title'),
   titleCloseButton: document.getElementById('pet-modal-close'),
   loadingSpinner: document.getElementById('pet-modal-spinner'),
-}
+};
 
 export function setPetModalHeaderText(textContent) {
   petModalElements.title.textContent = textContent;
@@ -125,8 +130,8 @@ const deleteModalElements = {
   titleCloseButton: document.getElementById('delete-modal-close'),
   petInfo: document.getElementById('delete-modal-pet-info'),
   deleteButton: document.getElementById('delete-modal-delete-btn'),
-  cancelButton:document.getElementById('delete-modal-cancel-btn')
-}
+  cancelButton: document.getElementById('delete-modal-cancel-btn'),
+};
 
 export async function showDeleteModal(pet) {
   deleteModalElements.title.textContent = `Delete pet #${pet.petId}`;
@@ -139,10 +144,16 @@ export async function showDeleteModal(pet) {
     return div;
   }
 
-  deleteModalElements.petInfo.appendChild(createPetInfoElement(`Name: ${pet.petName}`));
-  deleteModalElements.petInfo.appendChild(createPetInfoElement(`Kind: ${petKindsEnum[pet.kind]}`));
+  deleteModalElements.petInfo.appendChild(
+    createPetInfoElement(`Name: ${pet.petName}`)
+  );
+  deleteModalElements.petInfo.appendChild(
+    createPetInfoElement(`Kind: ${petKindsEnum[pet.kind]}`)
+  );
   if (pet.hasOwnProperty('age')) {
-    deleteModalElements.petInfo.appendChild(createPetInfoElement(`Age: ${pet.age}`));
+    deleteModalElements.petInfo.appendChild(
+      createPetInfoElement(`Age: ${pet.age}`)
+    );
   }
   if (pet.hasOwnProperty('notes')) {
     deleteModalElements.petInfo.appendChild(
@@ -157,32 +168,29 @@ export async function showDeleteModal(pet) {
     );
   }
   deleteModalElements.petInfo.appendChild(
-    createPetInfoElement(
-      `Date added: ${formatDate(new Date(pet.addedDate))}`
-    )
+    createPetInfoElement(`Date added: ${formatDate(new Date(pet.addedDate))}`)
   );
 
   deleteModalElements.modal.style.display = 'block';
 
-  deleteModalElements.deleteButton.onclick =
-    async function () {
-      hideError('delete-pet-error');
-      showDeleteModalSubmitSpinner();
-      disableDeleteModalEvents();
+  deleteModalElements.deleteButton.onclick = async function () {
+    hideError('delete-pet-error');
+    showDeleteModalSubmitSpinner();
+    disableDeleteModalEvents();
 
-      try {
-        await deletePet(pet.petId);
-        hideDeleteModal();
-        hidePetModal();
-        await refreshPets();
-      } catch (err) {
-        console.log(err);
-        showError('delete-pet-error');
-      } finally {
-        hideDeleteModalSubmitSpinner();
-        enableDeleteModalEvents();
-      }
-    };
+    try {
+      await deletePet(pet.petId);
+      hideDeleteModal();
+      hidePetModal();
+      await refreshPets();
+    } catch (err) {
+      console.log(err);
+      showError('delete-pet-error');
+    } finally {
+      hideDeleteModalSubmitSpinner();
+      enableDeleteModalEvents();
+    }
+  };
 }
 
 export function hideDeleteModal() {
@@ -190,8 +198,9 @@ export function hideDeleteModal() {
 }
 
 function showDeleteModalSubmitSpinner() {
-  deleteModalElements.deleteButton
-    .appendChild(createSubmitSpinner('delete-modal-submit-spinner'));
+  deleteModalElements.deleteButton.appendChild(
+    createSubmitSpinner('delete-modal-submit-spinner')
+  );
 }
 
 function hideDeleteModalSubmitSpinner() {
@@ -203,8 +212,8 @@ deleteModalElements.titleCloseButton.addEventListener('click', () => {
 });
 
 deleteModalElements.cancelButton.addEventListener('click', () => {
-    hideDeleteModal();
-  });
+  hideDeleteModal();
+});
 
 export function enableDeleteModalEvents() {
   enableModalsBackdropClosing();
