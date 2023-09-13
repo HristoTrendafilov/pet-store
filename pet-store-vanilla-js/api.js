@@ -28,14 +28,16 @@ export function getPetKinds() {
 async function fetchFromApi(endPoint, method, body) {
   const apiErrorInfo = `endpoint: ${endPoint} | method: ${method}`;
 
+  const headers = {};
+  if (method !== 'GET') {
+    headers['Content-type'] = 'application/json';
+  }
+
   let apiResponse;
   try {
-    // Question: Should i remove the 'Content-type' header if the method is 'GET'?
     apiResponse = await fetch(`${apiBaseUrl}${endPoint}`, {
       method: method,
-      headers: {
-        'Content-type': 'application/json',
-      },
+      headers: headers,
       body: body,
       signal: AbortSignal.timeout(apiWaitTimeout),
     });

@@ -17,18 +17,14 @@ const mainPageElements = {
 export const petKindsEnum = {};
 window.addEventListener('DOMContentLoaded', async () => {
   disableAddPetButton();
-  showLoadingPetsSpinner();
 
-  // Question: Its redundat to refresh the pets if we are not able do download the pet kinds.
-  // I removed the Promise.all and just showed the spinner at the start
-  // There is code duplication with the spinner here and in the refreshPets(). Maybe it's not the best practice.
-  const fetchedPetKinds = await tryFetchPetKinds();
-  if (fetchedPetKinds) {
-    await refreshPets();
+  const fetchKindsPromise = tryFetchPetKinds();
+  const refreshPetsPromise = refreshPets();
+
+  const fetchedKinds = await fetchKindsPromise;
+  if (fetchedKinds) {
     enableAddPetButton();
   }
-
-  hideLoadingPetsSpinner();
 });
 
 function disableAddPetButton() {
@@ -42,7 +38,7 @@ function enableAddPetButton() {
 }
 
 async function tryFetchPetKinds() {
-  let fetchedPetKinds;
+  let fetchedPetKinds = false;
 
   try {
     const petKinds = await getPetKinds();
@@ -56,7 +52,6 @@ async function tryFetchPetKinds() {
     }
     fetchedPetKinds = true;
   } catch (err) {
-    fetchedPetKinds = false;
     console.error(err);
     showError('main-page-error');
   }
