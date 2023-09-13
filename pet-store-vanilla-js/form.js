@@ -55,7 +55,7 @@ formElements.form.addEventListener(
       fillFormInputs(petResponse);
       lockForm(petResponse);
     } catch (err) {
-      console.log(err);
+      console.error(err);
       showError('submit-form-error');
     } finally {
       hideFormSubmitSpinner();

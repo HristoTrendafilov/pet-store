@@ -54,7 +54,7 @@ export async function configureFormEditModal(petId) {
     lockForm(pet);
     showForm();
   } catch (err) {
-    console.log(err);
+    console.error(err);
     showError('fetch-pet-error');
   } finally {
     hidePetModalSpinner();
@@ -184,7 +184,7 @@ export async function showDeleteModal(pet) {
       hidePetModal();
       await refreshPets();
     } catch (err) {
-      console.log(err);
+      console.error(err);
       showError('delete-pet-error');
     } finally {
       hideDeleteModalSubmitSpinner();

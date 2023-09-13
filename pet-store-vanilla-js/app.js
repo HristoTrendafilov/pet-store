@@ -57,7 +57,7 @@ async function tryFetchPetKinds() {
     fetchedPetKinds = true;
   } catch (err) {
     fetchedPetKinds = false;
-    console.log(err);
+    console.error(err);
     showError('main-page-error');
   }
 
@@ -81,7 +81,7 @@ export async function refreshPets() {
       mainPageElements.tableBody.appendChild(tr);
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
     showError('main-page-error');
   } finally {
     hideLoadingPetsSpinner();
