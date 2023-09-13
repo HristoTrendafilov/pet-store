@@ -67,9 +67,8 @@ export function configureFormNewModal() {
   unlockFormInputs(true);
   setPetModalHeaderText('Add pet');
 
-  formElements.saveButton.textContent = 'Save';
-  formElements.saveButton.classList.remove('btn-warning');
-  formElements.saveButton.classList.add('btn-primary');
+  formElements.saveButton.style.display = 'flex';
+  formElements.editButton.style.display = 'none';
 
   formElements.deleteButton.style.display = 'none';
   formElements.lockButton.style.display = 'none';
@@ -96,10 +95,31 @@ formElements.cancelButton.addEventListener('click', () => {
   hidePetModal();
 });
 
+formElements.editButton.addEventListener('click', () => {
+  const isFormLocked = formElements.form.dataset.isLocked;
+  if (isFormLocked === 'false') {
+    return;
+  }
+
+  unlockFormInputs(false);
+  disableModalsBackdropClosing();
+
+  formElements.saveButton.style.display = 'flex';
+  formElements.editButton.style.display = 'none';
+
+  formElements.lockButton.style.display = 'flex';
+  formElements.deleteButton.style.display = 'none';
+
+  const petId = petModalElements.title.textContent.split(' ').pop();
+  setPetModalHeaderText(`Edit pet ${petId}`);
+
+  formElements.form.dataset.isLocked = 'false';
+});
+
 export function disablePetModalEvents() {
   disableModalsBackdropClosing();
-  petModalElements.titleCloseButton.style.pointerEvents = 'none';
 
+  petModalElements.titleCloseButton.disabled = true;
   formElements.saveButton.disabled = true;
   formElements.deleteButton.disabled = true;
   formElements.cancelButton.disabled = true;
@@ -115,8 +135,8 @@ export function disablePetModalEvents() {
 
 export function enablePetModalEvents() {
   enableModalsBackdropClosing();
-  petModalElements.titleCloseButton.style.pointerEvents = 'auto';
 
+  petModalElements.titleCloseButton.disabled = false;
   formElements.saveButton.disabled = false;
   formElements.deleteButton.disabled = false;
   formElements.cancelButton.disabled = false;
@@ -182,7 +202,7 @@ export async function showDeleteModal(pet) {
       await deletePet(pet.petId);
       hideDeleteModal();
       hidePetModal();
-      await refreshPets();
+      void refreshPets();
     } catch (err) {
       console.error(err);
       showError('delete-pet-error');
@@ -217,14 +237,14 @@ deleteModalElements.cancelButton.addEventListener('click', () => {
 
 export function enableDeleteModalEvents() {
   enableModalsBackdropClosing();
-  deleteModalElements.titleCloseButton.style.pointerEvents = 'auto';
+  deleteModalElements.titleCloseButton.disabled = false;
   deleteModalElements.cancelButton.disabled = false;
   deleteModalElements.deleteButton.disabled = false;
 }
 
 export function disableDeleteModalEvents() {
   disableModalsBackdropClosing();
-  deleteModalElements.titleCloseButton.style.pointerEvents = 'none';
+  deleteModalElements.titleCloseButton.disabled = true;
   deleteModalElements.cancelButton.disabled = true;
   deleteModalElements.deleteButton.disabled = true;
 }

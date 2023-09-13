@@ -43,7 +43,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <div id="pet-modal-title"></div>
-          <span id="pet-modal-close" class="modal-close">X</span>
+          <button type="button" id="pet-modal-close" class="modal-close">X</button>
         </div>
 
         <div id="fetch-pet-error"></div>
@@ -53,7 +53,7 @@
         </div>
 
         <form id="pet-modal-form" class="pet-modal-form">
-          <input style="display: none" id="petId" name="petId" />
+          <input hidden id="petId" name="petId" />
           <div class="form-row">
             <label for="petName">Name</label>
             <input type="text" id="petName" name="petName" required />
@@ -85,6 +85,9 @@
             <button id="form-save-btn" class="btn btn-primary" type="submit">
               Save
             </button>
+            <button id="form-edit-btn" class="btn btn-warning" type="button">
+              Edit
+            </button>
             <button id="form-lock-btn" class="btn btn-warning" type="button">
               Lock
             </button>
@@ -107,7 +110,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <div id="delete-modal-title"></div>
-          <span id="delete-modal-close" class="modal-close">X</span>
+          <button type="button" id="delete-modal-close" class="modal-close">X</button>
         </div>
         <div class="delete-modal-body">
           <div id="delete-modal-pet-info"></div>

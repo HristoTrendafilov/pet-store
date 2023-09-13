@@ -194,7 +194,9 @@ tr > th:nth-of-type(4) {
   margin-top: 10px;
 }
 
-.pet-modal-buttons > button:first-child {
+.pet-modal-buttons > button:nth-child(1),
+.pet-modal-buttons > button:nth-child(2)
+ {
   flex-basis: 50%;
 }
 

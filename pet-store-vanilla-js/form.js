@@ -21,6 +21,7 @@ export const formElements = {
   addedDate: document.getElementById('addedDate'),
 
   saveButton: document.getElementById('form-save-btn'),
+  editButton: document.getElementById('form-edit-btn'),
   deleteButton: document.getElementById('form-delete-btn'),
   cancelButton: document.getElementById('form-cancel-btn'),
   lockButton: document.getElementById('form-lock-btn'),
@@ -30,12 +31,6 @@ formElements.form.addEventListener(
   'submit',
   async function handleFormSubmit(e) {
     e.preventDefault();
-
-    const isFormLocked = e.target.dataset.isLocked;
-    if (isFormLocked === 'true') {
-      unlockForm();
-      return;
-    }
 
     hideError('submit-form-error');
     disablePetModalEvents();
@@ -50,7 +45,6 @@ formElements.form.addEventListener(
         petResponse = await addPet(pet);
       }
 
-      // Question: Should i refresh the pets on form submission or when the modal is closed?
       await refreshPets();
       fillFormInputs(petResponse);
       lockForm(petResponse);
@@ -84,13 +78,11 @@ export function lockForm(pet) {
   setPetModalHeaderText(`View pet #${pet.petId}`);
   enableModalsBackdropClosing();
 
-  formElements.lockButton.style.display = 'none';
-  formElements.deleteButton.style.display = 'block';
+  formElements.lockButton.style.display = 'none'
+  formElements.deleteButton.style.display = 'flex';
 
-  formElements.deleteButton.style.display = 'block';
-  formElements.saveButton.textContent = 'Edit';
-  formElements.saveButton.classList.remove('btn-primary');
-  formElements.saveButton.classList.add('btn-warning');
+  formElements.saveButton.style.display = 'none';
+  formElements.editButton.style.display = 'flex';
 
   formElements.form.dataset.isLocked = 'true';
 
@@ -103,23 +95,6 @@ export function lockForm(pet) {
     fillFormInputs(pet);
     lockForm(pet);
   };
-}
-
-export function unlockForm() {
-  unlockFormInputs(false);
-  disableModalsBackdropClosing();
-
-  formElements.saveButton.textContent = 'Save';
-  formElements.saveButton.classList.remove('btn-warning');
-  formElements.saveButton.classList.add('btn-primary');
-
-  formElements.lockButton.style.display = 'block';
-  formElements.deleteButton.style.display = 'none';
-
-  const petId = petModalElements.title.textContent.split(' ').pop();
-  setPetModalHeaderText(`Edit pet ${petId}`);
-
-  formElements.form.dataset.isLocked = 'false';
 }
 
 export function unlockFormInputs(isNewPet) {
