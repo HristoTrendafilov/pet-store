@@ -78,7 +78,7 @@ export function lockForm(pet) {
   setPetModalHeaderText(`View pet #${pet.petId}`);
   enableModalsBackdropClosing();
 
-  formElements.lockButton.style.display = 'none'
+  formElements.lockButton.style.display = 'none';
   formElements.deleteButton.style.display = 'flex';
 
   formElements.saveButton.style.display = 'none';
