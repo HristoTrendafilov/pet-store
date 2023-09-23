@@ -72,10 +72,6 @@ table {
   width: 100%;
 }
 
-.data-card-body > div:first-child {
-  overflow-x: auto;
-}
-
 table,
 th,
 td {
@@ -195,7 +191,8 @@ tr > th:nth-of-type(4) {
 }
 
 .pet-modal-buttons > button:nth-child(1),
-.pet-modal-buttons > button:nth-child(2) {
+.pet-modal-buttons > button:nth-child(2)
+ {
   flex-basis: 50%;
 }
 

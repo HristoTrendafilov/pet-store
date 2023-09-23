@@ -1,11 +1,6 @@
-import {
-  configureFormEditModal,
-  configureFormNewModal,
-  showDeleteModal,
-} from './modals.js';
-
+import { configureFormNewModal, configureFormEditModal, showDeleteModal } from './modals.js';
 import { getPetKinds, getAllPets } from './api.js';
-import { formatDate, showError } from './utils.js';
+import { formatDate, hideError, showError } from './utils.js';
 import { formElements } from './form.js';
 
 const mainPageElements = {
@@ -15,16 +10,11 @@ const mainPageElements = {
 };
 
 export const petKindsEnum = {};
+const allPets = [];
 window.addEventListener('DOMContentLoaded', async () => {
   disableAddPetButton();
-
-  const fetchKindsPromise = tryFetchPetKinds();
-  const refreshPetsPromise = refreshPets();
-
-  const fetchedKinds = await fetchKindsPromise;
-  if (fetchedKinds) {
-    enableAddPetButton();
-  }
+  await refreshPets(true);
+  enableAddPetButton();
 });
 
 function disableAddPetButton() {
@@ -37,34 +27,27 @@ function enableAddPetButton() {
   mainPageElements.addPetButton.style.opacity = '1';
 }
 
-async function tryFetchPetKinds() {
-  let fetchedPetKinds = false;
-
-  try {
-    const petKinds = await getPetKinds();
-    for (let kind of petKinds) {
-      petKindsEnum[kind.value] = kind.displayName;
-
-      const petKindOption = document.createElement('option');
-      petKindOption.innerText = kind.displayName;
-      petKindOption.value = kind.value;
-      formElements.kind.append(petKindOption);
-    }
-    fetchedPetKinds = true;
-  } catch (err) {
-    console.error(err);
-    showError('main-page-error');
-  }
-
-  return fetchedPetKinds;
-}
-
-export async function refreshPets() {
+export async function refreshPets(fetchPetKinds = false) {
+  hideError('main-page-error');
   showLoadingPetsSpinner();
   mainPageElements.tableBody.innerHTML = '';
 
   try {
-    const pets = await getAllPets();
+    const allPetsPromise = getAllPets();
+
+    if(fetchPetKinds) {
+      const petKinds = await getPetKinds();
+      for (let kind of petKinds) {
+        petKindsEnum[kind.value] = kind.displayName;
+  
+        const petKindOption = document.createElement('option');
+        petKindOption.innerText = kind.displayName;
+        petKindOption.value = kind.value;
+        formElements.kind.append(petKindOption);
+      }
+    }
+
+    const pets = await allPetsPromise;
     for (let pet of pets.sort((a, b) => b.petId - a.petId)) {
       const tr = document.createElement('tr');
       tr.appendChild(createTableColumn(pet.petId));
@@ -74,6 +57,7 @@ export async function refreshPets() {
       tr.appendChild(createPetTableButtons(pet));
 
       mainPageElements.tableBody.appendChild(tr);
+      allPets.push(pet);
     }
   } catch (err) {
     console.error(err);
@@ -95,7 +79,7 @@ function createPetTableButtons(pet) {
 
   const flexWrapperDiv = document.createElement('div');
   flexWrapperDiv.appendChild(createViewEditButton(pet.petId));
-  flexWrapperDiv.appendChild(createDeleteButton(pet));
+  flexWrapperDiv.appendChild(createDeleteButton(pet.petId));
 
   td.appendChild(flexWrapperDiv);
   return td;
@@ -105,25 +89,38 @@ function createViewEditButton(petId) {
   const viewEditButton = document.createElement('button');
   viewEditButton.textContent = 'View / Edit';
   viewEditButton.classList.add('btn', 'btn-warning');
-
-  viewEditButton.addEventListener('click', async () => {
-    await configureFormEditModal(petId);
-  });
+  viewEditButton.dataset.petId = petId;
+  viewEditButton.dataset.type = "edit";
 
   return viewEditButton;
 }
 
-function createDeleteButton(pet) {
+function createDeleteButton(petId) {
   const deleteButton = document.createElement('button');
   deleteButton.textContent = 'Delete';
   deleteButton.classList.add('btn', 'btn-danger');
-
-  deleteButton.addEventListener('click', async () => {
-    await showDeleteModal(pet);
-  });
+  deleteButton.dataset.petId = petId;
+  deleteButton.dataset.type = "delete";
 
   return deleteButton;
 }
+
+mainPageElements.tableBody.addEventListener('click', async (e) => {
+  if (e.target.tagName !== 'BUTTON') {
+    return;
+  }
+
+  const dataSet = e.target.dataset;
+  const petId = Number(dataSet.petId);
+  
+  const buttonType = dataSet.type;
+  if(buttonType === 'edit') {
+    await configureFormEditModal(petId);
+  } else if (buttonType === 'delete') {
+    const pet = allPets.find((x) => x.petId === petId);
+    await showDeleteModal(pet);
+  }
+});
 
 mainPageElements.addPetButton.addEventListener('click', () => {
   configureFormNewModal();
