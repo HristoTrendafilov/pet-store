@@ -1,4 +1,8 @@
-import { configureFormNewModal, configureFormEditModal, showDeleteModal } from './modals.js';
+import {
+  configureFormNewModal,
+  configureFormEditModal,
+  showDeleteModal,
+} from './modals.js';
 import { getPetKinds, getAllPets } from './api.js';
 import { formatDate, hideError, showError } from './utils.js';
 import { formElements } from './form.js';
@@ -35,11 +39,11 @@ export async function refreshPets(fetchPetKinds = false) {
   try {
     const allPetsPromise = getAllPets();
 
-    if(fetchPetKinds) {
+    if (fetchPetKinds) {
       const petKinds = await getPetKinds();
       for (let kind of petKinds) {
         petKindsEnum[kind.value] = kind.displayName;
-  
+
         const petKindOption = document.createElement('option');
         petKindOption.innerText = kind.displayName;
         petKindOption.value = kind.value;
@@ -90,7 +94,7 @@ function createViewEditButton(petId) {
   viewEditButton.textContent = 'View / Edit';
   viewEditButton.classList.add('btn', 'btn-warning');
   viewEditButton.dataset.petId = petId;
-  viewEditButton.dataset.type = "edit";
+  viewEditButton.dataset.type = 'edit';
 
   return viewEditButton;
 }
@@ -100,7 +104,7 @@ function createDeleteButton(petId) {
   deleteButton.textContent = 'Delete';
   deleteButton.classList.add('btn', 'btn-danger');
   deleteButton.dataset.petId = petId;
-  deleteButton.dataset.type = "delete";
+  deleteButton.dataset.type = 'delete';
 
   return deleteButton;
 }
@@ -112,9 +116,9 @@ mainPageElements.tableBody.addEventListener('click', async (e) => {
 
   const dataSet = e.target.dataset;
   const petId = Number(dataSet.petId);
-  
+
   const buttonType = dataSet.type;
-  if(buttonType === 'edit') {
+  if (buttonType === 'edit') {
     await configureFormEditModal(petId);
   } else if (buttonType === 'delete') {
     const pet = allPets.find((x) => x.petId === petId);
