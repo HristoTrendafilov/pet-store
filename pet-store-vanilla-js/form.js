@@ -3,11 +3,9 @@ import { editPet, addPet } from './api.js';
 import {
   enablePetModalEvents,
   disablePetModalEvents,
-  disableModalsBackdropClosing,
   enableModalsBackdropClosing,
   showDeleteModal,
   setPetModalHeaderText,
-  petModalElements,
 } from './modals.js';
 import { refreshPets } from './app.js';
 
