@@ -1,6 +1,6 @@
 import {
-  configureFormNewModal,
-  configureFormEditModal,
+  configureNewPetModal,
+  configureEditPetModal,
   showDeleteModal,
 } from './modals.js';
 import { getPetKinds, getAllPets } from './api.js';
@@ -117,7 +117,7 @@ mainPageElements.tableBody.addEventListener('click', async (e) => {
 
   const buttonType = dataSet.type;
   if (buttonType === 'edit') {
-    await configureFormEditModal(petId);
+    await configureEditPetModal(petId);
   } else if (buttonType === 'delete') {
     const pet = allPets.find((x) => x.petId === petId);
     await showDeleteModal(pet);
@@ -125,7 +125,7 @@ mainPageElements.tableBody.addEventListener('click', async (e) => {
 });
 
 mainPageElements.addPetButton.addEventListener('click', () => {
-  configureFormNewModal();
+  configureNewPetModal();
 });
 
 function showLoadingPetsSpinner() {

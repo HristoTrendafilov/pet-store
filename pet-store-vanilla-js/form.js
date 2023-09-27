@@ -6,6 +6,7 @@ import {
   enableModalsBackdropClosing,
   showDeleteModal,
   setPetModalHeaderText,
+  disableModalsBackdropClosing,
 } from './modals.js';
 import { refreshPets } from './app.js';
 
@@ -146,3 +147,28 @@ export function showForm() {
 export function hideForm() {
   formElements.form.style.display = 'none';
 }
+
+formElements.editButton.addEventListener('click', () => {
+  const isFormLocked = formElements.form.dataset.isLocked;
+  if (isFormLocked === 'false') {
+    return;
+  }
+
+  unlockFormInputs(false);
+  disableModalsBackdropClosing();
+
+  formElements.saveButton.style.display = 'flex';
+  formElements.editButton.style.display = 'none';
+
+  formElements.lockButton.style.display = 'flex';
+  formElements.deleteButton.style.display = 'none';
+
+  const petId = petModalElements.title.textContent.split(' ').pop();
+  setPetModalHeaderText(`Edit pet ${petId}`);
+
+  formElements.form.dataset.isLocked = 'false';
+});
+
+formElements.cancelButton.addEventListener('click', () => {
+  hidePetModal();
+});

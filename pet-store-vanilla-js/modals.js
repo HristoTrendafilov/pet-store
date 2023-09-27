@@ -39,7 +39,7 @@ export function showPetModal() {
   petModalElements.modal.style.display = 'block';
 }
 
-export async function configureFormEditModal(petId) {
+export async function configureEditPetModal(petId) {
   hideForm();
   resetForm();
 
@@ -62,7 +62,7 @@ export async function configureFormEditModal(petId) {
   }
 }
 
-export function configureFormNewModal() {
+export function configureNewPetModal() {
   resetForm();
   unlockFormInputs(true);
   setPetModalHeaderText('Add pet');
@@ -90,31 +90,6 @@ export function hidePetModalSpinner() {
 
 petModalElements.titleCloseButton.addEventListener('click', () => {
   hidePetModal();
-});
-
-formElements.cancelButton.addEventListener('click', () => {
-  hidePetModal();
-});
-
-formElements.editButton.addEventListener('click', () => {
-  const isFormLocked = formElements.form.dataset.isLocked;
-  if (isFormLocked === 'false') {
-    return;
-  }
-
-  unlockFormInputs(false);
-  disableModalsBackdropClosing();
-
-  formElements.saveButton.style.display = 'flex';
-  formElements.editButton.style.display = 'none';
-
-  formElements.lockButton.style.display = 'flex';
-  formElements.deleteButton.style.display = 'none';
-
-  const petId = petModalElements.title.textContent.split(' ').pop();
-  setPetModalHeaderText(`Edit pet ${petId}`);
-
-  formElements.form.dataset.isLocked = 'false';
 });
 
 export function disablePetModalEvents() {
