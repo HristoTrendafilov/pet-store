@@ -16,38 +16,33 @@ const mainPageElements = {
 export const petKindsEnum = {};
 const allPets = [];
 window.addEventListener('DOMContentLoaded', async () => {
-  disableAddPetButton();
   await refreshPets(true);
-  enableAddPetButton();
 });
-
-function disableAddPetButton() {
-  mainPageElements.addPetButton.disabled = true;
-  mainPageElements.addPetButton.style.opacity = '0.5';
-}
-
-function enableAddPetButton() {
-  mainPageElements.addPetButton.disabled = false;
-  mainPageElements.addPetButton.style.opacity = '1';
-}
 
 export async function refreshPets(fetchPetKinds = false) {
   hideError('main-page-error');
   showLoadingPetsSpinner();
   mainPageElements.tableBody.innerHTML = '';
 
+  let hasFetchedPetKinds = false;
   try {
     const allPetsPromise = getAllPets();
 
     if (fetchPetKinds) {
-      const petKinds = await getPetKinds();
-      for (let kind of petKinds) {
-        petKindsEnum[kind.value] = kind.displayName;
+      try {
+        const petKinds = await getPetKinds();
+        for (let kind of petKinds) {
+          petKindsEnum[kind.value] = kind.displayName;
 
-        const petKindOption = document.createElement('option');
-        petKindOption.innerText = kind.displayName;
-        petKindOption.value = kind.value;
-        formElements.kind.append(petKindOption);
+          const petKindOption = document.createElement('option');
+          petKindOption.innerText = kind.displayName;
+          petKindOption.value = kind.value;
+          formElements.kind.append(petKindOption);
+        }
+        hasFetchedPetKinds = true;
+      } catch (err) {
+        console.error(err);
+        showError('main-page-error');
       }
     }
 
@@ -58,7 +53,7 @@ export async function refreshPets(fetchPetKinds = false) {
       tr.appendChild(createTableColumn(pet.petName));
       tr.appendChild(createTableColumn(formatDate(new Date(pet.addedDate))));
       tr.appendChild(createTableColumn(petKindsEnum[pet.kind]));
-      tr.appendChild(createPetTableButtons(pet));
+      tr.appendChild(createPetTableButtons(pet.petId));
 
       mainPageElements.tableBody.appendChild(tr);
       allPets.push(pet);
@@ -68,6 +63,9 @@ export async function refreshPets(fetchPetKinds = false) {
     showError('main-page-error');
   } finally {
     hideLoadingPetsSpinner();
+    if (hasFetchedPetKinds) {
+      mainPageElements.addPetButton.disabled = false;
+    }
   }
 }
 
@@ -77,13 +75,13 @@ function createTableColumn(textContent) {
   return td;
 }
 
-function createPetTableButtons(pet) {
+function createPetTableButtons(petId) {
   const td = document.createElement('td');
   td.setAttribute('colspan', '2');
 
   const flexWrapperDiv = document.createElement('div');
-  flexWrapperDiv.appendChild(createViewEditButton(pet.petId));
-  flexWrapperDiv.appendChild(createDeleteButton(pet.petId));
+  flexWrapperDiv.appendChild(createViewEditButton(petId));
+  flexWrapperDiv.appendChild(createDeleteButton(petId));
 
   td.appendChild(flexWrapperDiv);
   return td;
