@@ -125,13 +125,6 @@ export function disablePetModalEvents() {
   formElements.deleteButton.disabled = true;
   formElements.cancelButton.disabled = true;
   formElements.lockButton.disabled = true;
-
-  formElements.petName.disabled = true;
-  formElements.age.disabled = true;
-  formElements.notes.disabled = true;
-  formElements.kind.disabled = true;
-  formElements.healthProblems.disabled = true;
-  formElements.addedDate.disabled = true;
 }
 
 export function enablePetModalEvents() {

@@ -30,7 +30,6 @@ formElements.form.addEventListener(
   async function handleFormSubmit(e) {
     e.preventDefault();
 
-    hideError('submit-form-error');
     disablePetModalEvents();
     showFormSubmitSpinner();
 
@@ -84,12 +83,19 @@ export function lockForm(pet) {
 
   formElements.form.dataset.isLocked = 'true';
 
-  // Question: When i use addEventListener, it triggers the event for every pet even thought there should be only 1
+  formElements.petName.disabled = true;
+  formElements.age.disabled = true;
+  formElements.notes.disabled = true;
+  formElements.kind.disabled = true;
+  formElements.healthProblems.disabled = true;
+  formElements.addedDate.disabled = true;
+
   formElements.deleteButton.onclick = async function () {
     await showDeleteModal(pet);
   };
 
   formElements.lockButton.onclick = function () {
+    hideError('submit-form-error');
     fillFormInputs(pet);
     lockForm(pet);
   };
