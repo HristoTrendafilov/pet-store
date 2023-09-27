@@ -31,12 +31,12 @@ export function setPetModalHeaderText(textContent) {
 
 export function hidePetModal() {
   petModalElements.modal.style.display = 'none';
+  hideError('fetch-pet-error');
+  hideError('submit-form-error');
 }
 
 export function showPetModal() {
   petModalElements.modal.style.display = 'block';
-  hideError('fetch-pet-error');
-  hideError('submit-form-error');
 }
 
 export async function configureFormEditModal(petId) {
@@ -76,6 +76,7 @@ export function configureFormNewModal() {
   formElements.addedDate.valueAsDate = new Date();
   formElements.form.dataset.isLocked = 'false';
 
+  showForm();
   showPetModal();
 }
 
@@ -194,7 +195,6 @@ export async function showDeleteModal(pet) {
   deleteModalElements.modal.style.display = 'block';
 
   deleteModalElements.deleteButton.onclick = async function () {
-    hideError('delete-pet-error');
     showDeleteModalSubmitSpinner();
     disableDeleteModalEvents();
 
@@ -215,6 +215,7 @@ export async function showDeleteModal(pet) {
 
 export function hideDeleteModal() {
   deleteModalElements.modal.style.display = 'none';
+  hideError('delete-pet-error');
 }
 
 function showDeleteModalSubmitSpinner() {
