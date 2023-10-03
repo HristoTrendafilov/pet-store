@@ -7,6 +7,8 @@ import {
   showDeleteModal,
   setPetModalHeaderText,
   disableModalsBackdropClosing,
+  hidePetModal,
+  petModalElements,
 } from './modals.js';
 import { refreshPets } from './app.js';
 

@@ -24,26 +24,21 @@ export async function refreshPets(fetchPetKinds = false) {
   showLoadingPetsSpinner();
   mainPageElements.tableBody.innerHTML = '';
 
-  let hasFetchedPetKinds = false;
   try {
     const allPetsPromise = getAllPets();
 
     if (fetchPetKinds) {
-      try {
-        const petKinds = await getPetKinds();
-        for (let kind of petKinds) {
-          petKindsEnum[kind.value] = kind.displayName;
+      const petKinds = await getPetKinds();
+      for (let kind of petKinds) {
+        petKindsEnum[kind.value] = kind.displayName;
 
-          const petKindOption = document.createElement('option');
-          petKindOption.innerText = kind.displayName;
-          petKindOption.value = kind.value;
-          formElements.kind.append(petKindOption);
-        }
-        hasFetchedPetKinds = true;
-      } catch (err) {
-        console.error(err);
-        showError('main-page-error');
+        const petKindOption = document.createElement('option');
+        petKindOption.innerText = kind.displayName;
+        petKindOption.value = kind.value;
+        formElements.kind.append(petKindOption);
       }
+
+      mainPageElements.addPetButton.disabled = false;
     }
 
     const pets = await allPetsPromise;
@@ -56,16 +51,13 @@ export async function refreshPets(fetchPetKinds = false) {
       tr.appendChild(createPetTableButtons(pet.petId));
 
       mainPageElements.tableBody.appendChild(tr);
-      allPets.push(pet);
+      allPets[pet.petId] = pet;
     }
   } catch (err) {
     console.error(err);
     showError('main-page-error');
   } finally {
     hideLoadingPetsSpinner();
-    if (hasFetchedPetKinds) {
-      mainPageElements.addPetButton.disabled = false;
-    }
   }
 }
 
@@ -119,8 +111,7 @@ mainPageElements.tableBody.addEventListener('click', async (e) => {
   if (buttonType === 'edit') {
     await configureEditPetModal(petId);
   } else if (buttonType === 'delete') {
-    const pet = allPets.find((x) => x.petId === petId);
-    await showDeleteModal(pet);
+    await showDeleteModal(allPets[petId]);
   }
 });
 
