@@ -33,6 +33,7 @@ formElements.form.addEventListener(
   async function handleFormSubmit(e) {
     e.preventDefault();
 
+    disableFormInputs();
     disablePetModalEvents();
     showFormSubmitSpinner();
 
@@ -45,9 +46,9 @@ formElements.form.addEventListener(
         petResponse = await addPet(pet);
       }
 
-      await refreshPets();
       fillFormInputs(petResponse);
       lockForm(petResponse);
+      void refreshPets();
     } catch (err) {
       console.error(err);
       showError('submit-form-error');
@@ -66,6 +67,8 @@ function getFormValues(formEl) {
     const inputName = input.name;
     if (input.type === 'checkbox') {
       pet[inputName] = input.checked;
+    } else if (input.type === 'select-one') {
+      pet[inputName] = Number(input.value);
     } else {
       pet[inputName] = input.value;
     }
@@ -76,7 +79,6 @@ function getFormValues(formEl) {
 
 export function lockForm(pet) {
   setPetModalHeaderText(`View pet #${pet.petId}`);
-  enableModalsBackdropClosing();
 
   formElements.lockButton.style.display = 'none';
   formElements.deleteButton.style.display = 'flex';
@@ -86,25 +88,28 @@ export function lockForm(pet) {
 
   formElements.form.dataset.isLocked = 'true';
 
-  formElements.petName.disabled = true;
-  formElements.age.disabled = true;
-  formElements.notes.disabled = true;
-  formElements.kind.disabled = true;
-  formElements.healthProblems.disabled = true;
-  formElements.addedDate.disabled = true;
-
   formElements.deleteButton.onclick = async function () {
     await showDeleteModal(pet);
   };
 
   formElements.lockButton.onclick = function () {
     hideError('submit-form-error');
+    enableModalsBackdropClosing();
     fillFormInputs(pet);
     lockForm(pet);
   };
 }
 
-export function unlockFormInputs(isNewPet) {
+export function disableFormInputs() {
+  formElements.petName.disabled = true;
+  formElements.age.disabled = true;
+  formElements.notes.disabled = true;
+  formElements.kind.disabled = true;
+  formElements.healthProblems.disabled = true;
+  formElements.addedDate.disabled = true;
+}
+
+export function enableFormInputs(isNewPet) {
   formElements.petName.disabled = false;
   formElements.age.disabled = false;
   formElements.notes.disabled = false;
@@ -156,7 +161,7 @@ formElements.editButton.addEventListener('click', () => {
     return;
   }
 
-  unlockFormInputs(false);
+  enableFormInputs(false);
   disableModalsBackdropClosing();
 
   formElements.saveButton.style.display = 'flex';

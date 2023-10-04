@@ -13,8 +13,9 @@ const mainPageElements = {
   tableBody: document.getElementById('data-table').tBodies[0],
 };
 
-export const petKindsEnum = {};
-const allPets = [];
+export const petKindsMap = new Map();
+const allPetsMap = new Map();
+
 window.addEventListener('DOMContentLoaded', async () => {
   await refreshPets(true);
 });
@@ -30,7 +31,7 @@ export async function refreshPets(fetchPetKinds = false) {
     if (fetchPetKinds) {
       const petKinds = await getPetKinds();
       for (let kind of petKinds) {
-        petKindsEnum[kind.value] = kind.displayName;
+        petKindsMap.set(kind.value, kind.displayName);
 
         const petKindOption = document.createElement('option');
         petKindOption.innerText = kind.displayName;
@@ -47,11 +48,11 @@ export async function refreshPets(fetchPetKinds = false) {
       tr.appendChild(createTableColumn(pet.petId));
       tr.appendChild(createTableColumn(pet.petName));
       tr.appendChild(createTableColumn(formatDate(new Date(pet.addedDate))));
-      tr.appendChild(createTableColumn(petKindsEnum[pet.kind]));
+      tr.appendChild(createTableColumn(petKindsMap.get(pet.kind)));
       tr.appendChild(createPetTableButtons(pet.petId));
 
       mainPageElements.tableBody.appendChild(tr);
-      allPets[pet.petId] = pet;
+      allPetsMap.set(pet.petId, pet);
     }
   } catch (err) {
     console.error(err);
@@ -111,7 +112,7 @@ mainPageElements.tableBody.addEventListener('click', async (e) => {
   if (buttonType === 'edit') {
     await configureEditPetModal(petId);
   } else if (buttonType === 'delete') {
-    await showDeleteModal(allPets[petId]);
+    await showDeleteModal(allPetsMap.get(petId));
   }
 });
 

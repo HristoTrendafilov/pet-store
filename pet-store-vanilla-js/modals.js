@@ -1,15 +1,16 @@
 import {
   resetForm,
-  unlockFormInputs,
+  enableFormInputs,
   formElements,
   lockForm,
   fillFormInputs,
   showForm,
   hideForm,
+  disableFormInputs,
 } from './form.js';
 
 import { getPet, deletePet } from './api.js';
-import { petKindsEnum, refreshPets } from './app.js';
+import { petKindsMap, refreshPets } from './app.js';
 import {
   createSubmitSpinner,
   formatDate,
@@ -45,11 +46,13 @@ export async function configureEditPetModal(petId) {
 
   setPetModalHeaderText(`View pet #${petId}`);
   disablePetModalEvents();
+  disableFormInputs();
   showPetModalSpinner();
   showPetModal();
 
   try {
     const pet = await getPet(petId);
+
     fillFormInputs(pet);
     lockForm(pet);
     showForm();
@@ -64,7 +67,7 @@ export async function configureEditPetModal(petId) {
 
 export function configureNewPetModal() {
   resetForm();
-  unlockFormInputs(true);
+  enableFormInputs(true);
   setPetModalHeaderText('Add pet');
 
   formElements.saveButton.style.display = 'flex';
@@ -137,7 +140,7 @@ export async function showDeleteModal(pet) {
     createPetInfoElement(`Name: ${pet.petName}`)
   );
   deleteModalElements.petInfo.appendChild(
-    createPetInfoElement(`Kind: ${petKindsEnum[pet.kind]}`)
+    createPetInfoElement(`Kind: ${petKindsMap.get(pet.kind)}`)
   );
   if (pet.hasOwnProperty('age')) {
     deleteModalElements.petInfo.appendChild(
