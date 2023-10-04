@@ -42,6 +42,10 @@ export async function refreshPets(fetchPetKinds = false) {
       mainPageElements.addPetButton.disabled = false;
     }
 
+    // Question: Is it a good idea to clear the pets map here and fill it again
+    // because when we delete a pet, it stays in the map
+    // or remove the pet from the map when we delete it?
+    allPetsMap.clear();
     const pets = await allPetsPromise;
     for (let pet of pets.sort((a, b) => b.petId - a.petId)) {
       const tr = document.createElement('tr');
