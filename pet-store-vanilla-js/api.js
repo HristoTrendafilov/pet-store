@@ -42,6 +42,7 @@ async function fetchFromApi(endPoint, method, body) {
       signal: AbortSignal.timeout(apiWaitTimeout),
     });
   } catch (err) {
+    console.error(err);
     throw new Error(`Fetch error. ${apiErrorInfo}`);
   }
 
@@ -54,6 +55,7 @@ async function fetchFromApi(endPoint, method, body) {
   try {
     return apiResponse.json();
   } catch (err) {
+    console.error(err);
     throw new Error(`Error parsing JSON response. ${apiErrorInfo}`);
   }
 }
