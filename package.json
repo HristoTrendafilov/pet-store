@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "concurrently \"npm run start:be\" \"npm run start:vanilla-js\"",
-    "start:be": "nodemon server.js",
+    "start:be": "node server.js",
     "start:vanilla-js": "browser-sync start --config ./browsersync-config.js",
     "format": "prettier --cache --write ."
   },
@@ -18,7 +18,6 @@
     "concurrently": "^8.2.0",
     "connect-history-api-fallback": "^2.0.0",
     "http-proxy-middleware": "^2.0.6",
-    "nodemon": "^3.0.1",
     "prettier": "^3.0.0"
   }
 }

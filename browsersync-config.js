@@ -1,5 +1,5 @@
 const historyApiFallback = require('connect-history-api-fallback');
-const httpProxyMiddleware = require('http-proxy-middleware');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 module.exports = {
   ui: {
@@ -18,9 +18,11 @@ module.exports = {
   port: 6344,
   middleware: [
     historyApiFallback(),
-    httpProxyMiddleware.createProxyMiddleware('/api', {
-      target: 'http://localhost:5150/api',
-      prependPath: false,
+    createProxyMiddleware('/api', {
+      target: 'http://localhost:5150',
+      pathRewrite: { '/api': '/' },
+      changeOrigin: true,
+      ws: true,
     }),
   ],
   serveStatic: [],
@@ -31,7 +33,7 @@ module.exports = {
   logFileChanges: true,
   logSnippet: true,
   rewriteRules: [],
-  open: true,
+  open: false,
   browser: 'default',
   cors: false,
   xip: false,
