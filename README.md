@@ -21,8 +21,16 @@ npm start
 - Don't look at `server.js`.
 - Don't install any npm packages.
 - Don't change `package.json` or `package-lock.json`.
-- Don't import libraries from external sources.
+- Don't import libraries from external sources (links).
 - Don't change any of the configuration files.
+
+# Scripts
+
+To format your code run:
+
+```sh
+npm run format
+```
 
 # Endpoints
 

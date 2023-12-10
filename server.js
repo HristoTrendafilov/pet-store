@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const PORT = 5150;
-const RESPONSE_DELAY = 1500;
+const RESPONSE_DELAY = 2000;
 
 const delay = (timeout) =>
   new Promise((resolve) => setTimeout(resolve, timeout));
