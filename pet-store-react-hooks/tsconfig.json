@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "noEmit": true,
+    "strict": true,
+    "jsx": "react-jsx",
+    "allowJs": false,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
+    "rootDir": "./",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "pretty": true,
+    "noImplicitAny": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "skipLibCheck": true,
+    "paths": {
+      "~*": ["src/*"],
+      "src/*": ["src/*"]
+    }
+  },
+  "include": ["src", "__mocks__", "setupTests.ts"]
+}

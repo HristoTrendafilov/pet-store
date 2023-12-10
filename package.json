@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "concurrently \"npm run start:be\" \"npm run start:vanilla-js\"",
-    "start:be": "nodemon server.js",
-    "start:vanilla-js": "cd ./pet-store-vanilla-js/ && lite-server",
+    "start": "concurrently \"npm run start:be\" \"npm run start:vanilla-js\" \"npm run start:react-hooks\"",
+    "start:be": "node server.js",
+    "start:vanilla-js": "browser-sync start --config ./browsersync-config.js",
+    "start:react-hooks": "cd ./pet-store-react-hooks && npm run start",
     "format": "prettier --cache --write ."
   },
   "dependencies": {
@@ -14,11 +15,10 @@
     "express": "^4.18.2"
   },
   "devDependencies": {
+    "browser-sync": "^2.29.3",
     "concurrently": "^8.2.0",
     "connect-history-api-fallback": "^2.0.0",
     "http-proxy-middleware": "^2.0.6",
-    "lite-server": "^2.6.1",
-    "nodemon": "^3.0.1",
     "prettier": "^3.0.0"
   }
 }
