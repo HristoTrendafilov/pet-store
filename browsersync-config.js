@@ -3,7 +3,7 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 module.exports = {
   ui: {
-    port: 6345,
+    port: 6343,
   },
   files: false,
   watchEvents: ['change'],
