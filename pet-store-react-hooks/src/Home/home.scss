@@ -1,0 +1,27 @@
+.home-wrapper {
+  /* Home page all pets table card */
+  .all-pets-card {
+    border: 1px solid black;
+    max-width: 700px;
+    margin: 3rem auto;
+    border-radius: 5px;
+
+    .all-pets-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 15px;
+      background-color: var(--header);
+      color: var(--white);
+    }
+
+    .all-pets-card-body {
+      padding: 10px;
+    }
+
+    .all-pets-card > div:nth-of-type(1) {
+      font-size: 30px;
+    }
+  }
+  /* Home page all pets table card */
+}
