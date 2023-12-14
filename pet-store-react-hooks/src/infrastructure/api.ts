@@ -1,4 +1,4 @@
-import type { IPet } from '~infrastructure/global';
+import type { IPet, IPetKind } from '~infrastructure/global';
 
 import { jsonParseReviver, logAndReturnError } from './utils';
 
@@ -7,8 +7,7 @@ const apiWaitTimeout = 5000;
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
-// Question: Should i return a specific type, or a response of type success-error with the needed properties for the specific thing?
-async function fetchFromApi<T>(
+async function fetchFromApiAsync<T>(
   endPoint: string,
   method: HttpMethod,
   body?: string
@@ -56,5 +55,9 @@ async function fetchFromApi<T>(
 }
 
 export function getAllPetsAsync(): Promise<IPet[]> {
-  return fetchFromApi<IPet[]>('/pet/all', 'GET');
+  return fetchFromApiAsync<IPet[]>('/pet/all', 'GET');
+}
+
+export function getPetKindsAsync(): Promise<IPetKind[]> {
+  return fetchFromApiAsync<IPetKind[]>('/pet/kinds', 'GET');
 }

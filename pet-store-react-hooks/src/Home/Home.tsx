@@ -3,8 +3,11 @@ import { useEffect, useState } from 'react';
 // Question: What is up with the ~ ?
 // Usage of relative parent imports is not allowed
 import { getAllPetsAsync } from '~infrastructure/api';
+import { LoadingIndicator } from '~infrastructure/components/LoadingIndicator';
 import type { IPet } from '~infrastructure/global';
-import { formatDate, getErrorMessage } from '~infrastructure/utils';
+import { getErrorMessage } from '~infrastructure/utils';
+
+import { PetsTable } from './PetsTable';
 
 import './home.scss';
 
@@ -34,38 +37,12 @@ export function Home() {
         {error && <div>{error}</div>}
         <div className="all-pets-card-header">
           <div>Pet store</div>
-          <button type="button" className="btn btn-success" disabled>
+          <button type="button" className="btn btn-success" disabled={loading}>
             Add pet
           </button>
         </div>
         <div className="all-pets-card-body">
-          {loading ? (
-            <div className="spinner-wrapper">
-              <div className="loading-spinner" />
-            </div>
-          ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Name</th>
-                  <th>Added date</th>
-                  <th>Kind</th>
-                  <th colSpan={2}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {allPets.length > 0 &&
-                  allPets.map((pet) => (
-                    <tr key={pet.petId}>
-                      <td>{pet.petId}</td>
-                      <td>{pet.petName}</td>
-                      <td>{formatDate(pet.addedDate)}</td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          )}
+          {loading ? <LoadingIndicator /> : <PetsTable pets={allPets} />}
         </div>
       </div>
     </div>
