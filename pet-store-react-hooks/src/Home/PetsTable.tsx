@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { useSessionContext } from '~Context/contextHelper';
-import { DeletePetModal } from '~DeletePetModal/DeletePetModal';
+import { useSessionContext } from '~context/contextHelper';
+import { DeletePetModal } from '~deletePetModal/DeletePetModal';
 import type { IPet } from '~infrastructure/global';
 import { formatDate } from '~infrastructure/utils';
 

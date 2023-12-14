@@ -1,5 +1,5 @@
-import { useSessionContext } from '~Context/contextHelper';
-import { Modal } from '~infrastructure/components/Modal/Modal';
+import { useSessionContext } from '~context/contextHelper';
+import { Modal } from '~infrastructure/components/modal/Modal';
 import type { IPet } from '~infrastructure/global';
 import { formatDate } from '~infrastructure/utils';
 

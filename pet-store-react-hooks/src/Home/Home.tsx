@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 // Question: What is up with the ~ ?
 // Usage of relative parent imports is not allowed
 import { getAllPetsAsync } from '~infrastructure/api';
-import { LoadingIndicator } from '~infrastructure/components/LoadingIndicator';
+import { LoadingIndicator } from '~infrastructure/components/loadingIndicator/LoadingIndicator';
 import type { IPet } from '~infrastructure/global';
 import { getErrorMessage } from '~infrastructure/utils';
 

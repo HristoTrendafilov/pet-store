@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import './loadingIndicator.scss';
+
 export function LoadingIndicator({ delay }: { delay?: number }) {
   const [showIndicator, setShowIndicator] = useState<boolean>(false);
 

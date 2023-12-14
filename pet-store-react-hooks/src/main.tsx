@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import { SessionContextProvider } from '~Context/context';
+import { SessionContextProvider } from '~context/context';
 
-import { Home } from './Home/Home';
+import { Home } from './home/Home';
 
 import './main.css';
 
