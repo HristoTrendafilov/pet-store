@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 // Question: What is up with the ~ ?
 // Usage of relative parent imports is not allowed
-import { getAllPetsASync } from '~api';
+import { getAllPetsAsync } from '~api';
 import type { IPet } from '~global';
 import { formatDate, getErrorMessage } from '~utils';
 
@@ -16,9 +16,9 @@ export function Home() {
   useEffect(() => {
     // Question: Should i always mark async functions in useEffect() as void?
     // Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator
-    void (async function fetchHomePets() {
+    void (async () => {
       try {
-        const pets = await getAllPetsASync();
+        const pets = await getAllPetsAsync();
         setAllPets(pets);
       } catch (err) {
         setError(getErrorMessage(err));
@@ -56,7 +56,7 @@ export function Home() {
             <tbody>
               {allPets.length > 0 &&
                 allPets.map((pet) => (
-                  <tr>
+                  <tr key={pet.petId}>
                     <td>{pet.petId}</td>
                     <td>{pet.petName}</td>
                     <td>{formatDate(pet.addedDate)}</td>

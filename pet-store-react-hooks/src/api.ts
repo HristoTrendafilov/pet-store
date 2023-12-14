@@ -1,6 +1,6 @@
 import type { IPet } from '~global';
 
-import { logAndReturnError } from './utils';
+import { jsonParseReviver, logAndReturnError } from './utils';
 
 const apiBaseUrl = 'http://localhost:5150';
 const apiWaitTimeout = 5000;
@@ -44,9 +44,8 @@ async function fetchFromApi<T>(
   }
 
   try {
-    // Question: Why do i have to return with 'await ...promise' and not just return the promise itself
-    // Returning an awaited promise is required in this context
-    return (await apiResponse.json()) as T;
+    const responseJson = await apiResponse.text();
+    return JSON.parse(responseJson, jsonParseReviver) as T;
   } catch (err) {
     throw logAndReturnError(
       err,
@@ -55,6 +54,6 @@ async function fetchFromApi<T>(
   }
 }
 
-export function getAllPetsASync(): Promise<IPet[]> {
+export function getAllPetsAsync(): Promise<IPet[]> {
   return fetchFromApi<IPet[]>('/pet/all', 'GET');
 }
