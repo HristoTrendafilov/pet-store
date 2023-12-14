@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 
 // Question: What is up with the ~ ?
 // Usage of relative parent imports is not allowed
-import { getAllPetsAsync } from '~api';
-import type { IPet } from '~global';
-import { formatDate, getErrorMessage } from '~utils';
+import { getAllPetsAsync } from '~infrastructure/api';
+import type { IPet } from '~infrastructure/global';
+import { formatDate, getErrorMessage } from '~infrastructure/utils';
 
 import './home.scss';
 
@@ -28,10 +28,6 @@ export function Home() {
     })();
   }, []);
 
-  if (loading) {
-    return <div>loading...</div>;
-  }
-
   return (
     <div className="home-wrapper">
       <div className="all-pets-card">
@@ -43,31 +39,33 @@ export function Home() {
           </button>
         </div>
         <div className="all-pets-card-body">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Added date</th>
-                <th>Kind</th>
-                <th colSpan={2}>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {allPets.length > 0 &&
-                allPets.map((pet) => (
-                  <tr key={pet.petId}>
-                    <td>{pet.petId}</td>
-                    <td>{pet.petName}</td>
-                    <td>{formatDate(pet.addedDate)}</td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-
-          <div id="loading-pets-spinner" className="spinner-wrapper">
-            <div className="loading-spinner" />
-          </div>
+          {loading ? (
+            <div className="spinner-wrapper">
+              <div className="loading-spinner" />
+            </div>
+          ) : (
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Added date</th>
+                  <th>Kind</th>
+                  <th colSpan={2}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {allPets.length > 0 &&
+                  allPets.map((pet) => (
+                    <tr key={pet.petId}>
+                      <td>{pet.petId}</td>
+                      <td>{pet.petName}</td>
+                      <td>{formatDate(pet.addedDate)}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </div>

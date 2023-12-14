@@ -1,4 +1,4 @@
-import type { IPet } from '~global';
+import type { IPet } from '~infrastructure/global';
 
 import { jsonParseReviver, logAndReturnError } from './utils';
 
@@ -45,6 +45,7 @@ async function fetchFromApi<T>(
 
   try {
     const responseJson = await apiResponse.text();
+    // Question: The Date properties from the api return as a string, so i needed to parse them to create the Date() from them
     return JSON.parse(responseJson, jsonParseReviver) as T;
   } catch (err) {
     throw logAndReturnError(

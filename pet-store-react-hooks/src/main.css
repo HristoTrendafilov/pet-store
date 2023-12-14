@@ -3,48 +3,84 @@
 @tailwind utilities;
 
 :root {
-    --primary: #4279e2;
-    --success: #2cb83a;
-    --warning: #d09234;
-    --danger: #b91f1f;
+  --primary: #4279e2;
+  --success: #2cb83a;
+  --warning: #d09234;
+  --danger: #b91f1f;
 
-    --header: #6461fe;
-    --locked: #ede8e8;
+  --header: #6461fe;
+  --locked: #ede8e8;
 
-    --white: #ffffff;
-    --black: #000000;
+  --white: #ffffff;
+  --black: #000000;
 }
 
 /* Buttons */
 .btn {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 
-    border: 1px solid var(--black);
-    border-radius: 5px;
+  border: 1px solid var(--black);
+  border-radius: 5px;
 
-    padding: .5rem 1.3rem;
-    cursor: pointer;
-    color: var(--white);
+  padding: 0.5rem 1.3rem;
+  cursor: pointer;
+  color: var(--white);
 }
 
 .btn-primary {
-    background-color: var(--primary);
+  background-color: var(--primary);
 }
 
 .btn-success {
-    background-color: var(--success);
+  background-color: var(--success);
 }
 
 .btn-warning {
-    background-color: var(--warning);
+  background-color: var(--warning);
 }
 
 .btn-danger {
-    background-color: var(--danger);
+  background-color: var(--danger);
 }
 
 .btn-secondary {
-    background-color: var(--secondary);
+  background-color: var(--secondary);
 }
 /* Buttons */
+
+/* Loading content spinner */
+.spinner-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 15px;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+}
+
+.loading-spinner:after {
+  content: ' ';
+  display: block;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border-radius: 50%;
+  border: 6px solid black;
+  border-color: black transparent black transparent;
+  animation: spinner-animation 1.2s linear infinite;
+}
+
+@keyframes spinner-animation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+/* Loading content spinner */
