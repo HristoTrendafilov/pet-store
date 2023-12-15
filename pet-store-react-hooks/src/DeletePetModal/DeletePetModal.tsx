@@ -16,7 +16,7 @@ type PetWithOptional = WithOptional<IPet, 'age' | 'notes' | 'healthProblems'>;
 type DeletePetModalProps = {
   pet: PetWithOptional;
   // Question: because im handling things differently on this callback from the parent component
-  // is it OK to use one callback with a parameter or two - one for success and one for cancel?
+  // is it OK to use one callback with a parameter, or two - onCancel() , onSuccess()?
   onClose: (hasDeleted: boolean) => void;
 };
 
@@ -55,15 +55,31 @@ export function DeletePetModal(props: DeletePetModalProps) {
               X
             </button>
           </div>
-          <div className="modal-body">
-            <div>Name: {pet.petName}</div>
-            <div>Kind: {petKindsRecord[pet.kind]}</div>
-            {pet.age && <div>Age: {pet.age}</div>}
-            {pet.notes && <div>Notes: {pet.notes}</div>}
-            {pet.healthProblems && (
-              <div>Has health problems {pet.healthProblems ? 'yes' : 'no'}</div>
+          <div className="modal-body delete-pet-modal-body">
+            <div>
+              <b>Name:</b> {pet.petName}
+            </div>
+            <div>
+              <b>Kind:</b> {petKindsRecord[pet.kind]}
+            </div>
+            {pet.age && (
+              <div>
+                <b>Age:</b> {pet.age}
+              </div>
             )}
-            <div>Date added: {formatDate(pet.addedDate)}</div>
+            {pet.notes && (
+              <div>
+                <b>Notes:</b> {pet.notes}
+              </div>
+            )}
+            {pet.healthProblems && (
+              <div>
+                <b>Has health problems</b> {pet.healthProblems ? 'yes' : 'no'}
+              </div>
+            )}
+            <div>
+              <b>Date added:</b> {formatDate(pet.addedDate)}
+            </div>
 
             <div className="button-group">
               <button
@@ -83,9 +99,9 @@ export function DeletePetModal(props: DeletePetModalProps) {
                 Cancel
               </button>
             </div>
-          </div>
 
-          <ErrorMessage message={error} />
+            <ErrorMessage message={error} style={{ marginTop: '.7rem' }} />
+          </div>
         </div>
       </OutsideAlerter>
     </Modal>

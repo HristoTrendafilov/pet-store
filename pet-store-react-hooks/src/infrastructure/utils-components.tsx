@@ -17,6 +17,7 @@ export function OutsideAlerter(props: OutsideAlerterProps) {
       }
     }
 
+    // Question: Maybe i should add for the touch events?
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
