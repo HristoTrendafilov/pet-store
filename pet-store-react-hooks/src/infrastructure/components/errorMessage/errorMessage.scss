@@ -1,0 +1,9 @@
+@import 'src/infrastructure/variables';
+
+.system-error-message {
+  display: flex;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: $danger-color;
+}

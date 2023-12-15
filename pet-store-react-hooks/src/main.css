@@ -2,19 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --primary: #4279e2;
-  --success: #2cb83a;
-  --warning: #d09234;
-  --danger: #b91f1f;
-
-  --header: #6461fe;
-  --locked: #ede8e8;
-
-  --white: #ffffff;
-  --black: #000000;
-}
-
 *,
 *::after,
 *::before {
@@ -24,54 +11,3 @@
 }
 
 /* Question: Can i change the main.css to main.scss or should i use only css files? */
-
-/* Buttons */
-.btn {
-  display: flex;
-  justify-content: center;
-
-  border: 1px solid var(--black);
-  border-radius: 5px;
-
-  padding: 0.5rem 1.3rem;
-  cursor: pointer;
-  color: var(--white);
-}
-
-.btn-primary {
-  background-color: var(--primary);
-}
-
-.btn-success {
-  background-color: var(--success);
-}
-
-.btn-warning {
-  background-color: var(--warning);
-}
-
-.btn-danger {
-  background-color: var(--danger);
-}
-
-.btn-secondary {
-  background-color: var(--secondary);
-}
-
-button:disabled {
-  opacity: 0.5;
-}
-/* Buttons */
-
-
-#modal {
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(1px);
-}

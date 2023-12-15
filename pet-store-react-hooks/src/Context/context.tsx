@@ -5,6 +5,7 @@ import type { IPetKind } from '~infrastructure/global';
 
 import type { ISessionProvider } from './contextHelper';
 
+// Question: Is it OK to give the default context as an empty object?
 export const SessionContext = createContext({} as ISessionProvider);
 
 type SessionContextProviderProps = {

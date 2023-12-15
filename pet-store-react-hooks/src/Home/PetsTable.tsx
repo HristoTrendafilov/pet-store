@@ -3,14 +3,21 @@ import { useState } from 'react';
 import { useSessionContext } from '~context/contextHelper';
 import { DeletePetModal } from '~deletePetModal/DeletePetModal';
 import type { IPet } from '~infrastructure/global';
-import { formatDate } from '~infrastructure/utils';
+import { formatDate } from '~infrastructure/utils-function';
 
 import './petsTable.scss';
 
-export function PetsTable({ pets }: { pets: IPet[] }) {
+type PetsTableProps = {
+  pets: IPet[];
+  onPetActionTaken: () => void;
+};
+
+export function PetsTable(props: PetsTableProps) {
   const { petKindsRecord } = useSessionContext();
-  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [showDeletePetModal, setShowDeletePetModal] = useState<boolean>(false);
   const [selectedPet, setSelectedPet] = useState<IPet | undefined>(undefined);
+
+  const { pets, onPetActionTaken } = props;
 
   return (
     <div className="pets-table-wrapper">
@@ -40,7 +47,7 @@ export function PetsTable({ pets }: { pets: IPet[] }) {
                     <button
                       onClick={() => {
                         setSelectedPet(pet);
-                        setShowDeleteModal(true);
+                        setShowDeletePetModal(true);
                       }}
                       className="btn btn-danger"
                       type="button"
@@ -53,10 +60,18 @@ export function PetsTable({ pets }: { pets: IPet[] }) {
             ))}
         </tbody>
       </table>
-      {showDeleteModal && selectedPet && (
+
+      {showDeletePetModal && selectedPet && (
         <DeletePetModal
           pet={selectedPet}
-          onClose={() => setShowDeleteModal(false)}
+          onClose={(hasDeleted: boolean) => {
+            setShowDeletePetModal(false);
+            setSelectedPet(undefined);
+
+            if (hasDeleted) {
+              onPetActionTaken();
+            }
+          }}
         />
       )}
     </div>

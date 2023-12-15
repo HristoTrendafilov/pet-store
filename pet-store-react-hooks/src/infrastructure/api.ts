@@ -1,12 +1,25 @@
 import type { IPet, IPetKind } from '~infrastructure/global';
 
-import { jsonParseReviver, logAndReturnError } from './utils';
+import { logAndReturnError } from './utils-function';
 
 const apiBaseUrl = 'http://localhost:5150';
 const apiWaitTimeout = 5000;
 
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+type JsonPropertyType = string | number | boolean | Date;
+export function jsonParseReviver(_: string, value: JsonPropertyType) {
+  if (typeof value === 'string' && /\d{4}-\d{2}-\d{2}/.test(value)) {
+    const parts = value.split('-');
+    return new Date(
+      Number.parseInt(parts[0], 10),
+      Number.parseInt(parts[1], 10) - 1,
+      Number.parseInt(parts[2], 10)
+    );
+  }
 
+  return value;
+}
+
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 async function fetchFromApiAsync<T>(
   endPoint: string,
   method: HttpMethod,
@@ -60,4 +73,8 @@ export function getAllPetsAsync(): Promise<IPet[]> {
 
 export function getPetKindsAsync(): Promise<IPetKind[]> {
   return fetchFromApiAsync<IPetKind[]>('/pet/kinds', 'GET');
+}
+
+export function deletePet(petId: number): Promise<IPet> {
+  return fetchFromApiAsync<IPet>(`/pet/${petId}`, 'DELETE');
 }

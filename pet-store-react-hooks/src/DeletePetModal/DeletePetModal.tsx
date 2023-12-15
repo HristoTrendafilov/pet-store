@@ -1,51 +1,93 @@
+import { useState } from 'react';
+
 import { useSessionContext } from '~context/contextHelper';
+import { deletePet } from '~infrastructure/api';
+import { ErrorMessage } from '~infrastructure/components/errorMessage/ErrorMessage';
 import { Modal } from '~infrastructure/components/modal/Modal';
-import type { IPet } from '~infrastructure/global';
-import { formatDate } from '~infrastructure/utils';
+import type { IPet, WithOptional } from '~infrastructure/global';
+import { OutsideAlerter } from '~infrastructure/utils-components';
+import { formatDate, getErrorMessage } from '~infrastructure/utils-function';
 
 import './deletePetModal.scss';
 
+// Question: Because we may not have all the properties at our disposal, is this OK to make them possibly undefined?
+type PetWithOptional = WithOptional<IPet, 'age' | 'notes' | 'healthProblems'>;
+
 type DeletePetModalProps = {
-  pet: IPet;
-  onClose: () => void;
+  pet: PetWithOptional;
+  // Question: because im handling things differently on this callback from the parent component
+  // is it OK to use one callback with a parameter or two - one for success and one for cancel?
+  onClose: (hasDeleted: boolean) => void;
 };
 
 export function DeletePetModal(props: DeletePetModalProps) {
+  const { petKindsRecord } = useSessionContext();
+  const [error, setError] = useState<string>('');
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
   const { pet, onClose } = props;
 
-  const { petKindsRecord } = useSessionContext();
+  async function handleDeletePet() {
+    setIsDeleting(true);
+
+    try {
+      await deletePet(pet.petId);
+      onClose(true);
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setIsDeleting(false);
+    }
+  }
 
   return (
     <Modal>
-      <div className="delete-pet-modal-wrapper">
-        <div className="delete-pet-modal-header">
-          <div>Delete pet #{pet.petId}</div>
-          <button type="button" onClick={onClose}>
-            X
-          </button>
-        </div>
-        <div className="delete-pet-modal-body">
-          <div>Name: {pet.petName}</div>
-          <div>Kind: {petKindsRecord[pet.kind]}</div>
-          <div>Age: {pet.age}</div>
-          <div>Notes: {pet.notes}</div>
-          <div>Has health problems {pet.healthProblems ? 'yes' : 'no'}</div>
-          <div>Date added: {formatDate(pet.addedDate)}</div>
-
-          <div className="button-group">
-            <button className="btn btn-danger" type="button">
-              Delete
-            </button>
+      <OutsideAlerter onAlert={() => !isDeleting && onClose(false)}>
+        <div className="delete-pet-modal-wrapper">
+          <div className="modal-header">
+            <div>Delete pet #{pet.petId}</div>
             <button
-              className="btn btn-secondary"
+              className="modal-close-header-btn"
               type="button"
-              onClick={onClose}
+              disabled={isDeleting}
+              onClick={() => onClose(false)}
             >
-              Cancel
+              X
             </button>
           </div>
+          <div className="modal-body">
+            <div>Name: {pet.petName}</div>
+            <div>Kind: {petKindsRecord[pet.kind]}</div>
+            {pet.age && <div>Age: {pet.age}</div>}
+            {pet.notes && <div>Notes: {pet.notes}</div>}
+            {pet.healthProblems && (
+              <div>Has health problems {pet.healthProblems ? 'yes' : 'no'}</div>
+            )}
+            <div>Date added: {formatDate(pet.addedDate)}</div>
+
+            <div className="button-group">
+              <button
+                className="btn btn-danger"
+                type="button"
+                disabled={isDeleting}
+                onClick={handleDeletePet}
+              >
+                Delete
+              </button>
+              <button
+                className="btn btn-secondary"
+                type="button"
+                disabled={isDeleting}
+                onClick={() => onClose(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          <ErrorMessage message={error} />
         </div>
-      </div>
+      </OutsideAlerter>
     </Modal>
   );
 }
