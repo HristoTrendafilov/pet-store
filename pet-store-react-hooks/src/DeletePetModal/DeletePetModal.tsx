@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { useSessionContext } from '~context/contextHelper';
-import { deletePet } from '~infrastructure/api';
+import { deletePetAsync } from '~infrastructure/api';
 import { ErrorMessage } from '~infrastructure/components/errorMessage/ErrorMessage';
 import { Modal } from '~infrastructure/components/modal/Modal';
 import type { IPet, WithOptional } from '~infrastructure/global';
@@ -31,7 +31,7 @@ export function DeletePetModal(props: DeletePetModalProps) {
     setIsDeleting(true);
 
     try {
-      await deletePet(pet.petId);
+      await deletePetAsync(pet.petId);
       onClose(true);
     } catch (err) {
       setError(getErrorMessage(err));

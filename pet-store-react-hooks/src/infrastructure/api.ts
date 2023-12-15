@@ -75,6 +75,6 @@ export function getPetKindsAsync(): Promise<IPetKind[]> {
   return fetchFromApiAsync<IPetKind[]>('/pet/kinds', 'GET');
 }
 
-export function deletePet(petId: number): Promise<IPet> {
+export function deletePetAsync(petId: number): Promise<IPet> {
   return fetchFromApiAsync<IPet>(`/pet/${petId}`, 'DELETE');
 }
