@@ -13,9 +13,10 @@ type PetsTableProps = {
 };
 
 export function PetsTable(props: PetsTableProps) {
-  const { petKindsRecord } = useSessionContext();
   const [showDeletePetModal, setShowDeletePetModal] = useState<boolean>(false);
   const [selectedPet, setSelectedPet] = useState<IPet | undefined>(undefined);
+
+  const { petKindsRecord } = useSessionContext();
 
   const { pets, onPetActionTaken } = props;
 

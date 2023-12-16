@@ -28,6 +28,7 @@ export function SessionContextProvider(props: SessionContextProviderProps) {
       try {
         const petKinds = await getPetKindsAsync();
 
+        // Comment: Lost more time on this than i had to. I wanted to cache the petkinds in some way so i chose Record<number, string>
         const record = petKinds.reduce(
           (acc: Record<number, string>, curr: IPetKind) => {
             acc[curr.value] = curr.displayName;

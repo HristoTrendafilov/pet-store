@@ -34,6 +34,7 @@ export function DeletePetModal(props: DeletePetModalProps) {
       await deletePetAsync(pet.petId);
       onClose(true);
     } catch (err) {
+      // Comment: The setError() and the getErrorMessage() doesnt feel quite right.
       setError(getErrorMessage(err));
     } finally {
       setIsDeleting(false);
