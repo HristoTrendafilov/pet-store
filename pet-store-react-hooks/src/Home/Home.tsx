@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 // Question: What is up with the ~ ?
 // Usage of relative parent imports is not allowed
 import { getAllPetsAsync } from '~infrastructure/api';
+import { DocumentTitle } from '~infrastructure/components/DocumentTitle';
 import { ErrorMessage } from '~infrastructure/components/errorMessage/ErrorMessage';
 import { LoadingIndicator } from '~infrastructure/components/loadingIndicator/LoadingIndicator';
 import type { IPet } from '~infrastructure/global';
@@ -42,6 +43,7 @@ export function Home() {
 
   return (
     <div className="home-wrapper">
+      <DocumentTitle title="Pet store" />
       <div className="all-pets-card">
         <div className="all-pets-card-header">
           <div>Pet store</div>

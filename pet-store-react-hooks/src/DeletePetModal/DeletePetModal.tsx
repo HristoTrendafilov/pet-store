@@ -2,10 +2,10 @@ import { useState } from 'react';
 
 import { useSessionContext } from '~context/contextHelper';
 import { deletePetAsync } from '~infrastructure/api';
+import { OutsideAlerter } from '~infrastructure/components/OutsideAlerter';
 import { ErrorMessage } from '~infrastructure/components/errorMessage/ErrorMessage';
 import { Modal } from '~infrastructure/components/modal/Modal';
 import type { IPet, WithOptional } from '~infrastructure/global';
-import { OutsideAlerter } from '~infrastructure/utils-components';
 import { formatDate, getErrorMessage } from '~infrastructure/utils-function';
 
 import './deletePetModal.scss';
