@@ -1,56 +1,36 @@
-import { useState } from 'react';
-
-import { useSessionContext } from '~context/contextHelper';
-import { deletePetAsync } from '~infrastructure/api';
 import { OutsideAlerter } from '~infrastructure/components/OutsideAlerter';
-import { ErrorMessage } from '~infrastructure/components/errorMessage/ErrorMessage';
 import { Modal } from '~infrastructure/components/modal/Modal';
-import type { IPet, WithOptional } from '~infrastructure/global';
-import { formatDate, getErrorMessage } from '~infrastructure/utils-function';
+import type { Pet, WithOptional } from '~infrastructure/global';
+import { formatDate } from '~infrastructure/utils-function';
 
 import './deletePetModal.scss';
 
 // Question: Because we may not have all the properties at our disposal, is this OK to make them possibly undefined?
-type PetWithOptional = WithOptional<IPet, 'age' | 'notes' | 'healthProblems'>;
+type PetWithOptionalProps = WithOptional<
+  Pet,
+  'age' | 'notes' | 'healthProblems'
+>;
 
-type DeletePetModalProps = {
-  pet: PetWithOptional;
+interface DeletePetModalProps {
+  pet: PetWithOptionalProps;
+  petKindsMap: Map<number, string>;
   // Question: because im handling things differently on this callback from the parent component
   // is it OK to use one callback with a parameter, or two - onCancel() , onSuccess()?
   onClose: (hasDeleted: boolean) => void;
-};
+}
 
 export function DeletePetModal(props: DeletePetModalProps) {
-  const { petKindsRecord } = useSessionContext();
-  const [error, setError] = useState<string>('');
-  const [isDeleting, setIsDeleting] = useState<boolean>(false);
-
-  const { pet, onClose } = props;
-
-  async function handleDeletePet() {
-    setIsDeleting(true);
-
-    try {
-      await deletePetAsync(pet.petId);
-      onClose(true);
-    } catch (err) {
-      // Comment: The setError() and the getErrorMessage() doesnt feel quite right.
-      setError(getErrorMessage(err));
-    } finally {
-      setIsDeleting(false);
-    }
-  }
+  const { pet, petKindsMap, onClose } = props;
 
   return (
     <Modal>
-      <OutsideAlerter onAlert={() => !isDeleting && onClose(false)}>
+      <OutsideAlerter onAlert={() => onClose(false)}>
         <div className="delete-pet-modal-wrapper">
           <div className="modal-header">
             <div>Delete pet #{pet.petId}</div>
             <button
               className="modal-close-header-btn"
               type="button"
-              disabled={isDeleting}
               onClick={() => onClose(false)}
             >
               X
@@ -61,7 +41,7 @@ export function DeletePetModal(props: DeletePetModalProps) {
               <b>Name:</b> {pet.petName}
             </div>
             <div>
-              <b>Kind:</b> {petKindsRecord[pet.kind]}
+              <b>Kind:</b> {petKindsMap.get(pet.kind)}
             </div>
             {pet.age && (
               <div>
@@ -83,25 +63,17 @@ export function DeletePetModal(props: DeletePetModalProps) {
             </div>
 
             <div className="button-group">
-              <button
-                className="btn btn-danger"
-                type="button"
-                disabled={isDeleting}
-                onClick={handleDeletePet}
-              >
+              <button className="btn btn-danger" type="button">
                 Delete
               </button>
               <button
                 className="btn btn-secondary"
                 type="button"
-                disabled={isDeleting}
                 onClick={() => onClose(false)}
               >
                 Cancel
               </button>
             </div>
-
-            <ErrorMessage message={error} style={{ marginTop: '.7rem' }} />
           </div>
         </div>
       </OutsideAlerter>

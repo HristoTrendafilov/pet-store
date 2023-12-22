@@ -1,14 +1,7 @@
-// Question: Should i remove the console.log() and handle the error differently?
-export function logAndReturnError(error: unknown, message?: string): Error {
+export function reportError(error: unknown) {
   /* eslint-disable no-console */
   console.error(error);
   /* eslint-enable no-console */
-
-  if (error instanceof Error) {
-    return error;
-  }
-
-  return new Error(`${message}`);
 }
 
 // Question: When i use try-catch on api methods and the error is of type: unknown, is there a better way to extract the message?

@@ -1,6 +1,6 @@
-import type { IPet, IPetKind } from '~infrastructure/global';
+import type { Pet, PetKind } from '~infrastructure/global';
 
-import { logAndReturnError } from './utils-function';
+import { reportError } from './utils-function';
 
 const apiBaseUrl = 'http://localhost:5150';
 const apiWaitTimeout = 5000;
@@ -9,6 +9,7 @@ type JsonPropertyType = string | number | boolean | Date;
 export function jsonParseReviver(_: string, value: JsonPropertyType) {
   if (typeof value === 'string' && /\d{4}-\d{2}-\d{2}/.test(value)) {
     const parts = value.split('-');
+
     return new Date(
       Number.parseInt(parts[0], 10),
       Number.parseInt(parts[1], 10) - 1,
@@ -46,7 +47,8 @@ async function fetchFromApiAsync<T>(
   try {
     apiResponse = await fetch(`${apiBaseUrl}${endPoint}`, fetchOptions);
   } catch (err) {
-    throw logAndReturnError(err, `Fetch error. ${apiErrorInfo}`);
+    reportError(err);
+    throw new Error(`Fetch error. ${apiErrorInfo}`);
   }
 
   if (!apiResponse.ok) {
@@ -60,21 +62,15 @@ async function fetchFromApiAsync<T>(
     // Question: The Date properties from the api return as a string, so i needed to parse them to create the Date() from them
     return JSON.parse(responseJson, jsonParseReviver) as T;
   } catch (err) {
-    throw logAndReturnError(
-      err,
-      `Error parsing JSON response. ${apiErrorInfo}`
-    );
+    reportError(err);
+    throw new Error(`Error parsing JSON response. ${apiErrorInfo}`);
   }
 }
 
-export function getAllPetsAsync(): Promise<IPet[]> {
-  return fetchFromApiAsync<IPet[]>('/pet/all', 'GET');
+export function getAllPetsAsync(): Promise<Pet[]> {
+  return fetchFromApiAsync<Pet[]>('/pet/all', 'GET');
 }
 
-export function getPetKindsAsync(): Promise<IPetKind[]> {
-  return fetchFromApiAsync<IPetKind[]>('/pet/kinds', 'GET');
-}
-
-export function deletePetAsync(petId: number): Promise<IPet> {
-  return fetchFromApiAsync<IPet>(`/pet/${petId}`, 'DELETE');
+export function getPetKindsAsync(): Promise<PetKind[]> {
+  return fetchFromApiAsync<PetKind[]>('/pet/kinds', 'GET');
 }

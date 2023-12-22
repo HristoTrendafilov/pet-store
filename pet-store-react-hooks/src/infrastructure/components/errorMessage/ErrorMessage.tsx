@@ -2,10 +2,10 @@ import type { CSSProperties } from 'react';
 
 import './errorMessage.scss';
 
-type ErrorMessageProps = {
+interface ErrorMessageProps {
   message: string;
   style?: CSSProperties;
-};
+}
 
 export function ErrorMessage(props: ErrorMessageProps) {
   const { message, style } = props;

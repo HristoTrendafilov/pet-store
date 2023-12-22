@@ -5,7 +5,13 @@ import './modal.scss';
 
 const modalRoot = document.getElementById('modal') as HTMLDivElement;
 
-export function Modal({ children }: { children: React.ReactNode }) {
+interface ModalProps {
+  children: React.ReactNode | React.ReactNode[];
+}
+
+export function Modal(props: ModalProps) {
+  const { children } = props;
+
   useEffect(() => {
     modalRoot.classList.add('modal');
 

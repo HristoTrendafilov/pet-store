@@ -2,7 +2,13 @@ import { useEffect, useState } from 'react';
 
 import './loadingIndicator.scss';
 
-export function LoadingIndicator({ delay }: { delay?: number }) {
+interface LoadingIndicatorProps {
+  delay?: number;
+}
+
+export function LoadingIndicator(props: LoadingIndicatorProps) {
+  const { delay } = props;
+
   const [showIndicator, setShowIndicator] = useState<boolean>(false);
 
   useEffect(() => {

@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import { SessionContextProvider } from '~context/context';
 import { Home } from '~home/Home';
 
 import './infrastructure/styles.scss';
@@ -13,8 +12,6 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <SessionContextProvider>
-      <Home />
-    </SessionContextProvider>
+    <Home />
   </React.StrictMode>
 );

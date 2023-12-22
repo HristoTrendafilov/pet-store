@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 
-type OutsideAlerterProps = {
+interface OutsideAlerterProps {
   onAlert: () => void;
   children: React.ReactNode | React.ReactNode[];
-};
+}
 
 export function OutsideAlerter(props: OutsideAlerterProps) {
   const { onAlert, children } = props;

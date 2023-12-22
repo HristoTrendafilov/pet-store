@@ -1,6 +1,6 @@
 // Question: If i want to create a global.d.ts file with all the interfaces and types i want to use
 // should the file: tsconfig.json be modified with: "include": ["**/*.d.ts"],
-export interface IPet {
+export interface Pet {
   petId: number;
   petName: string;
   age: number;
@@ -10,7 +10,7 @@ export interface IPet {
   addedDate: Date;
 }
 
-export interface IPetKind {
+export interface PetKind {
   displayName: string;
   value: number;
 }
