@@ -19,40 +19,44 @@ export function Home() {
     new Map<number, string>()
   );
 
-  const refreshPets = useCallback(async () => {
-    setLoading(true);
+  const refreshPets = useCallback(
+    async (fetchPetKindsCb?: () => Promise<void>) => {
+      setLoading(true);
 
-    try {
-      const pets = await getAllPetsAsync();
-      pets.sort((x, y) => (x.petId > y.petId ? -1 : 1));
-
-      setAllPets(pets);
-    } catch (err) {
-      setError(getErrorMessage(err));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    void (async () => {
       try {
-        const petKinds = await getPetKindsAsync();
-        const map = new Map<number, string>();
-        for (const kind of petKinds) {
-          map.set(kind.value, kind.displayName);
+        const petsPromise = getAllPetsAsync();
+
+        if (fetchPetKindsCb) {
+          void fetchPetKindsCb();
         }
 
-        setPetKindsMap(map);
+        const pets = await petsPromise;
+        pets.sort((x, y) => (x.petId > y.petId ? -1 : 1));
+
+        setAllPets(pets);
       } catch (err) {
         setError(getErrorMessage(err));
+      } finally {
+        setLoading(false);
       }
-    })();
+    },
+    []
+  );
+
+  const fetchPetKinds = useCallback(async () => {
+    const petKinds = await getPetKindsAsync();
+
+    const map = new Map<number, string>();
+    for (const kind of petKinds) {
+      map.set(kind.value, kind.displayName);
+    }
+
+    setPetKindsMap(map);
   }, []);
 
   useEffect(() => {
-    void refreshPets();
-  }, [refreshPets]);
+    void refreshPets(fetchPetKinds);
+  }, [refreshPets, fetchPetKinds]);
 
   return (
     <div className="home-wrapper">
@@ -68,9 +72,9 @@ export function Home() {
         <div className="all-pets-card-body">
           <ErrorMessage message={error} />
 
-          {loading ? (
-            <LoadingIndicator />
-          ) : (
+          {loading && <LoadingIndicator />}
+
+          {allPets.length > 0 && petKindsMap.size > 0 && (
             <PetsTable pets={allPets} petKindsMap={petKindsMap} />
           )}
         </div>
