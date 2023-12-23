@@ -74,7 +74,7 @@ export function Home() {
 
           {loading && <LoadingIndicator />}
 
-          {allPets.length > 0 && petKindsMap.size > 0 && (
+          {petKindsMap.size > 0 && (
             <PetsTable pets={allPets} petKindsMap={petKindsMap} />
           )}
         </div>

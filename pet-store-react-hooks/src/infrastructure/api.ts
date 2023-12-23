@@ -30,19 +30,16 @@ async function fetchFromApiAsync<T>(
 
   const fetchOptions: RequestInit = {
     method,
-    // Question: Should i be more specific about the body type?
     body,
     signal: AbortSignal.timeout(apiWaitTimeout),
   };
 
   if (method !== 'GET') {
-    // Question: Should i be more specific about the headers type?
     fetchOptions.headers = {
       'Content-type': 'application/json',
     };
   }
 
-  // Question: should there be anything more specific than 'Response' from when i hover 'fetch'?
   let apiResponse: Response;
   try {
     apiResponse = await fetch(`${apiBaseUrl}${endPoint}`, fetchOptions);

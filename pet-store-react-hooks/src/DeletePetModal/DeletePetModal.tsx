@@ -14,9 +14,7 @@ type PetWithOptionalProps = WithOptional<
 interface DeletePetModalProps {
   pet: PetWithOptionalProps;
   petKindsMap: Map<number, string>;
-  // Question: because im handling things differently on this callback from the parent component
-  // is it OK to use one callback with a parameter, or two - onCancel() , onSuccess()?
-  onClose: (hasDeleted: boolean) => void;
+  onClose: () => void;
 }
 
 export function DeletePetModal(props: DeletePetModalProps) {
@@ -24,14 +22,14 @@ export function DeletePetModal(props: DeletePetModalProps) {
 
   return (
     <Modal>
-      <OutsideAlerter onAlert={() => onClose(false)}>
+      <OutsideAlerter onAlert={() => onClose()}>
         <div className="delete-pet-modal-wrapper">
           <div className="modal-header">
             <div>Delete pet #{pet.petId}</div>
             <button
               className="modal-close-header-btn"
               type="button"
-              onClick={() => onClose(false)}
+              onClick={() => onClose()}
             >
               X
             </button>
@@ -69,7 +67,7 @@ export function DeletePetModal(props: DeletePetModalProps) {
               <button
                 className="btn btn-secondary"
                 type="button"
-                onClick={() => onClose(false)}
+                onClick={() => onClose()}
               >
                 Cancel
               </button>
