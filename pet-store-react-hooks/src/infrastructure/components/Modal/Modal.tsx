@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
-import './modal.scss';
+import './modal.css';
 
 const modalRoot = document.getElementById('modal') as HTMLDivElement;
 
 interface ModalProps {
-  children: React.ReactNode | React.ReactNode[];
+  children: React.ReactNode;
 }
 
 export function Modal(props: ModalProps) {
@@ -22,7 +22,5 @@ export function Modal(props: ModalProps) {
     return null;
   }
 
-  // Question: It bugs the hell out of me that in the DOM tree with the OutsideAlerter happens nesting of 2 <div>
-  // Is it fine this way? Probably not...
-  return createPortal(<div>{children}</div>, modalRoot);
+  return createPortal(children, modalRoot);
 }

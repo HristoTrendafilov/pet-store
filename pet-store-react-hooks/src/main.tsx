@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 
 import { Home } from '~home/Home';
 
-import './infrastructure/styles.scss';
 import './main.css';
 
 const root = ReactDOM.createRoot(

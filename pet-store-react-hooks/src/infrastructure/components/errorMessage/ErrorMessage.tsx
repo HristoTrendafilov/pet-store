@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-import './errorMessage.scss';
+import './errorMessage.css';
 
 interface ErrorMessageProps {
   message: string;
@@ -9,11 +9,6 @@ interface ErrorMessageProps {
 
 export function ErrorMessage(props: ErrorMessageProps) {
   const { message, style } = props;
-
-  // Question: Because i want to put the Component without always checking for errors, is it OK to do this?
-  if (!message) {
-    return null;
-  }
 
   return (
     <div className="system-error-message" style={style}>

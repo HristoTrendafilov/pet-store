@@ -1,24 +1,9 @@
-import type { Pet, PetKind } from '~infrastructure/global';
+import type { Pet, PetKind } from '~infrastructure/api-types';
 
-import { reportError } from './utils-function';
+import { reportError } from './utils';
 
 const apiBaseUrl = 'http://localhost:5150';
 const apiWaitTimeout = 5000;
-
-type JsonPropertyType = string | number | boolean | Date;
-export function jsonParseReviver(_: string, value: JsonPropertyType) {
-  if (typeof value === 'string' && /\d{4}-\d{2}-\d{2}/.test(value)) {
-    const parts = value.split('-');
-
-    return new Date(
-      Number.parseInt(parts[0], 10),
-      Number.parseInt(parts[1], 10) - 1,
-      Number.parseInt(parts[2], 10)
-    );
-  }
-
-  return value;
-}
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 async function fetchFromApiAsync<T>(
@@ -55,9 +40,7 @@ async function fetchFromApiAsync<T>(
   }
 
   try {
-    const responseJson = await apiResponse.text();
-    // Question: The Date properties from the api return as a string, so i needed to parse them to create the Date() from them
-    return JSON.parse(responseJson, jsonParseReviver) as T;
+    return apiResponse.json() as T;
   } catch (err) {
     reportError(err);
     throw new Error(`Error parsing JSON response. ${apiErrorInfo}`);

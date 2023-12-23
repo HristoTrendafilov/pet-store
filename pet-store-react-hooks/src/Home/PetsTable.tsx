@@ -1,10 +1,7 @@
-import { useState } from 'react';
+import type { Pet } from '~infrastructure/api-types';
+import { formatDate } from '~infrastructure/utils';
 
-import { DeletePetModal } from '~deletePetModal/DeletePetModal';
-import type { Pet } from '~infrastructure/global';
-import { formatDate } from '~infrastructure/utils-function';
-
-import './petsTable.scss';
+import './petsTable.css';
 
 interface PetsTableProps {
   pets: Pet[];
@@ -13,9 +10,6 @@ interface PetsTableProps {
 
 export function PetsTable(props: PetsTableProps) {
   const { pets, petKindsMap } = props;
-
-  const [showDeletePetModal, setShowDeletePetModal] = useState<boolean>(false);
-  const [selectedPet, setSelectedPet] = useState<Pet | undefined>(undefined);
 
   return (
     <div className="pets-table-wrapper">
@@ -35,21 +29,14 @@ export function PetsTable(props: PetsTableProps) {
               <tr key={pet.petId}>
                 <td>{pet.petId}</td>
                 <td>{pet.petName}</td>
-                <td>{formatDate(pet.addedDate)}</td>
+                <td>{formatDate(new Date(pet.addedDate))}</td>
                 <td>{petKindsMap.get(pet.kind)}</td>
                 <td colSpan={2}>
                   <div>
                     <button className="btn btn-warning" type="button">
                       View / Edit
                     </button>
-                    <button
-                      onClick={() => {
-                        setSelectedPet(pet);
-                        setShowDeletePetModal(true);
-                      }}
-                      className="btn btn-danger"
-                      type="button"
-                    >
+                    <button className="btn btn-danger" type="button">
                       Delete
                     </button>
                   </div>
@@ -58,17 +45,6 @@ export function PetsTable(props: PetsTableProps) {
             ))}
         </tbody>
       </table>
-
-      {showDeletePetModal && selectedPet && (
-        <DeletePetModal
-          pet={selectedPet}
-          petKindsMap={petKindsMap}
-          onClose={() => {
-            setShowDeletePetModal(false);
-            setSelectedPet(undefined);
-          }}
-        />
-      )}
     </div>
   );
 }
