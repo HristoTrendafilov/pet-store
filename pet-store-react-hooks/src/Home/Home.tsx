@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { getAllPetsAsync, getPetKindsAsync } from '~infrastructure/api';
+import { getAllPetsAsync, getPetKindsAsync } from '~infrastructure/api-client';
 import type { PetListItem } from '~infrastructure/api-types';
 import { ErrorMessage } from '~infrastructure/components/errorMessage/ErrorMessage';
 import { LoadingIndicator } from '~infrastructure/components/loadingIndicator/LoadingIndicator';
@@ -11,11 +11,11 @@ import './Home.css';
 
 export function Home() {
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | undefined>(undefined);
-  const [allPets, setAllPets] = useState<PetListItem[] | undefined>(undefined);
+  const [error, setError] = useState<string | undefined>();
+  const [allPets, setAllPets] = useState<PetListItem[] | undefined>();
   const [petKindsMap, setPetKindsMap] = useState<
     Map<number, string> | undefined
-  >(undefined);
+  >();
 
   const hasFetchedPetKinds = useRef<boolean>(false);
 
