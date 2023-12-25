@@ -1,10 +1,10 @@
-import type { Pet } from '~infrastructure/api-types';
+import type { PetListItem } from '~infrastructure/api-types';
 import { formatDate } from '~infrastructure/utils';
 
 import './PetsTable.css';
 
 interface PetsTableProps {
-  pets: Pet[];
+  pets: PetListItem[];
   petKindsMap: Map<number, string>;
 }
 

@@ -1,4 +1,4 @@
-import type { Pet, PetKind } from '~infrastructure/api-types';
+import type { PetKind, PetListItem } from '~infrastructure/api-types';
 
 import { reportError } from './utils';
 
@@ -47,8 +47,8 @@ async function fetchFromApiAsync<T>(
   }
 }
 
-export function getAllPetsAsync(): Promise<Pet[]> {
-  return fetchFromApiAsync<Pet[]>('/pet/all', 'GET');
+export function getAllPetsAsync(): Promise<PetListItem[]> {
+  return fetchFromApiAsync<PetListItem[]>('/pet/all', 'GET');
 }
 
 export function getPetKindsAsync(): Promise<PetKind[]> {
