@@ -6,7 +6,7 @@ const apiBaseUrl = 'http://localhost:5150';
 const apiWaitTimeout = 5000;
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
-async function fetchFromApiAsync<T>(
+async function fetchJSON<T>(
   endPoint: string,
   method: HttpMethod,
   body?: string
@@ -48,9 +48,9 @@ async function fetchFromApiAsync<T>(
 }
 
 export function getAllPetsAsync(): Promise<PetListItem[]> {
-  return fetchFromApiAsync<PetListItem[]>('/pet/all', 'GET');
+  return fetchJSON<PetListItem[]>('/pet/all', 'GET');
 }
 
 export function getPetKindsAsync(): Promise<PetKind[]> {
-  return fetchFromApiAsync<PetKind[]>('/pet/kinds', 'GET');
+  return fetchJSON<PetKind[]>('/pet/kinds', 'GET');
 }
