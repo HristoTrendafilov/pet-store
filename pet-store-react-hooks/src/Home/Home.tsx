@@ -11,11 +11,11 @@ import './Home.css';
 
 export function Home() {
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
-  const [allPets, setAllPets] = useState<PetListItem[]>([]);
-  const [petKindsMap, setPetKindsMap] = useState<Map<number, string>>(
-    new Map<number, string>()
-  );
+  const [error, setError] = useState<string | undefined>(undefined);
+  const [allPets, setAllPets] = useState<PetListItem[] | undefined>(undefined);
+  const [petKindsMap, setPetKindsMap] = useState<
+    Map<number, string> | undefined
+  >(undefined);
 
   const refreshPets = useCallback(async (fetchPetKinds: boolean = false) => {
     setLoading(true);
@@ -61,7 +61,7 @@ export function Home() {
       <div className="all-pets-card-body">
         {loading && <LoadingIndicator />}
         {error && <ErrorMessage message={error} />}
-        {!error && !loading && (
+        {allPets && petKindsMap && (
           <PetsTable pets={allPets} petKindsMap={petKindsMap} />
         )}
       </div>
