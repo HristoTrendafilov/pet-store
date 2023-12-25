@@ -1,7 +1,7 @@
 import type { Pet } from '~infrastructure/api-types';
 import { formatDate } from '~infrastructure/utils';
 
-import './petsTable.css';
+import './PetsTable.css';
 
 interface PetsTableProps {
   pets: Pet[];

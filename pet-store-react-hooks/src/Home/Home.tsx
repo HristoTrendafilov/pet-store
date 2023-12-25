@@ -7,7 +7,7 @@ import { LoadingIndicator } from '~infrastructure/components/loadingIndicator/Lo
 
 import { PetsTable } from './PetsTable';
 
-import './home.css';
+import './Home.css';
 
 export function Home() {
   const [loading, setLoading] = useState<boolean>(false);

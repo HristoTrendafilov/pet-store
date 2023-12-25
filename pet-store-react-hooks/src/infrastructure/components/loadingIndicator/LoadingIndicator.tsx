@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import './loadingIndicator.css';
+import './LoadingIndicator.css';
 
 interface LoadingIndicatorProps {
   delay?: number;

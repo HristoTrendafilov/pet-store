@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-import './errorMessage.css';
+import './ErrorMessage.css';
 
 interface ErrorMessageProps {
   message: string;
