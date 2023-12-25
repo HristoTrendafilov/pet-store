@@ -2,8 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { getAllPetsAsync, getPetKindsAsync } from '~infrastructure/api-client';
 import type { PetListItem } from '~infrastructure/api-types';
-import { ErrorMessage } from '~infrastructure/components/errorMessage/ErrorMessage';
-import { LoadingIndicator } from '~infrastructure/components/loadingIndicator/LoadingIndicator';
+import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessage';
+import { LoadingIndicator } from '~infrastructure/components/LoadingIndicator/LoadingIndicator';
 
 import { PetsTable } from './PetsTable';
 
