@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { getAllPetsAsync, getPetKindsAsync } from '~infrastructure/api';
 import type { PetListItem } from '~infrastructure/api-types';
@@ -17,13 +17,16 @@ export function Home() {
     Map<number, string> | undefined
   >(undefined);
 
-  const refreshPets = useCallback(async (fetchPetKinds: boolean = false) => {
+  const hasFetchedPetKinds = useRef<boolean>(false);
+
+  const refreshPets = useCallback(async () => {
+    setError(undefined);
     setLoading(true);
 
     try {
       const petsPromise = getAllPetsAsync();
 
-      if (fetchPetKinds) {
+      if (!hasFetchedPetKinds.current) {
         const petKinds = await getPetKindsAsync();
 
         const map = new Map<number, string>();
@@ -32,6 +35,7 @@ export function Home() {
         }
 
         setPetKindsMap(map);
+        hasFetchedPetKinds.current = true;
       }
 
       const pets = await petsPromise;
@@ -46,8 +50,7 @@ export function Home() {
   }, []);
 
   useEffect(() => {
-    document.title = 'Pet store';
-    void refreshPets(true);
+    void refreshPets();
   }, [refreshPets]);
 
   return (
@@ -61,7 +64,7 @@ export function Home() {
       <div className="all-pets-card-body">
         {loading && <LoadingIndicator />}
         {error && <ErrorMessage message={error} />}
-        {allPets && petKindsMap && (
+        {allPets && petKindsMap && !loading && (
           <PetsTable pets={allPets} petKindsMap={petKindsMap} />
         )}
       </div>
