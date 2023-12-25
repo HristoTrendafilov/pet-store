@@ -39,7 +39,7 @@ export function Home() {
       }
 
       const pets = await petsPromise;
-      pets.sort((x, y) => (x.petId > y.petId ? -1 : 1));
+      pets.sort((x, y) => y.petId - x.petId);
       setAllPets(pets);
     } catch (err) {
       reportError(err);
