@@ -64,8 +64,17 @@ export function Home() {
       <div className="all-pets-card-body">
         {loading && <LoadingIndicator />}
         {error && <ErrorMessage message={error} />}
-        {allPets && petKindsMap && (
-          <PetsTable pets={allPets} petKindsMap={petKindsMap} />
+        {/* Had to add !loading so that the table is hidden and the spinner is shown on refreshPets */}
+        {allPets && petKindsMap && !loading && (
+          <PetsTable
+            pets={allPets}
+            petKindsMap={petKindsMap}
+            // Question: How should refreshPets() be handled?
+            // Should the PetsTable component refresh them when a pet is deleted
+            // Should DeletePetModal refresh them when a pet is deleted... Probably not
+            // Should a callback be passed from DeletePetModal to PetsTable to here so that i call refreshPets()?
+            refreshPets={refreshPets}
+          />
         )}
       </div>
     </div>

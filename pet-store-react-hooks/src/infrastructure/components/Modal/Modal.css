@@ -1,0 +1,38 @@
+.modal-backdrop {
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(1px);
+}
+
+.modal-backdrop .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--header);
+  color: var(--white);
+  font-size: 1.8rem;
+  padding: 0.4rem 1rem;
+}
+
+.modal-backdrop .modal-body {
+  background-color: var(--white);
+  border: 1px solid #888;
+  padding: 0.7rem;
+}
+
+.modal-backdrop .modal-close-header-btn {
+  color: var(--black);
+  text-decoration: none;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+}
+
+.modal-backdrop > div {
+  margin: 13rem auto 0;
+}

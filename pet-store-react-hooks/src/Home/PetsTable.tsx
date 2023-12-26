@@ -1,3 +1,6 @@
+import { useState } from 'react';
+
+import { DeletePetModal } from '~DeletePetModal/DeletePetModal';
 import type { PetListItem } from '~infrastructure/api-types';
 import { formatDate } from '~infrastructure/utils';
 
@@ -6,10 +9,14 @@ import './PetsTable.css';
 interface PetsTableProps {
   pets: PetListItem[];
   petKindsMap: Map<number, string>;
+  refreshPets: () => void;
 }
 
 export function PetsTable(props: PetsTableProps) {
-  const { pets, petKindsMap } = props;
+  const { pets, petKindsMap, refreshPets } = props;
+
+  const [showDeletePetModal, setShowDeletePetModal] = useState<boolean>(false);
+  const [selectedPet, setSelectedPet] = useState<PetListItem | undefined>();
 
   return (
     <div className="pets-table-wrapper">
@@ -36,7 +43,14 @@ export function PetsTable(props: PetsTableProps) {
                     <button className="btn btn-warning" type="button">
                       View / Edit
                     </button>
-                    <button className="btn btn-danger" type="button">
+                    <button
+                      className="btn btn-danger"
+                      type="button"
+                      onClick={() => {
+                        setSelectedPet(pet);
+                        setShowDeletePetModal(true);
+                      }}
+                    >
                       Delete
                     </button>
                   </div>
@@ -45,6 +59,21 @@ export function PetsTable(props: PetsTableProps) {
             ))}
         </tbody>
       </table>
+
+      {showDeletePetModal && selectedPet && (
+        <DeletePetModal
+          pet={selectedPet}
+          petKindsMap={petKindsMap}
+          onClose={(hasDeleted: boolean) => {
+            setShowDeletePetModal(false);
+            setSelectedPet(undefined);
+
+            if (hasDeleted) {
+              refreshPets();
+            }
+          }}
+        />
+      )}
     </div>
   );
 }

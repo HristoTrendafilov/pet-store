@@ -1,4 +1,4 @@
-import type { PetKind, PetListItem } from '~infrastructure/api-types';
+import type { Pet, PetKind, PetListItem } from '~infrastructure/api-types';
 
 import { reportError } from './utils';
 
@@ -53,4 +53,8 @@ export function getAllPetsAsync(): Promise<PetListItem[]> {
 
 export function getPetKindsAsync(): Promise<PetKind[]> {
   return fetchJSON<PetKind[]>('/pet/kinds', 'GET');
+}
+
+export function deletePetAsync(petId: number): Promise<Pet> {
+  return fetchJSON<Pet>(`/pet/${petId}`, 'DELETE');
 }
