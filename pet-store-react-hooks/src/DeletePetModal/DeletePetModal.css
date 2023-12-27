@@ -1,23 +1,23 @@
 .delete-pet-modal-wrapper {
-  width: 30rem;
+  width: 480px;
 }
 
 .delete-pet-modal-wrapper .button-group {
   display: flex;
   justify-content: end;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 16px;
+  margin-top: 16px;
 }
 
 @media (max-width: 560px) {
   .delete-pet-modal-wrapper {
-    width: calc(100% - 1rem);
+    width: calc(100% - 16px);
   }
 }
 
 @media (max-width: 300px) {
   .delete-pet-modal-wrapper .button-group {
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 13px;
   }
 }

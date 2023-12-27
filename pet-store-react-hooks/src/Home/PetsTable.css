@@ -11,18 +11,18 @@ td {
 }
 
 td {
-  padding: 0.2rem 0.7rem;
+  padding: 3px 10px;
 }
 
 td:nth-child(5) > div {
   display: flex;
   justify-content: space-between;
-  gap: 0.7rem;
+  gap: 10px;
 }
 
 td:nth-child(5) > div > button {
   width: 100%;
-  font-size: 0.75rem;
+  font-size: 12px;
 }
 
 tr > th:nth-of-type(1) {
@@ -68,7 +68,7 @@ tr > th:nth-of-type(4) {
 
   td:before {
     position: absolute;
-    left: 0.5rem;
+    left: 8px;
     width: 45%;
   }
 
@@ -88,6 +88,6 @@ tr > th:nth-of-type(4) {
 
 @media (max-width: 476px) {
   td:nth-child(5) {
-    padding: 0.5rem 1rem;
+    padding: 8px 16px;
   }
 }

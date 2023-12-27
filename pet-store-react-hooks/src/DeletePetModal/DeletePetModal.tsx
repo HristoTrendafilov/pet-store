@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { deletePetAsync } from '~infrastructure/api-client';
 import type { PetListItem } from '~infrastructure/api-types';
@@ -6,40 +6,44 @@ import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessa
 import { Modal } from '~infrastructure/components/Modal/Modal';
 import { formatDate } from '~infrastructure/utils';
 
-import '~infrastructure/components/Modal/Modal.css';
-
 import './DeletePetModal.css';
 
 type DeletePetModalProps = {
   pet: PetListItem;
   petKindsMap: Map<number, string>;
-  // Question: because im handling things differently on this callback from the parent component
-  // is it OK to use one callback with a parameter, or two - onClose() , onDelete()?
-  onClose: (hasDeleted: boolean) => void;
+  onClose: () => void;
+  onDelete: () => void;
 };
 
 export function DeletePetModal(props: DeletePetModalProps) {
-  const { pet, petKindsMap, onClose } = props;
+  const { pet, petKindsMap, onClose, onDelete } = props;
 
   const [error, setError] = useState<string | undefined>();
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
-  async function handleDeletePet() {
+  const handleDeletePet = useCallback(async () => {
     setIsDeleting(true);
 
     try {
       await deletePetAsync(pet.petId);
-      onClose(true);
+      onDelete();
+      onClose();
     } catch (err) {
       reportError(err);
       setError('System error. Please contact the system administrator.');
     } finally {
       setIsDeleting(false);
     }
-  }
+  }, [onClose, onDelete, pet.petId]);
+
+  const handleModalBackdropClick = useCallback(() => {
+    if (!isDeleting) {
+      onClose();
+    }
+  }, [isDeleting, onClose]);
 
   return (
-    <Modal onBackdropClick={() => !isDeleting && onClose(false)}>
+    <Modal onBackdropClick={handleModalBackdropClick}>
       <div className="delete-pet-modal-wrapper">
         <div className="modal-header">
           <div>Delete pet #{pet.petId}</div>
@@ -47,7 +51,7 @@ export function DeletePetModal(props: DeletePetModalProps) {
             className="modal-close-header-btn"
             type="button"
             disabled={isDeleting}
-            onClick={() => onClose(false)}
+            onClick={onClose}
           >
             X
           </button>
@@ -70,7 +74,7 @@ export function DeletePetModal(props: DeletePetModalProps) {
               className="btn btn-secondary"
               type="button"
               disabled={isDeleting}
-              onClick={() => onClose(false)}
+              onClick={onClose}
             >
               Cancel
             </button>

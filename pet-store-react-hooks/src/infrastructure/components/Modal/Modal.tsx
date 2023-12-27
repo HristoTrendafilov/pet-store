@@ -1,9 +1,7 @@
-import { type ReactNode, useEffect } from 'react';
+import { type ReactNode, useCallback, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 import './Modal.css';
-
-const modalRoot = document.getElementById('modal-root') as HTMLDivElement;
 
 interface ModalProps {
   children: ReactNode;
@@ -13,25 +11,34 @@ interface ModalProps {
 export function Modal(props: ModalProps) {
   const { children, onBackdropClick } = props;
 
-  useEffect(() => {
-    const handleBackdropClick = (event: MouseEvent) => {
-      if (modalRoot && modalRoot === event.target) {
+  const modalBackdropRef = useRef<HTMLDivElement>(null);
+
+  // Question: With this function and useEffect() there should be a simpler way for handling
+  const handleBackdropClick = useCallback(
+    (event: MouseEvent) => {
+      if (
+        modalBackdropRef.current &&
+        modalBackdropRef.current === event.target
+      ) {
         onBackdropClick();
       }
-    };
+    },
+    [onBackdropClick]
+  );
 
-    modalRoot.classList.add('modal-backdrop');
-    modalRoot.addEventListener('click', handleBackdropClick);
+  useEffect(() => {
+    const ref = modalBackdropRef.current;
+    ref?.addEventListener('click', handleBackdropClick);
 
     return () => {
-      modalRoot.removeAttribute('class');
-      modalRoot.removeEventListener('click', handleBackdropClick);
+      ref?.removeEventListener('click', handleBackdropClick);
     };
-  }, [onBackdropClick]);
+  }, [handleBackdropClick]);
 
-  if (!modalRoot) {
-    return null;
-  }
-
-  return createPortal(children, modalRoot);
+  return createPortal(
+    <div ref={modalBackdropRef} className="modal-backdrop">
+      {children}
+    </div>,
+    document.body
+  );
 }

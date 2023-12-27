@@ -1,8 +1,7 @@
 export interface PetListItem {
   petId: number;
   petName: string;
-  // Question: Sence the addedDate comes from the api as string, should i change the type to string and pass it as Date where i have to?
-  addedDate: Date;
+  addedDate: string;
   kind: number;
 }
 
@@ -13,7 +12,7 @@ export interface Pet {
   notes: string;
   kind: number;
   healthProblems: boolean;
-  addedDate: Date;
+  addedDate: string;
 }
 
 export interface PetKind {

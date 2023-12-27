@@ -1,7 +1,7 @@
 .all-pets-card {
   border: 1px solid black;
   max-width: 700px;
-  margin: 3rem auto;
+  margin: 48px auto;
   border-radius: 5px;
   box-shadow:
     rgba(0, 0, 0, 0.25) 0px 54px 55px,
@@ -15,21 +15,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.4rem 1rem;
+  padding: 7px 16px;
   background-color: var(--header);
   color: var(--white);
 }
 
 .all-pets-card > .all-pets-card-body {
-  padding: 0.6rem;
+  padding: 7px;
 }
 
 .all-pets-card > div:nth-of-type(1) {
-  font-size: 2rem;
+  font-size: 32px;
 }
 
 @media (max-width: 705px) {
   .all-pets-card {
-    width: calc(100% - 2rem);
+    width: calc(100% - 32px);
   }
 }
