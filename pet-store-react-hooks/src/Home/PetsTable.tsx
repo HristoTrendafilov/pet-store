@@ -7,11 +7,11 @@ import './PetsTable.css';
 interface PetsTableProps {
   pets: PetListItem[];
   petKindsMap: Map<number, string>;
-  onForDelete: (pet: PetListItem) => void;
+  onDelete: (pet: PetListItem) => void;
 }
 
 export function PetsTable(props: PetsTableProps) {
-  const { pets, petKindsMap, onForDelete } = props;
+  const { pets, petKindsMap, onDelete } = props;
 
   return (
     <div className="pets-table-wrapper">
@@ -32,7 +32,7 @@ export function PetsTable(props: PetsTableProps) {
                 key={pet.petId}
                 pet={pet}
                 petKindsMap={petKindsMap}
-                onDeleteButtonClicked={onForDelete}
+                onDelete={onDelete}
               />
             ))}
         </tbody>

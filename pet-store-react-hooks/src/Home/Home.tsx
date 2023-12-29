@@ -76,7 +76,7 @@ export function Home() {
           <PetsTable
             pets={allPets}
             petKindsMap={petKindsMap}
-            onForDelete={setPetForDelete}
+            onDelete={setPetForDelete}
           />
         )}
       </div>
@@ -86,7 +86,7 @@ export function Home() {
           pet={petForDelete}
           petKindsMap={petKindsMap}
           onClose={clearPetForDelete}
-          onDelete={refreshPets}
+          onDeleted={refreshPets}
         />
       )}
     </div>

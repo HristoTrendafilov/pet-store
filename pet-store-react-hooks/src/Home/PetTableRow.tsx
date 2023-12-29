@@ -6,15 +6,15 @@ import { formatDate } from '~infrastructure/utils';
 interface PetTableRowProps {
   pet: PetListItem;
   petKindsMap: Map<number, string>;
-  onDeleteButtonClicked: (pet: PetListItem) => void;
+  onDelete: (pet: PetListItem) => void;
 }
 
 export function PetTableRow(props: PetTableRowProps) {
-  const { pet, petKindsMap, onDeleteButtonClicked } = props;
+  const { pet, petKindsMap, onDelete } = props;
 
   const handleForDelete = useCallback(() => {
-    onDeleteButtonClicked(pet);
-  }, [pet, onDeleteButtonClicked]);
+    onDelete(pet);
+  }, [pet, onDelete]);
 
   return (
     <tr>

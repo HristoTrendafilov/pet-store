@@ -12,11 +12,11 @@ type DeletePetModalProps = {
   pet: PetListItem;
   petKindsMap: Map<number, string>;
   onClose: () => void;
-  onDelete: () => void;
+  onDeleted: () => void;
 };
 
 export function DeletePetModal(props: DeletePetModalProps) {
-  const { pet, petKindsMap, onClose, onDelete } = props;
+  const { pet, petKindsMap, onClose, onDeleted } = props;
 
   const [error, setError] = useState<string | undefined>();
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -26,7 +26,7 @@ export function DeletePetModal(props: DeletePetModalProps) {
 
     try {
       await deletePetAsync(pet.petId);
-      onDelete();
+      onDeleted();
       onClose();
     } catch (err) {
       reportError(err);
@@ -34,7 +34,7 @@ export function DeletePetModal(props: DeletePetModalProps) {
     } finally {
       setIsDeleting(false);
     }
-  }, [onClose, onDelete, pet.petId]);
+  }, [onClose, onDeleted, pet.petId]);
 
   const handleModalBackdropClick = useCallback(() => {
     if (!isDeleting) {
