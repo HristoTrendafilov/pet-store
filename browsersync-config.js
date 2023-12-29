@@ -18,9 +18,9 @@ module.exports = {
   port: 6344,
   middleware: [
     historyApiFallback(),
-    createProxyMiddleware('/api', {
+    createProxyMiddleware('/api/', {
       target: 'http://localhost:5150',
-      pathRewrite: { '/api': '/' },
+      pathRewrite: { '/api/': '/' },
       changeOrigin: true,
       ws: true,
     }),
