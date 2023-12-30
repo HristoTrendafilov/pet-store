@@ -10,6 +10,7 @@
     "format": "prettier --cache --write .",
     "format-check": "prettier --cache --check .",
     "lint": "eslint ./ --cache --cache-location ./node_modules/.cache/eslint/ --max-warnings 0",
+    "lint:clean-cache": "rimraf ./node_modules/.cache/eslint/",
     "lint:fix": "npm run lint -- --fix"
   },
   "dependencies": {
@@ -69,6 +70,7 @@
     "prettier": "^3.1.1",
     "react-refresh": "^0.14.0",
     "resolve-url-loader": "^5.0.0",
+    "rimraf": "^5.0.5",
     "sass": "^1.69.6",
     "sass-loader": "^13.3.3",
     "style-loader": "^3.3.3",
