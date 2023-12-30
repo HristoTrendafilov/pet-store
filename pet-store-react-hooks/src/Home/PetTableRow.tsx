@@ -5,12 +5,12 @@ import { formatDate } from '~infrastructure/utils';
 
 interface PetTableRowProps {
   pet: PetListItem;
-  petKindsMap: Map<number, string>;
+  petKind: string | undefined;
   onDelete: (pet: PetListItem) => void;
 }
 
 export function PetTableRow(props: PetTableRowProps) {
-  const { pet, petKindsMap, onDelete } = props;
+  const { pet, petKind, onDelete } = props;
 
   const handleForDelete = useCallback(() => {
     onDelete(pet);
@@ -21,7 +21,7 @@ export function PetTableRow(props: PetTableRowProps) {
       <td>{pet.petId}</td>
       <td>{pet.petName}</td>
       <td>{formatDate(new Date(pet.addedDate))}</td>
-      <td>{petKindsMap.get(pet.kind)}</td>
+      <td>{petKind}</td>
       <td colSpan={2}>
         <div>
           <button className="btn btn-warning" type="button">

@@ -40,7 +40,7 @@ async function fetchJSON<T>(
   }
 
   try {
-    return apiResponse.json() as T;
+    return (await apiResponse.json()) as T;
   } catch (err) {
     reportError(err);
     throw new Error(`Error parsing JSON response. ${apiErrorInfo}`);

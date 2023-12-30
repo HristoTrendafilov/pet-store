@@ -31,7 +31,7 @@ export function PetsTable(props: PetsTableProps) {
               <PetTableRow
                 key={pet.petId}
                 pet={pet}
-                petKindsMap={petKindsMap}
+                petKind={petKindsMap.get(pet.kind)}
                 onDelete={onDelete}
               />
             ))}

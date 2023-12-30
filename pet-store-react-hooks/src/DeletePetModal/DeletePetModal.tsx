@@ -68,7 +68,7 @@ export function DeletePetModal(props: DeletePetModalProps) {
               disabled={isDeleting}
               onClick={handleDeletePet}
             >
-              Delete
+              Delete {isDeleting && <span className="submit-spinner" />}
             </button>
             <button
               className="btn btn-secondary"

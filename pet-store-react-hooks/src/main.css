@@ -26,6 +26,8 @@
 .btn {
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 10px;
 
   border: 1px solid var(--black);
   border-radius: 5px;
@@ -53,8 +55,27 @@
 .btn-secondary {
   background-color: var(--secondary);
 }
-/* Buttons */
 
 .btn:disabled {
   opacity: 0.5;
 }
+/* Buttons */
+
+/* Submit button spinner */
+.submit-spinner {
+  width: 10px;
+  height: 10px;
+}
+
+.submit-spinner:after {
+  content: ' ';
+  display: block;
+  margin-top: -3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 8px solid #fff;
+  border-color: #fff transparent #fff transparent;
+  animation: spinner-animation 1.2s linear infinite;
+}
+/* Submit button spinner */
