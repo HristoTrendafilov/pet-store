@@ -3,33 +3,21 @@
   max-width: 700px;
   margin: 48px auto;
   border-radius: 5px;
-  box-shadow:
-    rgba(0, 0, 0, 0.25) 0px 54px 55px,
-    rgba(0, 0, 0, 0.12) 0px -12px 30px,
-    rgba(0, 0, 0, 0.12) 0px 4px 6px,
-    rgba(0, 0, 0, 0.17) 0px 12px 13px,
-    rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
 
 .all-pets-card > .all-pets-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 7px 16px;
+  padding: 5px 15px;
   background-color: var(--header);
   color: var(--white);
 }
 
 .all-pets-card > .all-pets-card-body {
-  padding: 7px;
+  padding: 10px;
 }
 
 .all-pets-card > div:nth-of-type(1) {
-  font-size: 32px;
-}
-
-@media (max-width: 705px) {
-  .all-pets-card {
-    width: calc(100% - 32px);
-  }
+  font-size: 30px;
 }
