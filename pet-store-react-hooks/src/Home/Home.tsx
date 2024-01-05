@@ -6,7 +6,7 @@ import type { PetListItem } from '~infrastructure/api-types';
 import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessage';
 import { LoadingIndicator } from '~infrastructure/components/LoadingIndicator/LoadingIndicator';
 
-import { PetsTable } from './PetsTable';
+import { PetTableRow } from './PetTableRow';
 
 import './Home.css';
 
@@ -70,15 +70,34 @@ export function Home() {
         </button>
       </div>
       <div className="all-pets-card-body">
-        {loading && <LoadingIndicator />}
         {error && <ErrorMessage message={error} />}
-        {allPets && petKindsMap && (
-          <PetsTable
-            pets={allPets}
-            petKindsMap={petKindsMap}
-            onDelete={setPetForDelete}
-          />
-        )}
+
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Added date</th>
+              <th>Kind</th>
+              {/* Question: Empty <th> gave the error: A control must be associated with a text label */}
+              <th colSpan={2} aria-label="actions" />
+            </tr>
+          </thead>
+          <tbody>
+            {allPets &&
+              petKindsMap &&
+              allPets.map((pet) => (
+                <PetTableRow
+                  key={pet.petId}
+                  pet={pet}
+                  petKind={petKindsMap.get(pet.kind)}
+                  onDelete={setPetForDelete}
+                />
+              ))}
+          </tbody>
+        </table>
+
+        {loading && <LoadingIndicator />}
       </div>
 
       {petForDelete && petKindsMap && (
