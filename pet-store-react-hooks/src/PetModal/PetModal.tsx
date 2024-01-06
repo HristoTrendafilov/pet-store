@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 
+import { DeletePetModal } from '~DeletePetModal/DeletePetModal';
 import {
   addPetAsync,
   editPetAsync,
@@ -23,7 +24,7 @@ interface PetModalProps {
   petId?: number;
   petKindsMap: Map<number, string>;
   onClose: () => void;
-  onSaved: () => void;
+  onModified: () => void;
 }
 
 // Question: How do i handle numbers when passing the initial values of the form?
@@ -38,9 +39,9 @@ const initialPetValues: Pet = {
 };
 
 type ModalState = 'View' | 'Edit' | 'New';
-// Question: Why does it trigger twice when i click on Edit button?
+
 export function PetModal(props: PetModalProps) {
-  const { petId, petKindsMap, onClose, onSaved } = props;
+  const { petId, petKindsMap, onClose, onModified } = props;
 
   const [error, setError] = useState<string | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
@@ -50,6 +51,8 @@ export function PetModal(props: PetModalProps) {
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isFormLocked, setIsFormLocked] = useState<boolean>(false);
+
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
   const [modalHeaderTitle, setModalHeaderTitle] = useState<string>(
     petId ? `View pet #${petId}` : 'Add pet'
@@ -71,6 +74,7 @@ export function PetModal(props: PetModalProps) {
 
   const lockForm = useCallback(() => {
     setIsFormLocked(true);
+    // Question: theese two things can be combined in some way
     setModalState('View');
     setModalHeaderTitle(`View pet #${petIdRef.current}`);
   }, []);
@@ -116,6 +120,20 @@ export function PetModal(props: PetModalProps) {
     }
   }, [lockForm, fetchedPet]);
 
+  const handleCloseDeleteModal = useCallback(() => {
+    setShowDeleteModal(false);
+  }, []);
+
+  const handleForDelete = useCallback(() => {
+    setShowDeleteModal(true);
+  }, []);
+
+  const handleDeleted = useCallback(() => {
+    setShowDeleteModal(false);
+    onClose();
+    onModified();
+  }, [onClose, onModified]);
+
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = useCallback(
     async (e) => {
       e.preventDefault();
@@ -134,7 +152,7 @@ export function PetModal(props: PetModalProps) {
         setFormValues(pet);
 
         lockForm();
-        onSaved();
+        onModified();
       } catch (err) {
         reportError(err);
         setError('System error. Please contact the system administrator.');
@@ -142,7 +160,7 @@ export function PetModal(props: PetModalProps) {
         setIsSubmitting(false);
       }
     },
-    [lockForm, onSaved, setFormValues, formValues]
+    [lockForm, onModified, setFormValues, formValues]
   );
 
   return (
@@ -290,7 +308,11 @@ export function PetModal(props: PetModalProps) {
                     >
                       Edit
                     </button>
-                    <button className="btn btn-danger" type="button">
+                    <button
+                      className="btn btn-danger"
+                      type="button"
+                      onClick={handleForDelete}
+                    >
                       Delete
                     </button>
                   </>
@@ -320,6 +342,15 @@ export function PetModal(props: PetModalProps) {
           )}
         </div>
       </div>
+
+      {showDeleteModal && (
+        <DeletePetModal
+          pet={formValues}
+          petKind={petKindsMap.get(formValues.kind)}
+          onClose={handleCloseDeleteModal}
+          onDeleted={handleDeleted}
+        />
+      )}
     </Modal>
   );
 }

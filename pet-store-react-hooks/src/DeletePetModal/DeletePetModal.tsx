@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 
 import { deletePetAsync } from '~infrastructure/api-client';
-import type { PetListItem } from '~infrastructure/api-types';
+import type { Pet, PetListItem } from '~infrastructure/api-types';
 import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessage';
 import { Modal } from '~infrastructure/components/Modal/Modal';
 import { formatDate } from '~infrastructure/utils';
@@ -9,17 +9,20 @@ import { formatDate } from '~infrastructure/utils';
 import './DeletePetModal.css';
 
 type DeletePetModalProps = {
-  pet: PetListItem;
-  petKindsMap: Map<number, string>;
+  pet: PetListItem | Pet;
+  petKind: string | undefined;
   onClose: () => void;
   onDeleted: () => void;
 };
 
 export function DeletePetModal(props: DeletePetModalProps) {
-  const { pet, petKindsMap, onClose, onDeleted } = props;
+  const { pet, petKind, onClose, onDeleted } = props;
 
   const [error, setError] = useState<string | undefined>();
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
+  // Question: There has to be a better way to check which type is passed
+  const petHasWholeData = 'age' in pet;
 
   const handleDeletePet = useCallback(async () => {
     setIsDeleting(true);
@@ -58,7 +61,16 @@ export function DeletePetModal(props: DeletePetModalProps) {
         </div>
         <div className="modal-body">
           <div>Name: {pet.petName}</div>
-          <div>Kind: {petKindsMap.get(pet.kind)}</div>
+          <div>Kind: {petKind}</div>
+          {petHasWholeData && (
+            <>
+              <div>Age: {pet.age}</div>
+              <div>Notes: {pet.notes}</div>
+              <div>
+                Has health problems: {pet.healthProblems ? 'yes' : 'no'}
+              </div>
+            </>
+          )}
           <div>Date added: {formatDate(new Date(pet.addedDate))}</div>
 
           <div className="button-group">

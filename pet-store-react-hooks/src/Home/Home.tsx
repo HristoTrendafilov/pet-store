@@ -124,7 +124,7 @@ export function Home() {
       {petForDelete && petKindsMap && (
         <DeletePetModal
           pet={petForDelete}
-          petKindsMap={petKindsMap}
+          petKind={petKindsMap.get(petForDelete.kind)}
           onClose={clearPetForDelete}
           onDeleted={refreshPets}
         />
@@ -134,7 +134,7 @@ export function Home() {
         <PetModal
           petKindsMap={petKindsMap}
           onClose={handleHideNewPetModal}
-          onSaved={refreshPets}
+          onModified={refreshPets}
         />
       )}
 
@@ -143,7 +143,7 @@ export function Home() {
           petId={petIdForEdit}
           petKindsMap={petKindsMap}
           onClose={clearPetIdForEdit}
-          onSaved={refreshPets}
+          onModified={refreshPets}
         />
       )}
     </div>
