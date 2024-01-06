@@ -120,7 +120,7 @@ export function PetModal(props: PetModalProps) {
     }
   }, [lockForm, fetchedPet]);
 
-  const handleCloseDeleteModal = useCallback(() => {
+  const closeDeleteModal = useCallback(() => {
     setShowDeleteModal(false);
   }, []);
 
@@ -347,7 +347,7 @@ export function PetModal(props: PetModalProps) {
         <DeletePetModal
           pet={formValues}
           petKind={petKindsMap.get(formValues.kind)}
-          onClose={handleCloseDeleteModal}
+          onClose={closeDeleteModal}
           onDeleted={handleDeleted}
         />
       )}

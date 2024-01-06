@@ -19,7 +19,7 @@ export function Home() {
     Map<number, string> | undefined
   >();
 
-  const [showNewPetModal, setShowNewPetModal] = useState<boolean>(false);
+  const [showPetModal, setShowPetModal] = useState<boolean>(false);
   const [petForDelete, setPetForDelete] = useState<PetListItem | undefined>();
   const [petIdForEdit, setPetIdForEdit] = useState<number | undefined>();
 
@@ -60,16 +60,18 @@ export function Home() {
     setPetForDelete(undefined);
   }, []);
 
-  const clearPetIdForEdit = useCallback(() => {
+  const showNewPetModal = useCallback(() => {
+    setShowPetModal(true);
+  }, []);
+
+  const showEditPetModal = useCallback((petId: number) => {
+    setPetIdForEdit(petId);
+    setShowPetModal(true);
+  }, []);
+
+  const hidePetModal = useCallback(() => {
     setPetIdForEdit(undefined);
-  }, []);
-
-  const handleShowNewPetModal = useCallback(() => {
-    setShowNewPetModal(true);
-  }, []);
-
-  const handleHideNewPetModal = useCallback(() => {
-    setShowNewPetModal(false);
+    setShowPetModal(false);
   }, []);
 
   useEffect(() => {
@@ -81,7 +83,7 @@ export function Home() {
       <div className="all-pets-card-header">
         <div>Pet store</div>
         <button
-          onClick={handleShowNewPetModal}
+          onClick={showNewPetModal}
           type="button"
           className="btn btn-success"
           disabled={loading}
@@ -112,7 +114,7 @@ export function Home() {
                   pet={pet}
                   petKind={petKindsMap.get(pet.kind)}
                   onDelete={setPetForDelete}
-                  onEdit={setPetIdForEdit}
+                  onEdit={showEditPetModal}
                 />
               ))}
           </tbody>
@@ -130,19 +132,11 @@ export function Home() {
         />
       )}
 
-      {showNewPetModal && petKindsMap && (
-        <PetModal
-          petKindsMap={petKindsMap}
-          onClose={handleHideNewPetModal}
-          onModified={refreshPets}
-        />
-      )}
-
-      {petIdForEdit && petKindsMap && (
+      {showPetModal && petKindsMap && (
         <PetModal
           petId={petIdForEdit}
           petKindsMap={petKindsMap}
-          onClose={clearPetIdForEdit}
+          onClose={hidePetModal}
           onModified={refreshPets}
         />
       )}
