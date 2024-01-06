@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { DeletePetModal } from '~DeletePetModal/DeletePetModal';
+import { PetModal } from '~PetModal/PetModal';
 import { getAllPetsAsync, getPetKindsAsync } from '~infrastructure/api-client';
 import type { PetListItem } from '~infrastructure/api-types';
 import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessage';
@@ -18,7 +19,9 @@ export function Home() {
     Map<number, string> | undefined
   >();
 
+  const [showNewPetModal, setShowNewPetModal] = useState<boolean>(false);
   const [petForDelete, setPetForDelete] = useState<PetListItem | undefined>();
+  const [petIdForEdit, setPetIdForEdit] = useState<number | undefined>();
 
   const hasFetchedPetKinds = useRef<boolean>(false);
 
@@ -57,6 +60,18 @@ export function Home() {
     setPetForDelete(undefined);
   }, []);
 
+  const clearPetIdForEdit = useCallback(() => {
+    setPetIdForEdit(undefined);
+  }, []);
+
+  const handleShowNewPetModal = useCallback(() => {
+    setShowNewPetModal(true);
+  }, []);
+
+  const handleHideNewPetModal = useCallback(() => {
+    setShowNewPetModal(false);
+  }, []);
+
   useEffect(() => {
     void refreshPets();
   }, [refreshPets]);
@@ -65,7 +80,12 @@ export function Home() {
     <div className="all-pets-card">
       <div className="all-pets-card-header">
         <div>Pet store</div>
-        <button type="button" className="btn btn-success" disabled={loading}>
+        <button
+          onClick={handleShowNewPetModal}
+          type="button"
+          className="btn btn-success"
+          disabled={loading}
+        >
           Add pet
         </button>
       </div>
@@ -92,6 +112,7 @@ export function Home() {
                   pet={pet}
                   petKind={petKindsMap.get(pet.kind)}
                   onDelete={setPetForDelete}
+                  onEdit={setPetIdForEdit}
                 />
               ))}
           </tbody>
@@ -106,6 +127,23 @@ export function Home() {
           petKindsMap={petKindsMap}
           onClose={clearPetForDelete}
           onDeleted={refreshPets}
+        />
+      )}
+
+      {showNewPetModal && petKindsMap && (
+        <PetModal
+          petKindsMap={petKindsMap}
+          onClose={handleHideNewPetModal}
+          onSaved={refreshPets}
+        />
+      )}
+
+      {petIdForEdit && petKindsMap && (
+        <PetModal
+          petId={petIdForEdit}
+          petKindsMap={petKindsMap}
+          onClose={clearPetIdForEdit}
+          onSaved={refreshPets}
         />
       )}
     </div>

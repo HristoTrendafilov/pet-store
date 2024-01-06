@@ -11,3 +11,7 @@ export function formatDate(date: Date): string {
     year: 'numeric',
   });
 }
+
+export function toInputDate(date: Date): string {
+  return date.toISOString().split('T')[0];
+}

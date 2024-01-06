@@ -58,3 +58,15 @@ export function getPetKindsAsync(): Promise<PetKind[]> {
 export function deletePetAsync(petId: number): Promise<Pet> {
   return fetchJSON<Pet>(`/pet/${petId}`, 'DELETE');
 }
+
+export function addPetAsync(pet: Pet): Promise<Pet> {
+  return fetchJSON<Pet>('/pet', 'POST', JSON.stringify(pet));
+}
+
+export function editPetAsync(pet: Pet): Promise<Pet> {
+  return fetchJSON<Pet>(`/pet/${pet.petId}`, 'PUT', JSON.stringify(pet));
+}
+
+export function getPetAsync(petId: number): Promise<Pet> {
+  return fetchJSON(`/pet/${petId}`, 'GET');
+}
