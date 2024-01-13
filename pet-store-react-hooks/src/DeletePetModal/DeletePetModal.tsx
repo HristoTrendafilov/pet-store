@@ -21,8 +21,11 @@ export function DeletePetModal(props: DeletePetModalProps) {
   const [error, setError] = useState<string | undefined>();
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
-  // Question: There has to be a better way to check which type is passed
   const petHasWholeData = 'age' in pet;
+  // typeguard for a type. Function that checks if pet is petlistitem or pet
+  // check it how you want and return parameter is type
+  // when it returns, in the true case, it will know that in this if the type is full pet
+  // Check the typeguard function in the typescript docs
 
   const handleDeletePet = useCallback(async () => {
     setIsDeleting(true);

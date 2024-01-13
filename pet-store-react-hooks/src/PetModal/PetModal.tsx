@@ -27,7 +27,8 @@ interface PetModalProps {
   onModified: () => void;
 }
 
-// Question: How do i handle numbers when passing the initial values of the form?
+// Create type like the Pet but with string values for all of them
+// Create a Map type that changes the types of non string types to string except the booleans
 const initialPetValues: Pet = {
   petId: 0,
   petName: '',
@@ -61,32 +62,27 @@ export function PetModal(props: PetModalProps) {
     petId ? 'View' : 'New'
   );
 
-  // Question: Not the best way to use for the modal header id.
-  // By the time i get to use this, i know there will be a value
+  // Do it as a useState and if its undefined dont show it
   const petIdRef = useRef<number>(petId ?? 0);
 
   const unlockForm = useCallback(() => {
     setIsFormLocked(false);
-    // Question: theese two things can be combined in some way
     setModalState('Edit');
     setModalHeaderTitle(`Edit pet #${petIdRef.current}`);
   }, []);
 
   const lockForm = useCallback(() => {
     setIsFormLocked(true);
-    // Question: theese two things can be combined in some way
     setModalState('View');
     setModalHeaderTitle(`View pet #${petIdRef.current}`);
   }, []);
 
-  // Question: Dont like the usage of parameter here
   const fetchPet = useCallback(async (existingPetId: number) => {
     setLoading(true);
 
     try {
-      // Question: Because of the <React.StrictMode> this was triggering twice and messing up the logic with the locking
-      // Was beginning to lose my sanity
       const pet = await getPetAsync(existingPetId);
+
       setFetchedPet(pet);
       setFormValues(pet);
 
@@ -100,7 +96,6 @@ export function PetModal(props: PetModalProps) {
   }, []);
 
   useEffect(() => {
-    // Question: Either this or i call the function always and check for the petId inside of it
     if (petId) {
       void fetchPet(petId);
     }
@@ -200,7 +195,7 @@ export function PetModal(props: PetModalProps) {
                 Kind
                 <select
                   value={formValues.kind}
-                  // Question: Should i create a callback function for every input
+                  // Create useCallback for every function
                   onChange={(e) =>
                     setFormValues({
                       ...formValues,
@@ -214,7 +209,7 @@ export function PetModal(props: PetModalProps) {
                   }
                 >
                   <option aria-label="empty-option" value="" />
-                  {/* Question: Seems too much work for this */}
+                  {/* Save the array also and just pass it here */}
                   {Array.from(petKindsMap).map(([key, value]) => (
                     <option key={key} value={key}>
                       {value}

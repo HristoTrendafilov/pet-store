@@ -101,8 +101,7 @@ export function Home() {
               <th>Name</th>
               <th>Added date</th>
               <th>Kind</th>
-              {/* Question: Empty <th> gave the error: A control must be associated with a text label */}
-              <th colSpan={2} aria-label="actions" />
+              <th colSpan={2} aria-hidden />
             </tr>
           </thead>
           <tbody>

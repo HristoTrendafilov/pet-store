@@ -59,7 +59,7 @@ export function deletePetAsync(petId: number): Promise<Pet> {
   return fetchJSON<Pet>(`/pet/${petId}`, 'DELETE');
 }
 
-export function addPetAsync(pet: Pet): Promise<Pet> {
+export function addPetAsync(pet: Omit<Pet, 'petId'>): Promise<Pet> {
   return fetchJSON<Pet>('/pet', 'POST', JSON.stringify(pet));
 }
 
