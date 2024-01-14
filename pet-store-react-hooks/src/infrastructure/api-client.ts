@@ -63,8 +63,11 @@ export function addPetAsync(pet: Omit<Pet, 'petId'>): Promise<Pet> {
   return fetchJSON<Pet>('/pet', 'POST', JSON.stringify(pet));
 }
 
-export function editPetAsync(pet: Pet): Promise<Pet> {
-  return fetchJSON<Pet>(`/pet/${pet.petId}`, 'PUT', JSON.stringify(pet));
+export function editPetAsync(
+  pet: Omit<Pet, 'petId'>,
+  petId: number
+): Promise<Pet> {
+  return fetchJSON<Pet>(`/pet/${petId}`, 'PUT', JSON.stringify(pet));
 }
 
 export function getPetAsync(petId: number): Promise<Pet> {

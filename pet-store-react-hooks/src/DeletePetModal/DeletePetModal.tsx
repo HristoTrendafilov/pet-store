@@ -15,17 +15,15 @@ type DeletePetModalProps = {
   onDeleted: () => void;
 };
 
+// Question: I have created this typeguard function to check what type is passed in our component
+// const isPet = (pet: PetListItem | Pet): pet is Pet =>
+//   'age' in pet && 'notes' in pet && 'healthProblems' in pet;
+
 export function DeletePetModal(props: DeletePetModalProps) {
   const { pet, petKind, onClose, onDeleted } = props;
 
   const [error, setError] = useState<string | undefined>();
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-
-  const petHasWholeData = 'age' in pet;
-  // typeguard for a type. Function that checks if pet is petlistitem or pet
-  // check it how you want and return parameter is type
-  // when it returns, in the true case, it will know that in this if the type is full pet
-  // Check the typeguard function in the typescript docs
 
   const handleDeletePet = useCallback(async () => {
     setIsDeleting(true);
@@ -65,15 +63,6 @@ export function DeletePetModal(props: DeletePetModalProps) {
         <div className="modal-body">
           <div>Name: {pet.petName}</div>
           <div>Kind: {petKind}</div>
-          {petHasWholeData && (
-            <>
-              <div>Age: {pet.age}</div>
-              <div>Notes: {pet.notes}</div>
-              <div>
-                Has health problems: {pet.healthProblems ? 'yes' : 'no'}
-              </div>
-            </>
-          )}
           <div>Date added: {formatDate(new Date(pet.addedDate))}</div>
 
           <div className="button-group">

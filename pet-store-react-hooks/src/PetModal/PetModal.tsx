@@ -1,4 +1,5 @@
 import {
+  type ChangeEvent,
   type FormEventHandler,
   useCallback,
   useEffect,
@@ -12,7 +13,7 @@ import {
   editPetAsync,
   getPetAsync,
 } from '~infrastructure/api-client';
-import type { Pet } from '~infrastructure/api-types';
+import type { Pet, PetKind } from '~infrastructure/api-types';
 import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessage';
 import { LoadingIndicator } from '~infrastructure/components/LoadingIndicator/LoadingIndicator';
 import { Modal } from '~infrastructure/components/Modal/Modal';
@@ -22,18 +23,21 @@ import './PetModal.css';
 
 interface PetModalProps {
   petId?: number;
+  petKinds: PetKind[];
   petKindsMap: Map<number, string>;
   onClose: () => void;
   onModified: () => void;
 }
 
-// Create type like the Pet but with string values for all of them
-// Create a Map type that changes the types of non string types to string except the booleans
-const initialPetValues: Pet = {
-  petId: 0,
+type FormValues<T> = {
+  [Property in keyof T]: T[Property] extends boolean ? boolean : string;
+};
+type PetFormValues = FormValues<Omit<Pet, 'petId'>>;
+
+const initialPetValues: PetFormValues = {
   petName: '',
-  kind: 0,
-  age: 0,
+  kind: '',
+  age: '',
   notes: '',
   healthProblems: false,
   addedDate: toInputDate(new Date()),
@@ -42,13 +46,13 @@ const initialPetValues: Pet = {
 type ModalState = 'View' | 'Edit' | 'New';
 
 export function PetModal(props: PetModalProps) {
-  const { petId, petKindsMap, onClose, onModified } = props;
+  const { petId, petKinds, petKindsMap, onClose, onModified } = props;
 
   const [error, setError] = useState<string | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
 
   const [fetchedPet, setFetchedPet] = useState<Pet | undefined>();
-  const [formValues, setFormValues] = useState<Pet>(initialPetValues);
+  const [formValues, setFormValues] = useState<PetFormValues>(initialPetValues);
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isFormLocked, setIsFormLocked] = useState<boolean>(false);
@@ -62,38 +66,70 @@ export function PetModal(props: PetModalProps) {
     petId ? 'View' : 'New'
   );
 
-  // Do it as a useState and if its undefined dont show it
-  const petIdRef = useRef<number>(petId ?? 0);
+  // Question: I'm using a ref here because when i change it to useState,
+  // when i lock the form the value in the state is undefined because of the batching perhaps...
+  const petIdRef = useRef<number | undefined>(petId);
+
+  // Question: I have created a Mapped type that converts the non-boolean types to string
+  // and now i have these two methods to get the Pet type from the form values and the other way around
+  const setPetToFormValues = useCallback((pet: Pet) => {
+    const newFormValues: PetFormValues = {
+      ...pet,
+      kind: pet.kind.toString(),
+      age: pet.age.toString(),
+    };
+
+    setFormValues(newFormValues);
+  }, []);
+
+  const getPetFromFormValues = useCallback((form: PetFormValues) => {
+    const newPet: Omit<Pet, 'petId'> = {
+      ...form,
+      kind: Number(form.kind),
+      age: Number(form.age),
+    };
+
+    return newPet;
+  }, []);
 
   const unlockForm = useCallback(() => {
     setIsFormLocked(false);
     setModalState('Edit');
-    setModalHeaderTitle(`Edit pet #${petIdRef.current}`);
+
+    if (petIdRef.current) {
+      setModalHeaderTitle(`Edit pet #${petIdRef.current}`);
+    }
   }, []);
 
   const lockForm = useCallback(() => {
     setIsFormLocked(true);
     setModalState('View');
-    setModalHeaderTitle(`View pet #${petIdRef.current}`);
-  }, []);
 
-  const fetchPet = useCallback(async (existingPetId: number) => {
-    setLoading(true);
-
-    try {
-      const pet = await getPetAsync(existingPetId);
-
-      setFetchedPet(pet);
-      setFormValues(pet);
-
-      setIsFormLocked(true);
-    } catch (err) {
-      reportError(err);
-      setError('System error. Please contact the system administrator.');
-    } finally {
-      setLoading(false);
+    if (petIdRef.current) {
+      setModalHeaderTitle(`View pet #${petIdRef.current}`);
     }
   }, []);
+
+  const fetchPet = useCallback(
+    async (propsPetId: number) => {
+      setLoading(true);
+
+      try {
+        const pet = await getPetAsync(propsPetId);
+
+        setFetchedPet(pet);
+        setPetToFormValues(pet);
+
+        setIsFormLocked(true);
+      } catch (err) {
+        reportError(err);
+        setError('System error. Please contact the system administrator.');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [setPetToFormValues]
+  );
 
   useEffect(() => {
     if (petId) {
@@ -111,9 +147,9 @@ export function PetModal(props: PetModalProps) {
     lockForm();
 
     if (fetchedPet) {
-      setFormValues(fetchedPet);
+      setPetToFormValues(fetchedPet);
     }
-  }, [lockForm, fetchedPet]);
+  }, [lockForm, fetchedPet, setPetToFormValues]);
 
   const closeDeleteModal = useCallback(() => {
     setShowDeleteModal(false);
@@ -136,15 +172,18 @@ export function PetModal(props: PetModalProps) {
 
       let pet: Pet;
       try {
-        if (formValues.petId > 0) {
-          pet = await editPetAsync(formValues);
+        if (petIdRef.current) {
+          pet = await editPetAsync(
+            getPetFromFormValues(formValues),
+            petIdRef.current
+          );
         } else {
-          pet = await addPetAsync(formValues);
+          pet = await addPetAsync(getPetFromFormValues(formValues));
           petIdRef.current = pet.petId;
         }
 
         setFetchedPet(pet);
-        setFormValues(pet);
+        setPetToFormValues(pet);
 
         lockForm();
         onModified();
@@ -155,7 +194,49 @@ export function PetModal(props: PetModalProps) {
         setIsSubmitting(false);
       }
     },
-    [lockForm, onModified, setFormValues, formValues]
+    [lockForm, onModified, getPetFromFormValues, setPetToFormValues, formValues]
+  );
+
+  const setFormPetName = useCallback(
+    (e: ChangeEvent<HTMLInputElement>): void => {
+      setFormValues({ ...formValues, petName: e.target.value });
+    },
+    [formValues]
+  );
+
+  const setFormPetKind = useCallback(
+    (e: ChangeEvent<HTMLSelectElement>): void => {
+      setFormValues({ ...formValues, kind: e.target.value });
+    },
+    [formValues]
+  );
+
+  const setFormPetAge = useCallback(
+    (e: ChangeEvent<HTMLInputElement>): void => {
+      setFormValues({ ...formValues, age: e.target.value });
+    },
+    [formValues]
+  );
+
+  const setFormPetHealthProblems = useCallback(
+    (e: ChangeEvent<HTMLInputElement>): void => {
+      setFormValues({ ...formValues, healthProblems: e.target.checked });
+    },
+    [formValues]
+  );
+
+  const setFormPetNotes = useCallback(
+    (e: ChangeEvent<HTMLTextAreaElement>): void => {
+      setFormValues({ ...formValues, notes: e.target.value });
+    },
+    [formValues]
+  );
+
+  const setFormPetAddedDate = useCallback(
+    (e: ChangeEvent<HTMLInputElement>): void => {
+      setFormValues({ ...formValues, addedDate: e.target.value });
+    },
+    [formValues]
   );
 
   return (
@@ -182,9 +263,7 @@ export function PetModal(props: PetModalProps) {
                 Name
                 <input
                   value={formValues.petName}
-                  onChange={(e) =>
-                    setFormValues({ ...formValues, petName: e.target.value })
-                  }
+                  onChange={setFormPetName}
                   id="petName"
                   required
                   type="text"
@@ -195,24 +274,15 @@ export function PetModal(props: PetModalProps) {
                 Kind
                 <select
                   value={formValues.kind}
-                  // Create useCallback for every function
-                  onChange={(e) =>
-                    setFormValues({
-                      ...formValues,
-                      kind: Number(e.target.value),
-                    })
-                  }
+                  onChange={setFormPetKind}
                   id="kind"
                   required
-                  disabled={
-                    isFormLocked || isSubmitting || formValues.petId > 0
-                  }
+                  disabled={isFormLocked || isSubmitting || !!petIdRef.current}
                 >
                   <option aria-label="empty-option" value="" />
-                  {/* Save the array also and just pass it here */}
-                  {Array.from(petKindsMap).map(([key, value]) => (
-                    <option key={key} value={key}>
-                      {value}
+                  {petKinds.map((kind) => (
+                    <option key={kind.value} value={kind.value}>
+                      {kind.displayName}
                     </option>
                   ))}
                 </select>
@@ -221,12 +291,7 @@ export function PetModal(props: PetModalProps) {
                 Age
                 <input
                   value={formValues.age}
-                  onChange={(e) =>
-                    setFormValues({
-                      ...formValues,
-                      age: Number(e.target.value),
-                    })
-                  }
+                  onChange={setFormPetAge}
                   id="age"
                   required
                   min="0"
@@ -238,12 +303,7 @@ export function PetModal(props: PetModalProps) {
                 <label htmlFor="healthProblems">
                   <input
                     checked={formValues.healthProblems}
-                    onChange={(e) =>
-                      setFormValues({
-                        ...formValues,
-                        healthProblems: e.target.checked,
-                      })
-                    }
+                    onChange={setFormPetHealthProblems}
                     id="healthProblems"
                     type="checkbox"
                     disabled={isFormLocked || isSubmitting}
@@ -255,9 +315,7 @@ export function PetModal(props: PetModalProps) {
                 Notes
                 <textarea
                   value={formValues.notes}
-                  onChange={(e) =>
-                    setFormValues({ ...formValues, notes: e.target.value })
-                  }
+                  onChange={setFormPetNotes}
                   id="notes"
                   rows={5}
                   disabled={isFormLocked || isSubmitting}
@@ -267,15 +325,11 @@ export function PetModal(props: PetModalProps) {
                 Added date
                 <input
                   value={formValues.addedDate}
-                  onChange={(e) =>
-                    setFormValues({ ...formValues, addedDate: e.target.value })
-                  }
+                  onChange={setFormPetAddedDate}
                   id="addedDate"
                   required
                   type="date"
-                  disabled={
-                    isFormLocked || isSubmitting || formValues.petId > 0
-                  }
+                  disabled={isFormLocked || isSubmitting || !!petIdRef.current}
                 />
               </label>
 
@@ -338,10 +392,10 @@ export function PetModal(props: PetModalProps) {
         </div>
       </div>
 
-      {showDeleteModal && (
+      {showDeleteModal && fetchedPet && (
         <DeletePetModal
-          pet={formValues}
-          petKind={petKindsMap.get(formValues.kind)}
+          pet={fetchedPet}
+          petKind={petKindsMap.get(fetchedPet.kind)}
           onClose={closeDeleteModal}
           onDeleted={handleDeleted}
         />

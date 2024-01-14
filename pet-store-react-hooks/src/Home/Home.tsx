@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { DeletePetModal } from '~DeletePetModal/DeletePetModal';
 import { PetModal } from '~PetModal/PetModal';
 import { getAllPetsAsync, getPetKindsAsync } from '~infrastructure/api-client';
-import type { PetListItem } from '~infrastructure/api-types';
+import type { PetKind, PetListItem } from '~infrastructure/api-types';
 import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessage';
 import { LoadingIndicator } from '~infrastructure/components/LoadingIndicator/LoadingIndicator';
 
@@ -14,7 +14,9 @@ import './Home.css';
 export function Home() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>();
+
   const [allPets, setAllPets] = useState<PetListItem[] | undefined>();
+  const [allPetKinds, setAllPetKinds] = useState<PetKind[] | undefined>();
   const [petKindsMap, setPetKindsMap] = useState<
     Map<number, string> | undefined
   >();
@@ -35,13 +37,14 @@ export function Home() {
 
       if (!hasFetchedPetKinds.current) {
         const petKinds = await getPetKindsAsync();
+        setAllPetKinds(petKinds);
 
         const map = new Map<number, string>();
         for (const kind of petKinds) {
           map.set(kind.value, kind.displayName);
         }
-
         setPetKindsMap(map);
+
         hasFetchedPetKinds.current = true;
       }
 
@@ -56,7 +59,7 @@ export function Home() {
     }
   }, []);
 
-  const clearPetForDelete = useCallback(() => {
+  const hideDeletePetModal = useCallback(() => {
     setPetForDelete(undefined);
   }, []);
 
@@ -126,14 +129,15 @@ export function Home() {
         <DeletePetModal
           pet={petForDelete}
           petKind={petKindsMap.get(petForDelete.kind)}
-          onClose={clearPetForDelete}
+          onClose={hideDeletePetModal}
           onDeleted={refreshPets}
         />
       )}
 
-      {showPetModal && petKindsMap && (
+      {showPetModal && allPetKinds && petKindsMap && (
         <PetModal
           petId={petIdForEdit}
+          petKinds={allPetKinds}
           petKindsMap={petKindsMap}
           onClose={hidePetModal}
           onModified={refreshPets}
