@@ -55,7 +55,7 @@ export function PetModal(props: PetModalProps) {
   const [formValues, setFormValues] = useState<PetFormValues>(initialPetValues);
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [isFormLocked, setIsFormLocked] = useState<boolean>(false);
+  const [isFormLocked, setIsFormLocked] = useState<boolean>(true);
 
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
@@ -119,8 +119,6 @@ export function PetModal(props: PetModalProps) {
 
         setFetchedPet(pet);
         setPetToFormValues(pet);
-
-        setIsFormLocked(true);
       } catch (err) {
         reportError(err);
         setError('System error. Please contact the system administrator.');
@@ -134,6 +132,8 @@ export function PetModal(props: PetModalProps) {
   useEffect(() => {
     if (petId) {
       void fetchPet(petId);
+    } else {
+      setIsFormLocked(false);
     }
   }, [petId, fetchPet]);
 
