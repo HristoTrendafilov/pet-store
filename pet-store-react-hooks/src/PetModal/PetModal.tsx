@@ -3,7 +3,6 @@ import {
   type FormEventHandler,
   useCallback,
   useEffect,
-  useRef,
   useState,
 } from 'react';
 
@@ -13,7 +12,7 @@ import {
   editPetAsync,
   getPetAsync,
 } from '~infrastructure/api-client';
-import type { Pet, PetKind } from '~infrastructure/api-types';
+import type { Pet, PetFormData, PetKind } from '~infrastructure/api-types';
 import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessage';
 import { LoadingIndicator } from '~infrastructure/components/LoadingIndicator/LoadingIndicator';
 import { Modal } from '~infrastructure/components/Modal/Modal';
@@ -32,7 +31,7 @@ interface PetModalProps {
 type FormValues<T> = {
   [Property in keyof T]: T[Property] extends boolean ? boolean : string;
 };
-type PetFormValues = FormValues<Omit<Pet, 'petId'>>;
+type PetFormValues = FormValues<PetFormData>;
 
 const initialPetValues: PetFormValues = {
   petName: '',
@@ -66,12 +65,6 @@ export function PetModal(props: PetModalProps) {
     petId ? 'View' : 'New'
   );
 
-  // Question: I'm using a ref here because when i change it to useState,
-  // when i lock the form the value in the state is undefined because of the batching perhaps...
-  const petIdRef = useRef<number | undefined>(petId);
-
-  // Question: I have created a Mapped type that converts the non-boolean types to string
-  // and now i have these two methods to get the Pet type from the form values and the other way around
   const setPetToFormValues = useCallback((pet: Pet) => {
     const newFormValues: PetFormValues = {
       ...pet,
@@ -83,7 +76,7 @@ export function PetModal(props: PetModalProps) {
   }, []);
 
   const getPetFromFormValues = useCallback((form: PetFormValues) => {
-    const newPet: Omit<Pet, 'petId'> = {
+    const newPet: PetFormData = {
       ...form,
       kind: Number(form.kind),
       age: Number(form.age),
@@ -96,19 +89,19 @@ export function PetModal(props: PetModalProps) {
     setIsFormLocked(false);
     setModalState('Edit');
 
-    if (petIdRef.current) {
-      setModalHeaderTitle(`Edit pet #${petIdRef.current}`);
+    if (fetchedPet) {
+      setModalHeaderTitle(`Edit pet #${fetchedPet.petId}`);
     }
-  }, []);
+  }, [fetchedPet]);
 
   const lockForm = useCallback(() => {
     setIsFormLocked(true);
     setModalState('View');
 
-    if (petIdRef.current) {
-      setModalHeaderTitle(`View pet #${petIdRef.current}`);
+    if (fetchedPet) {
+      setModalHeaderTitle(`View pet #${fetchedPet?.petId}`);
     }
-  }, []);
+  }, [fetchedPet]);
 
   const fetchPet = useCallback(
     async (propsPetId: number) => {
@@ -172,14 +165,13 @@ export function PetModal(props: PetModalProps) {
 
       let pet: Pet;
       try {
-        if (petIdRef.current) {
+        if (fetchedPet) {
           pet = await editPetAsync(
             getPetFromFormValues(formValues),
-            petIdRef.current
+            fetchedPet.petId
           );
         } else {
           pet = await addPetAsync(getPetFromFormValues(formValues));
-          petIdRef.current = pet.petId;
         }
 
         setFetchedPet(pet);
@@ -194,7 +186,14 @@ export function PetModal(props: PetModalProps) {
         setIsSubmitting(false);
       }
     },
-    [lockForm, onModified, getPetFromFormValues, setPetToFormValues, formValues]
+    [
+      lockForm,
+      onModified,
+      getPetFromFormValues,
+      setPetToFormValues,
+      formValues,
+      fetchedPet,
+    ]
   );
 
   const setFormPetName = useCallback(
@@ -277,7 +276,7 @@ export function PetModal(props: PetModalProps) {
                   onChange={setFormPetKind}
                   id="kind"
                   required
-                  disabled={isFormLocked || isSubmitting || !!petIdRef.current}
+                  disabled={isFormLocked || isSubmitting || !!fetchedPet}
                 >
                   <option aria-label="empty-option" value="" />
                   {petKinds.map((kind) => (
@@ -329,7 +328,7 @@ export function PetModal(props: PetModalProps) {
                   id="addedDate"
                   required
                   type="date"
-                  disabled={isFormLocked || isSubmitting || !!petIdRef.current}
+                  disabled={isFormLocked || isSubmitting || !!fetchedPet}
                 />
               </label>
 

@@ -19,3 +19,5 @@ export interface PetKind {
   displayName: string;
   value: number;
 }
+
+export type PetFormData = Omit<Pet, 'petId'>;

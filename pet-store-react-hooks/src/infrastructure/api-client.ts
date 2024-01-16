@@ -1,4 +1,9 @@
-import type { Pet, PetKind, PetListItem } from '~infrastructure/api-types';
+import type {
+  Pet,
+  PetFormData,
+  PetKind,
+  PetListItem,
+} from '~infrastructure/api-types';
 
 import { reportError } from './utils';
 
@@ -59,14 +64,11 @@ export function deletePetAsync(petId: number): Promise<Pet> {
   return fetchJSON<Pet>(`/pet/${petId}`, 'DELETE');
 }
 
-export function addPetAsync(pet: Omit<Pet, 'petId'>): Promise<Pet> {
+export function addPetAsync(pet: PetFormData): Promise<Pet> {
   return fetchJSON<Pet>('/pet', 'POST', JSON.stringify(pet));
 }
 
-export function editPetAsync(
-  pet: Omit<Pet, 'petId'>,
-  petId: number
-): Promise<Pet> {
+export function editPetAsync(pet: PetFormData, petId: number): Promise<Pet> {
   return fetchJSON<Pet>(`/pet/${petId}`, 'PUT', JSON.stringify(pet));
 }
 
