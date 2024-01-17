@@ -15,10 +15,6 @@ type DeletePetModalProps = {
   onDeleted: () => void;
 };
 
-// Question: I have created this typeguard function to check what type is passed in our component
-// const isPet = (pet: PetListItem | Pet): pet is Pet =>
-//   'age' in pet && 'notes' in pet && 'healthProblems' in pet;
-
 export function DeletePetModal(props: DeletePetModalProps) {
   const { pet, petKind, onClose, onDeleted } = props;
 
