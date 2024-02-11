@@ -7,7 +7,7 @@ import type {
 
 import { reportError } from './utils';
 
-const apiBaseUrl = 'http://localhost:5150';
+export const apiBaseUrl = 'http://localhost:5150';
 const apiWaitTimeout = 5000;
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
