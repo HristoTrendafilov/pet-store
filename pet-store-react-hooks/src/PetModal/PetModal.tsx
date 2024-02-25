@@ -204,7 +204,7 @@ export function PetModal(props: PetModalProps) {
   );
 
   const setFormPetKind = useCallback(
-    (e: ChangeEvent<HTMLSelectElement>) => {
+    (e: ChangeEvent<HTMLSelectElement>): void => {
       setFormValues({ ...formValues, kind: e.target.value });
     },
     [formValues]

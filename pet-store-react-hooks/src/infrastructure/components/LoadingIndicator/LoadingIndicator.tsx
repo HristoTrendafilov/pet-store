@@ -24,7 +24,7 @@ export function LoadingIndicator(props: LoadingIndicatorProps) {
   }
 
   return (
-    <div className="spinner-wrapper">
+    <div aria-label="loading-indicator" className="spinner-wrapper">
       <div className="loading-spinner" />
     </div>
   );
