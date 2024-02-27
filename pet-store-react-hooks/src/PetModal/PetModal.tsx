@@ -16,7 +16,7 @@ import type { Pet, PetFormData, PetKind } from '~infrastructure/api-types';
 import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessage';
 import { LoadingIndicator } from '~infrastructure/components/LoadingIndicator/LoadingIndicator';
 import { Modal } from '~infrastructure/components/Modal/Modal';
-import { toInputDate } from '~infrastructure/utils';
+import { reportError, toInputDate } from '~infrastructure/utils';
 
 import './PetModal.css';
 

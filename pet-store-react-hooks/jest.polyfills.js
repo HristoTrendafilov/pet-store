@@ -31,8 +31,7 @@ Object.defineProperties(global, {
   Response: { value: Response },
 });
 
-AbortSignal.timeout = (ms) => {
+AbortSignal.timeout = () => {
   const controller = new AbortController();
-  setTimeout(() => controller.abort(new DOMException('TimeoutError'), ms));
   return controller.signal;
 };
