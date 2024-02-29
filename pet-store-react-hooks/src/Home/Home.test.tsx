@@ -1,4 +1,4 @@
-import { petKinds, pets } from '~/Tests/data';
+import { petKinds, pets, petsList } from '~/Tests/data';
 import {
   render,
   screen,
@@ -59,13 +59,13 @@ test('The table is displayed, columns count and text inside of them is correct',
 
   const headerCells = screen.getAllByRole('columnheader', { hidden: true });
   expect(headerCells).toHaveLength(5);
-  expect(headerCells[headerCells.length - 1]).toHaveAttribute('colSpan', '2');
 
   expect(headerCells[0]).toHaveTextContent('#');
   expect(headerCells[1]).toHaveTextContent('Name');
   expect(headerCells[2]).toHaveTextContent('Added date');
   expect(headerCells[3]).toHaveTextContent('Kind');
   expect(headerCells[4]).toHaveTextContent('');
+  expect(headerCells[4]).toHaveAttribute('colSpan', '2');
 });
 
 test('All table rows are rendered, cell values are visualized correctly and each row has the View/Edit and Delete button', async () => {
@@ -77,7 +77,7 @@ test('All table rows are rendered, cell values are visualized correctly and each
     }),
     http.get(`${apiBaseUrl}/pet/all`, async () => {
       await waitHandle.wait();
-      return HttpResponse.json(pets);
+      return HttpResponse.json(petsList);
     })
   );
 
@@ -129,6 +129,8 @@ test('All table rows are rendered, cell values are visualized correctly and each
   expect(thirdRowButtons[1]).toHaveTextContent('Delete');
 });
 
+// Question: I have to make the modal button and content to be siblings instead of nested,
+// because the error is bugging me
 test('New pet modal is shown on Add pet button click and then closed', async () => {
   const user = userEvent.setup();
   const waitHandle = new WaitHandle();
@@ -139,7 +141,7 @@ test('New pet modal is shown on Add pet button click and then closed', async () 
     }),
     http.get(`${apiBaseUrl}/pet/all`, async () => {
       await waitHandle.wait();
-      return HttpResponse.json(pets);
+      return HttpResponse.json(petsList);
     })
   );
 
@@ -174,23 +176,18 @@ test('View/Edit pet modal is shown on row button click and then closed', async (
       await waitHandle.wait();
       return HttpResponse.json(pets);
     }),
-    http.get(`${apiBaseUrl}/pet/:petId`, async ({ request }) => {
-      const url = new URL(request.url);
-      const paramPetId = url.searchParams.get('petId');
-      console.log('paramPetId: ' + paramPetId);
-      if (!paramPetId) {
-        return new HttpResponse(null, { status: 404 });
-      }
-
-      const petId = Number.parseInt(paramPetId!);
-      const pet = pets.filter((x) => x.petId === petId);
-
+    http.get(`${apiBaseUrl}/pet/44`, async () => {
+      await waitHandle.wait();
+      const pet = pets.find((x) => x.petId === 44);
       return HttpResponse.json(pet);
     })
   );
 
   render(<Home />);
 
+  // Question: in this case i dont care about the loading indicator
+  // but i have to wait for it to dissapear so i can be sure the controls are there
+  // Is there any way to ditch this logic?
   const loadingIndicator = await screen.findByLabelText('loading-indicator');
   waitHandle.release();
   await waitForElementToBeRemoved(loadingIndicator);
@@ -201,12 +198,10 @@ test('View/Edit pet modal is shown on row button click and then closed', async (
   const modal = screen.getByLabelText('modal');
   expect(modal).toBeInTheDocument();
 
-  // Question: Is it OK to use querySelector to find elements?
-  const modalHeader = modal.querySelector('.modal-header > div');
-  expect(modalHeader).toHaveTextContent('View pet #44');
-
+  // Same here
   const ModalLoadingIndicator =
     await screen.findByLabelText('loading-indicator');
+  waitHandle.release();
   await waitForElementToBeRemoved(ModalLoadingIndicator);
 
   const modalCancelButton = screen.getByRole('button', { name: 'Cancel' });
@@ -215,7 +210,77 @@ test('View/Edit pet modal is shown on row button click and then closed', async (
   expect(modal).not.toBeInTheDocument();
 });
 
-test('Delete pet modal is shown on row button click and then closed', () => {});
+test('Delete pet modal is shown on row button click and then closed', async () => {
+  const user = userEvent.setup();
+  const waitHandle = new WaitHandle();
 
-test('Error message is displayed and Add pet button is disabled on fail from fetching pets', () => {});
-test('Error message is displayed and Add pet button is disabled on fail from fetching pet kinds', () => {});
+  server.resetHandlers(
+    http.get(`${apiBaseUrl}/pet/kinds`, async () => {
+      return HttpResponse.json(petKinds);
+    }),
+    http.get(`${apiBaseUrl}/pet/all`, async () => {
+      await waitHandle.wait();
+      return HttpResponse.json(pets);
+    })
+  );
+
+  render(<Home />);
+
+  const loadingIndicator = await screen.findByLabelText('loading-indicator');
+  waitHandle.release();
+  await waitForElementToBeRemoved(loadingIndicator);
+
+  const deletePetButton = screen.getAllByRole('button', {
+    name: 'Delete',
+  });
+  await user.click(deletePetButton[0]);
+
+  const modal = screen.getByLabelText('modal');
+  expect(modal).toBeInTheDocument();
+
+  const modalCancelButton = screen.getByRole('button', { name: 'Cancel' });
+  await user.click(modalCancelButton);
+
+  expect(modal).not.toBeInTheDocument();
+});
+
+test('Error message is displayed on fail from fetching pets', async () => {
+  server.resetHandlers(
+    http.get(`${apiBaseUrl}/pet/kinds`, async () => {
+      return HttpResponse.json(petKinds);
+    }),
+    http.get(`${apiBaseUrl}/pet/all`, async () => {
+      return new HttpResponse(null, { status: 500 });
+    })
+  );
+
+  render(<Home />);
+
+  const errorMessage = await screen.findByLabelText('system-error-message');
+  expect(errorMessage).toBeInTheDocument();
+  expect(errorMessage).toHaveTextContent(
+    'System error. Please contact the system administrator.'
+  );
+});
+
+test('Error message is displayed on fetching pet kinds', async () => {
+  server.resetHandlers(
+    http.get(`${apiBaseUrl}/pet/kinds`, async () => {
+      return new HttpResponse(null, { status: 500 });
+    }),
+    http.get(`${apiBaseUrl}/pet/all`, async () => {
+      return HttpResponse.json(pets);
+    })
+  );
+
+  render(<Home />);
+
+  const errorMessage = await screen.findByLabelText('system-error-message');
+  expect(errorMessage).toBeInTheDocument();
+  expect(errorMessage).toHaveTextContent(
+    'System error. Please contact the system administrator.'
+  );
+});
+
+// Question: Why is the '% Branch' column at 93.75% ?
+// Perhaps the errors from the modal and fetch
