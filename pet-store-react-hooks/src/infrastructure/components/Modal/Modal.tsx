@@ -21,14 +21,15 @@ export function Modal(props: ModalProps) {
   );
 
   return createPortal(
-    <button
-      type="button"
-      onClick={handleBackdropClick}
-      className="modal-backdrop"
-      aria-label="modal"
-    >
-      {children}
-    </button>,
+    <div className="modal-wrapper" role="dialog">
+      <button
+        type="button"
+        className="modal-backdrop"
+        onClick={handleBackdropClick}
+        aria-label="modal backdrop"
+      />
+      <div className="modal-content">{children}</div>
+    </div>,
     document.body
   );
 }

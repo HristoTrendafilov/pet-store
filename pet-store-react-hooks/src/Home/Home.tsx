@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { reportError } from '~/infrastructure/utils';
+import { reportError } from '~/infrastructure/reportError';
 import { DeletePetModal } from '~DeletePetModal/DeletePetModal';
 import { PetModal } from '~PetModal/PetModal';
 import { getAllPetsAsync, getPetKindsAsync } from '~infrastructure/api-client';

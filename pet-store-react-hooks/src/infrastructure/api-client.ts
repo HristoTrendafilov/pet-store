@@ -1,11 +1,10 @@
+import { reportError } from '~/infrastructure/reportError';
 import type {
   Pet,
   PetFormData,
   PetKind,
   PetListItem,
 } from '~infrastructure/api-types';
-
-import { reportError } from './utils';
 
 export const apiBaseUrl = 'http://localhost:5150';
 const apiWaitTimeout = 5000;

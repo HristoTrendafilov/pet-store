@@ -19,7 +19,7 @@ export function LoadingIndicator(props: LoadingIndicatorProps) {
     };
   }, [delay]);
 
-  if (!showIndicator && process.env.NODE_ENV !== 'test') {
+  if (!showIndicator) {
     return null;
   }
 

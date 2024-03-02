@@ -16,7 +16,8 @@ import type { Pet, PetFormData, PetKind } from '~infrastructure/api-types';
 import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessage';
 import { LoadingIndicator } from '~infrastructure/components/LoadingIndicator/LoadingIndicator';
 import { Modal } from '~infrastructure/components/Modal/Modal';
-import { reportError, toInputDate } from '~infrastructure/utils';
+import { reportError } from '~infrastructure/reportError';
+import { toInputDate } from '~infrastructure/utils';
 
 import './PetModal.css';
 
@@ -48,7 +49,7 @@ export function PetModal(props: PetModalProps) {
   const { petId, petKinds, petKindsMap, onClose, onModified } = props;
 
   const [error, setError] = useState<string | undefined>();
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const [fetchedPet, setFetchedPet] = useState<Pet | undefined>();
   const [formValues, setFormValues] = useState<PetFormValues>(initialPetValues);
@@ -127,6 +128,7 @@ export function PetModal(props: PetModalProps) {
       void fetchPet(petId);
     } else {
       setIsFormLocked(false);
+      setLoading(false);
     }
   }, [petId, fetchPet]);
 
