@@ -9,10 +9,10 @@ import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
 
 import { Home } from '~/Home/Home';
-import { WaitHandle } from '~/Tests/WaitHandle';
-import { petKinds, pets, petsList } from '~/Tests/data';
-import { handlers } from '~/Tests/handlers';
 import { apiBaseUrl } from '~/infrastructure/api-client';
+import { WaitHandle } from '~testing/WaitHandle';
+import { petKinds, pets, petsList } from '~testing/data';
+import { handlers } from '~testing/handlers';
 
 const server = setupServer(...handlers);
 
@@ -105,7 +105,6 @@ test('All table rows are rendered, cell values are visualized correctly and each
 
 test('New pet modal is shown on Add pet button click and then closed', async () => {
   const user = userEvent.setup();
-
   render(<Home />);
 
   const addPetButton = await screen.findByRole('button', { name: 'Add pet' });
@@ -187,7 +186,7 @@ test('Error message is displayed on fail from fetching pets', async () => {
   );
 });
 
-test('Error message is displayed on fetching pet kinds', async () => {
+test('Error message is displayed on fail from fetching pet kinds', async () => {
   const waitHandle = new WaitHandle();
 
   server.resetHandlers(

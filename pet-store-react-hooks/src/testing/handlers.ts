@@ -1,8 +1,7 @@
-// Question: how to solve this: 'msw' should be listed in the project's dependencies, not devDependencies
 import { HttpResponse, http } from 'msw';
 
-import { petKinds, pets } from '~/Tests/data';
 import { apiBaseUrl } from '~/infrastructure/api-client';
+import { petKinds, pets } from '~testing/data';
 
 export const handlers = [
   http.get(`${apiBaseUrl}/pet/kinds`, () => HttpResponse.json(petKinds)),
