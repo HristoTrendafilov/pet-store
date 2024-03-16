@@ -14,7 +14,19 @@ export const handlers = [
     }
 
     const petId = Number.parseInt(paramPetId, 10);
-    const pet = pets.filter((x) => x.petId === petId);
+    const pet = pets.find((x) => x.petId === petId);
+
+    return HttpResponse.json(pet);
+  }),
+  http.delete(`${apiBaseUrl}/pet/:petId`, ({ request }) => {
+    const url = new URL(request.url);
+    const paramPetId = url.searchParams.get('petId');
+    if (!paramPetId) {
+      return new HttpResponse(null, { status: 404 });
+    }
+
+    const petId = Number.parseInt(paramPetId, 10);
+    const pet = pets.find((x) => x.petId === petId);
 
     return HttpResponse.json(pet);
   }),

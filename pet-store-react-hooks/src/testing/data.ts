@@ -4,6 +4,11 @@ export const petKinds = [
   { displayName: 'Parrot', value: 3 },
 ];
 
+export const petKindsMap = new Map<number, string>();
+petKinds.forEach((pet) => {
+  petKindsMap.set(pet.value, pet.displayName);
+});
+
 export const pets = [
   {
     petId: 42,
