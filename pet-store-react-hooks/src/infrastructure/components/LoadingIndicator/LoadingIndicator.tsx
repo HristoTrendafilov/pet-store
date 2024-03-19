@@ -24,7 +24,11 @@ export function LoadingIndicator(props: LoadingIndicatorProps) {
   }
 
   return (
-    <div aria-label="loading-indicator" className="spinner-wrapper">
+    <div
+      role="alert"
+      aria-label="loading indicator"
+      className="spinner-wrapper"
+    >
       <div className="loading-spinner" />
     </div>
   );

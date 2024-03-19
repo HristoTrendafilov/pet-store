@@ -12,7 +12,8 @@ export function ErrorMessage(props: ErrorMessageProps) {
 
   return (
     <div
-      aria-label="system-error-message"
+      role="alert"
+      aria-label="system error message"
       className="system-error-message"
       style={style}
     >

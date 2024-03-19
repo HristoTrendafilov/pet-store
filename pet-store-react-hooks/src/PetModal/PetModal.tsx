@@ -44,6 +44,11 @@ const initialPetValues: PetFormValues = {
 };
 
 type ModalState = 'View' | 'Edit' | 'New';
+const modalStateNames = new Map<ModalState, string>([
+  ['View', 'View pet modal'],
+  ['Edit', 'Edit pet modal'],
+  ['New', 'Add pet modal'],
+]);
 
 export function PetModal(props: PetModalProps) {
   const { petId, petKinds, petKindsMap, onClose, onModified } = props;
@@ -241,7 +246,10 @@ export function PetModal(props: PetModalProps) {
   );
 
   return (
-    <Modal onBackdropClick={handleModalBackdropClick}>
+    <Modal
+      name={modalStateNames.get(modalState)}
+      onBackdropClick={handleModalBackdropClick}
+    >
       <div className="pet-modal-wrapper">
         <div className="modal-header">
           <div>{modalHeaderTitle}</div>

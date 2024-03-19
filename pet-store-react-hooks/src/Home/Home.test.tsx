@@ -45,7 +45,9 @@ test('Add pet button is disabled while fetching pets and then enabled', async ()
   const addPetButton = await screen.findByRole('button', { name: 'Add pet' });
   expect(addPetButton).toBeDisabled();
 
-  const loadingIndicator = await screen.findByLabelText('loading-indicator');
+  const loadingIndicator = await screen.findByRole('alert', {
+    name: 'loading indicator',
+  });
   waitHandle.release();
   await waitForElementToBeRemoved(loadingIndicator);
 
@@ -83,7 +85,9 @@ test('All table rows are rendered, cell values are visualized correctly and each
 
   render(<Home />);
 
-  const loadingIndicator = await screen.findByLabelText('loading-indicator');
+  const loadingIndicator = await screen.findByRole('alert', {
+    name: 'loading indicator',
+  });
   waitHandle.release();
   await waitForElementToBeRemoved(loadingIndicator);
 
@@ -110,7 +114,9 @@ test('New pet modal is shown on Add pet button click and then closed', async () 
   const addPetButton = await screen.findByRole('button', { name: 'Add pet' });
   await user.click(addPetButton);
 
-  const modal = await screen.findByRole('dialog');
+  const modal = await screen.findByRole('dialog', {
+    name: 'Add pet modal',
+  });
   expect(modal).toBeInTheDocument();
 
   const modalCancelButton = await screen.findByRole('button', {
@@ -118,7 +124,6 @@ test('New pet modal is shown on Add pet button click and then closed', async () 
   });
   await user.click(modalCancelButton);
 
-  // The element(s) given to waitForElementToBeRemoved are already removed. waitForElementToBeRemoved requires that the element(s) exist(s) before waiting for removal.
   expect(modal).not.toBeInTheDocument();
 });
 
@@ -131,7 +136,9 @@ test('View/Edit pet modal is shown on row button click and then closed', async (
   });
   await user.click(editPetButton[0]);
 
-  const modal = await screen.findByRole('dialog');
+  const modal = await screen.findByRole('dialog', {
+    name: 'View pet modal',
+  });
   expect(modal).toBeInTheDocument();
 
   const modalCancelButton = await screen.findByRole('button', {
@@ -151,7 +158,9 @@ test('Delete pet modal is shown on row button click and then closed', async () =
   });
   await user.click(deletePetButton[0]);
 
-  const modal = await screen.findByRole('dialog');
+  const modal = await screen.findByRole('dialog', {
+    name: 'Delete pet modal',
+  });
   expect(modal).toBeInTheDocument();
 
   const modalCancelButton = await screen.findByRole('button', {
@@ -175,11 +184,15 @@ test('Error message is displayed on fail from fetching pets', async () => {
 
   render(<Home />);
 
-  const loadingIndicator = await screen.findByLabelText('loading-indicator');
+  const loadingIndicator = await screen.findByRole('alert', {
+    name: 'loading indicator',
+  });
   waitHandle.release();
   await waitForElementToBeRemoved(loadingIndicator);
 
-  const errorMessage = await screen.findByLabelText('system-error-message');
+  const errorMessage = await screen.findByRole('alert', {
+    name: 'system error message',
+  });
   expect(errorMessage).toBeInTheDocument();
   expect(errorMessage).toHaveTextContent(
     'System error. Please contact the system administrator.'
@@ -199,11 +212,15 @@ test('Error message is displayed on fail from fetching pet kinds', async () => {
 
   render(<Home />);
 
-  const loadingIndicator = await screen.findByLabelText('loading-indicator');
+  const loadingIndicator = await screen.findByRole('alert', {
+    name: 'loading indicator',
+  });
   waitHandle.release();
   await waitForElementToBeRemoved(loadingIndicator);
 
-  const errorMessage = await screen.findByLabelText('system-error-message');
+  const errorMessage = await screen.findByRole('alert', {
+    name: 'system error message',
+  });
   expect(errorMessage).toBeInTheDocument();
   expect(errorMessage).toHaveTextContent(
     'System error. Please contact the system administrator.'

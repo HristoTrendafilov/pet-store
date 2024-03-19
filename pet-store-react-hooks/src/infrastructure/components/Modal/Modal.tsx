@@ -6,22 +6,19 @@ import './Modal.css';
 interface ModalProps {
   children: ReactNode;
   onBackdropClick: () => void;
+  name?: string;
 }
 
 export function Modal(props: ModalProps) {
-  const { children, onBackdropClick } = props;
+  const { children, onBackdropClick, name } = props;
 
-  const handleBackdropClick: MouseEventHandler<HTMLButtonElement> = useCallback(
-    (e) => {
-      if (e.currentTarget === e.target) {
-        onBackdropClick();
-      }
-    },
-    [onBackdropClick]
-  );
+  const handleBackdropClick: MouseEventHandler<HTMLButtonElement> =
+    useCallback(() => {
+      onBackdropClick();
+    }, [onBackdropClick]);
 
   return createPortal(
-    <div className="modal-wrapper" role="dialog">
+    <div className="modal-wrapper" role="dialog" aria-label={name}>
       <button
         type="button"
         className="modal-backdrop"

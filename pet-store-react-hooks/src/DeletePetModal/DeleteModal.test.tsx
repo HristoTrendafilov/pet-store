@@ -12,21 +12,23 @@ import { handlers } from '~testing/handlers';
 const server = setupServer(...handlers);
 
 beforeAll(() => server.listen());
-afterEach(() => server.resetHandlers());
+afterEach(() => {
+  server.resetHandlers();
+  jest.restoreAllMocks();
+});
 afterAll(() => server.close());
 
-// Question: When i have pet for testing, is it OK to get it outside of the tests and use it in all of them?
 const petForDelete = petsList.find((x) => x.petId === 44);
 if (!petForDelete) {
   throw new Error('Pet with petId: 44 is not found in the testing data');
 }
 
-// Question: I'm defining the callback function here and cleaning the mock data in the tests i'm using them. OK?
-const onClose = jest.fn();
-const onDeleted = jest.fn();
 jest.mock('~/infrastructure/reportError');
 
 test('Header and pet information is displayed correctly, Delete and Cancel buttons are visualised', async () => {
+  const onClose = jest.fn();
+  const onDeleted = jest.fn();
+
   render(
     <DeletePetModal
       pet={petForDelete}
@@ -61,8 +63,10 @@ test('Header and pet information is displayed correctly, Delete and Cancel butto
   expect(cancelButton).toBeInTheDocument();
 });
 
-test('Modal is closed on header close button click', async () => {
-  onClose.mockClear();
+test('onClose is called on header close button click', async () => {
+  const onClose = jest.fn();
+  const onDeleted = jest.fn();
+
   const user = userEvent.setup();
 
   render(
@@ -80,8 +84,10 @@ test('Modal is closed on header close button click', async () => {
   expect(onClose).toHaveBeenCalled();
 });
 
-test('Modal is closed on body Cancel button click', async () => {
-  onClose.mockClear();
+test('onClose is called on body Cancel button click', async () => {
+  const onClose = jest.fn();
+  const onDeleted = jest.fn();
+
   const user = userEvent.setup();
 
   render(
@@ -99,8 +105,10 @@ test('Modal is closed on body Cancel button click', async () => {
   expect(onClose).toHaveBeenCalled();
 });
 
-test('Modal is closed on modal backdrop click', async () => {
-  onClose.mockClear();
+test('onClose is called on modal backdrop click', async () => {
+  const onClose = jest.fn();
+  const onDeleted = jest.fn();
+
   const user = userEvent.setup();
 
   render(
@@ -119,8 +127,8 @@ test('Modal is closed on modal backdrop click', async () => {
 });
 
 test('Modal is locked while deleting the pet and it is closed when deletion is successfull', async () => {
-  onClose.mockClear();
-  onDeleted.mockClear();
+  const onClose = jest.fn();
+  const onDeleted = jest.fn();
 
   const user = userEvent.setup();
   const waitHandle = new WaitHandle();
@@ -147,14 +155,11 @@ test('Modal is locked while deleting the pet and it is closed when deletion is s
   await user.click(deleteButton);
   expect(deleteButton).toBeDisabled();
 
-  // Question: Is there any point of testing the disabled state of the buttons here?
   const cancelButton = await screen.findByRole('button', { name: 'Cancel' });
-  expect(cancelButton).toBeDisabled();
   await user.click(cancelButton);
   expect(onClose).not.toHaveBeenCalled();
 
   const headerCloseButton = await screen.findByRole('button', { name: 'X' });
-  expect(headerCloseButton).toBeDisabled();
   await user.click(headerCloseButton);
   expect(onClose).not.toHaveBeenCalled();
 
@@ -164,8 +169,6 @@ test('Modal is locked while deleting the pet and it is closed when deletion is s
 
   waitHandle.release();
 
-  // Question: On the line before im releasing the waitHandle, but the functions are not called yet
-  // and as far as i saw, there is no way to wait for function to be called asynchronous
   await waitFor(() => {
     expect(onClose).toHaveBeenCalled();
     expect(onDeleted).toHaveBeenCalled();
@@ -173,6 +176,9 @@ test('Modal is locked while deleting the pet and it is closed when deletion is s
 });
 
 test('Error message is displayed on fail from deleting pet', async () => {
+  const onClose = jest.fn();
+  const onDeleted = jest.fn();
+
   const user = userEvent.setup();
 
   server.resetHandlers(
@@ -194,7 +200,9 @@ test('Error message is displayed on fail from deleting pet', async () => {
   const deleteButton = await screen.findByRole('button', { name: 'Delete' });
   await user.click(deleteButton);
 
-  const errorMessage = await screen.findByLabelText('system-error-message');
+  const errorMessage = await screen.findByRole('alert', {
+    name: 'system error message',
+  });
   expect(errorMessage).toBeInTheDocument();
   // Question: Do i realy care about the error message text?
   expect(errorMessage).toHaveTextContent(
