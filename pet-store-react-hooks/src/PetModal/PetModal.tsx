@@ -3,6 +3,7 @@ import {
   type FormEventHandler,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 
@@ -44,7 +45,7 @@ const initialPetValues: PetFormValues = {
 };
 
 type ModalState = 'View' | 'Edit' | 'New';
-const modalStateNames = new Map<ModalState, string>([
+const modalAriaLabels = new Map<ModalState, string>([
   ['View', 'View pet modal'],
   ['Edit', 'Edit pet modal'],
   ['New', 'Add pet modal'],
@@ -56,7 +57,9 @@ export function PetModal(props: PetModalProps) {
   const [error, setError] = useState<string | undefined>();
   const [loading, setLoading] = useState<boolean>(true);
 
-  const [fetchedPet, setFetchedPet] = useState<Pet | undefined>();
+  // Question: Because i used this variable as a useState, when submitting the form i setted the value of it but
+  // because the component wasn't rerendered with the new value, it was still undefined and the header wasn't updated correctly on Add pet
+  const fetchedPetRef = useRef<Pet | undefined>();
   const [formValues, setFormValues] = useState<PetFormValues>(initialPetValues);
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -95,19 +98,19 @@ export function PetModal(props: PetModalProps) {
     setIsFormLocked(false);
     setModalState('Edit');
 
-    if (fetchedPet) {
-      setModalHeaderTitle(`Edit pet #${fetchedPet.petId}`);
+    if (fetchedPetRef.current) {
+      setModalHeaderTitle(`Edit pet #${fetchedPetRef.current.petId}`);
     }
-  }, [fetchedPet]);
+  }, [fetchedPetRef]);
 
   const lockForm = useCallback(() => {
     setIsFormLocked(true);
     setModalState('View');
 
-    if (fetchedPet) {
-      setModalHeaderTitle(`View pet #${fetchedPet?.petId}`);
+    if (fetchedPetRef.current) {
+      setModalHeaderTitle(`View pet #${fetchedPetRef.current.petId}`);
     }
-  }, [fetchedPet]);
+  }, [fetchedPetRef]);
 
   const fetchPet = useCallback(
     async (propsPetId: number) => {
@@ -116,7 +119,7 @@ export function PetModal(props: PetModalProps) {
       try {
         const pet = await getPetAsync(propsPetId);
 
-        setFetchedPet(pet);
+        fetchedPetRef.current = pet;
         setPetToFormValues(pet);
       } catch (err) {
         reportError(err);
@@ -146,10 +149,10 @@ export function PetModal(props: PetModalProps) {
   const handleLockButtonClick = useCallback(() => {
     lockForm();
 
-    if (fetchedPet) {
-      setPetToFormValues(fetchedPet);
+    if (fetchedPetRef.current) {
+      setPetToFormValues(fetchedPetRef.current);
     }
-  }, [lockForm, fetchedPet, setPetToFormValues]);
+  }, [lockForm, fetchedPetRef, setPetToFormValues]);
 
   const closeDeleteModal = useCallback(() => {
     setShowDeleteModal(false);
@@ -172,16 +175,16 @@ export function PetModal(props: PetModalProps) {
 
       let pet: Pet;
       try {
-        if (fetchedPet) {
+        if (fetchedPetRef.current) {
           pet = await editPetAsync(
             getPetFromFormValues(formValues),
-            fetchedPet.petId
+            fetchedPetRef.current.petId
           );
         } else {
           pet = await addPetAsync(getPetFromFormValues(formValues));
         }
 
-        setFetchedPet(pet);
+        fetchedPetRef.current = pet;
         setPetToFormValues(pet);
 
         lockForm();
@@ -199,7 +202,7 @@ export function PetModal(props: PetModalProps) {
       getPetFromFormValues,
       setPetToFormValues,
       formValues,
-      fetchedPet,
+      fetchedPetRef,
     ]
   );
 
@@ -247,7 +250,7 @@ export function PetModal(props: PetModalProps) {
 
   return (
     <Modal
-      ariaLabel={modalStateNames.get(modalState)}
+      ariaLabel={modalAriaLabels.get(modalState)}
       onBackdropClick={handleModalBackdropClick}
     >
       <div className="pet-modal-wrapper">
@@ -286,7 +289,9 @@ export function PetModal(props: PetModalProps) {
                   onChange={setFormPetKind}
                   id="kind"
                   required
-                  disabled={isFormLocked || isSubmitting || !!fetchedPet}
+                  disabled={
+                    isFormLocked || isSubmitting || !!fetchedPetRef.current
+                  }
                 >
                   <option aria-label="empty-option" value="" />
                   {petKinds.map((kind) => (
@@ -338,7 +343,9 @@ export function PetModal(props: PetModalProps) {
                   id="addedDate"
                   required
                   type="date"
-                  disabled={isFormLocked || isSubmitting || !!fetchedPet}
+                  disabled={
+                    isFormLocked || isSubmitting || !!fetchedPetRef.current
+                  }
                 />
               </label>
 
@@ -401,10 +408,10 @@ export function PetModal(props: PetModalProps) {
         </div>
       </div>
 
-      {showDeleteModal && fetchedPet && (
+      {showDeleteModal && fetchedPetRef.current && (
         <DeletePetModal
-          pet={fetchedPet}
-          petKind={petKindsMap.get(fetchedPet.kind)}
+          pet={fetchedPetRef.current}
+          petKind={petKindsMap.get(fetchedPetRef.current.kind)}
           onClose={closeDeleteModal}
           onDeleted={handleDeleted}
         />
