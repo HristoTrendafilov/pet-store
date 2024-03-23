@@ -44,7 +44,10 @@ export function DeletePetModal(props: DeletePetModalProps) {
   }, [isDeleting, onClose]);
 
   return (
-    <Modal name="Delete pet modal" onBackdropClick={handleModalBackdropClick}>
+    <Modal
+      ariaLabel="Delete pet modal"
+      onBackdropClick={handleModalBackdropClick}
+    >
       <div className="delete-pet-modal-wrapper">
         <div className="modal-header">
           <div>Delete pet #{pet.petId}</div>

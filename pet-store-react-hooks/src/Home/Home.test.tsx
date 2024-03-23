@@ -46,7 +46,7 @@ test('Add pet button is disabled while fetching pets and then enabled', async ()
   expect(addPetButton).toBeDisabled();
 
   const loadingIndicator = await screen.findByRole('alert', {
-    name: 'loading indicator',
+    name: 'loading',
   });
   waitHandle.release();
   await waitForElementToBeRemoved(loadingIndicator);
@@ -86,7 +86,7 @@ test('All table rows are rendered, cell values are visualized correctly and each
   render(<Home />);
 
   const loadingIndicator = await screen.findByRole('alert', {
-    name: 'loading indicator',
+    name: 'loading',
   });
   waitHandle.release();
   await waitForElementToBeRemoved(loadingIndicator);
@@ -185,15 +185,12 @@ test('Error message is displayed on fail from fetching pets', async () => {
   render(<Home />);
 
   const loadingIndicator = await screen.findByRole('alert', {
-    name: 'loading indicator',
+    name: 'loading',
   });
   waitHandle.release();
   await waitForElementToBeRemoved(loadingIndicator);
 
-  const errorMessage = await screen.findByRole('alert', {
-    name: 'system error message',
-  });
-  expect(errorMessage).toBeInTheDocument();
+  const errorMessage = await screen.findByRole('alert');
   expect(errorMessage).toHaveTextContent(
     'System error. Please contact the system administrator.'
   );
@@ -213,15 +210,12 @@ test('Error message is displayed on fail from fetching pet kinds', async () => {
   render(<Home />);
 
   const loadingIndicator = await screen.findByRole('alert', {
-    name: 'loading indicator',
+    name: 'loading',
   });
   waitHandle.release();
   await waitForElementToBeRemoved(loadingIndicator);
 
-  const errorMessage = await screen.findByRole('alert', {
-    name: 'system error message',
-  });
-  expect(errorMessage).toBeInTheDocument();
+  const errorMessage = await screen.findByRole('alert');
   expect(errorMessage).toHaveTextContent(
     'System error. Please contact the system administrator.'
   );

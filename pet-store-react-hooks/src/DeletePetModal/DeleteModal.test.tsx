@@ -200,11 +200,7 @@ test('Error message is displayed on fail from deleting pet', async () => {
   const deleteButton = await screen.findByRole('button', { name: 'Delete' });
   await user.click(deleteButton);
 
-  const errorMessage = await screen.findByRole('alert', {
-    name: 'system error message',
-  });
-  expect(errorMessage).toBeInTheDocument();
-  // Question: Do i realy care about the error message text?
+  const errorMessage = await screen.findByRole('alert');
   expect(errorMessage).toHaveTextContent(
     'System error. Please contact the system administrator.'
   );

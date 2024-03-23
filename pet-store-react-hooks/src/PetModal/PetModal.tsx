@@ -247,7 +247,7 @@ export function PetModal(props: PetModalProps) {
 
   return (
     <Modal
-      name={modalStateNames.get(modalState)}
+      ariaLabel={modalStateNames.get(modalState)}
       onBackdropClick={handleModalBackdropClick}
     >
       <div className="pet-modal-wrapper">
