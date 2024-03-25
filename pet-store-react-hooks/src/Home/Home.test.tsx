@@ -1,6 +1,7 @@
 import {
   render,
   screen,
+  waitFor,
   waitForElementToBeRemoved,
   within,
 } from '@testing-library/react';
@@ -124,7 +125,9 @@ test('New pet modal is shown on Add pet button click and then closed', async () 
   });
   await user.click(modalCancelButton);
 
-  expect(modal).not.toBeInTheDocument();
+  await waitFor(() => {
+    expect(modal).not.toBeInTheDocument();
+  });
 });
 
 test('View/Edit pet modal is shown on row button click and then closed', async () => {
@@ -146,7 +149,9 @@ test('View/Edit pet modal is shown on row button click and then closed', async (
   });
   await user.click(modalCancelButton);
 
-  expect(modal).not.toBeInTheDocument();
+  await waitFor(() => {
+    expect(modal).not.toBeInTheDocument();
+  });
 });
 
 test('Delete pet modal is shown on row button click and then closed', async () => {
@@ -168,7 +173,9 @@ test('Delete pet modal is shown on row button click and then closed', async () =
   });
   await user.click(modalCancelButton);
 
-  expect(modal).not.toBeInTheDocument();
+  await waitFor(() => {
+    expect(modal).not.toBeInTheDocument();
+  });
 });
 
 test('Error message is displayed on fail from fetching pets', async () => {
