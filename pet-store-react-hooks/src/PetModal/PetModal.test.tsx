@@ -55,7 +55,7 @@ describe('Add pet modal', () => {
     expect(headerText).toBeInTheDocument();
 
     const headerCloseButton = await screen.findByRole('button', {
-      name: 'X',
+      name: 'close modal',
     });
     expect(headerCloseButton).toBeInTheDocument();
 
@@ -90,8 +90,6 @@ describe('Add pet modal', () => {
     expect(ageInput).toBeInTheDocument();
     expect(ageInput).toBeEnabled();
 
-    // Question: Found a label with the text of: Has health problems, however the element associated with this label (<input />) is non-labellable
-    // Why do i get this error when i put 'checkbox' value for selector?
     const hasHealthProblemsCheck = await screen.findByLabelText(
       'Has health problems',
       {
@@ -169,19 +167,13 @@ describe('Add pet modal', () => {
     });
     await user.type(notesInput, 'Test notes');
 
-    // Question: Looked around 30 minutes but couldnt find a way to set the value with user events...
     const addedDateInput = await screen.findByLabelText('Added date', {
       selector: 'input',
     });
+    await user.clear(addedDateInput);
     const date = new Date();
     date.setDate(date.getDate() + 1);
-    fireEvent.change(addedDateInput, {
-      target: {
-        value: toInputDate(date),
-      },
-    });
-    // await user.type(addedDateInput, '275760-03-24');
-    // await user.tab();
+    await user.type(addedDateInput, toInputDate(date));
 
     const saveButton = await screen.findByRole('button', {
       name: 'Save',
@@ -215,6 +207,30 @@ describe('Add pet modal', () => {
       name: 'Cancel',
     });
     expect(cancelButton).toBeInTheDocument();
+  });
+
+  test('onClose is called on header close button click', async () => {
+    const onClose = jest.fn();
+    const onModified = jest.fn();
+
+    const user = userEvent.setup();
+
+    render(
+      <PetModal
+        petId={undefined}
+        petKinds={petKinds}
+        petKindsMap={petKindsMap}
+        onClose={onClose}
+        onModified={onModified}
+      />
+    );
+
+    const headerCloseButton = await screen.findByRole('button', {
+      name: 'close modal',
+    });
+    await user.click(headerCloseButton);
+
+    expect(onClose).toHaveBeenCalled();
   });
 
   test('onClose is called on Cancel button click', async () => {
@@ -283,7 +299,7 @@ describe('View pet modal', () => {
     expect(headerText).toBeInTheDocument();
 
     const headerCloseButton = await screen.findByRole('button', {
-      name: 'X',
+      name: 'close modal',
     });
     expect(headerCloseButton).toBeInTheDocument();
 
@@ -668,6 +684,41 @@ describe('Edit pet modal', () => {
     expect(deleteButton).toBeInTheDocument();
   });
 
+  test('The modal cannot be closed while fetching the pet', async () => {
+    const onClose = jest.fn();
+    const onModified = jest.fn();
+
+    const user = userEvent.setup();
+    const waitHandle = new WaitHandle();
+
+    server.resetHandlers(
+      http.get(`${apiBaseUrl}/pet/:petId`, async () => {
+        await waitHandle.wait();
+        return HttpResponse.json(petForEdit);
+      })
+    );
+
+    render(
+      <PetModal
+        petId={petId}
+        petKinds={petKinds}
+        petKindsMap={petKindsMap}
+        onClose={onClose}
+        onModified={onModified}
+      />
+    );
+
+    const modalBackdrop = await screen.findByLabelText('modal backdrop');
+    await user.click(modalBackdrop);
+    expect(onClose).not.toHaveBeenCalled();
+
+    const headerCloseButton = await screen.findByRole('button', {
+      name: 'close modal',
+    });
+    await user.click(headerCloseButton);
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
   test('The modal cannot be closed on backdrop click', async () => {
     const onClose = jest.fn();
     const onModified = jest.fn();
@@ -734,14 +785,15 @@ test('Error message is displayed on fail from saving the pet', async () => {
   const onClose = jest.fn();
   const onModified = jest.fn();
 
+  const waitHandle = new WaitHandle();
   const user = userEvent.setup();
 
   server.resetHandlers(
     http.get(`${apiBaseUrl}/pet/:petId`, () => HttpResponse.json(petForEdit)),
-    http.put(
-      `${apiBaseUrl}/pet/:petId`,
-      () => new HttpResponse(null, { status: 500 })
-    )
+    http.put(`${apiBaseUrl}/pet/:petId`, async () => {
+      await waitHandle.wait();
+      return new HttpResponse(null, { status: 500 });
+    })
   );
 
   render(
@@ -763,6 +815,12 @@ test('Error message is displayed on fail from saving the pet', async () => {
     name: 'Save',
   });
   await user.click(saveButton);
+
+  const submitSpinner = await screen.findByRole('alert', {
+    name: 'submitting',
+  });
+  waitHandle.release();
+  await waitForElementToBeRemoved(submitSpinner);
 
   const errorMessage = await screen.findByRole('alert');
   expect(errorMessage).toHaveTextContent(
