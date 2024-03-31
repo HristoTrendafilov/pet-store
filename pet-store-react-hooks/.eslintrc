@@ -12,6 +12,7 @@
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
+    "plugin:require-useeffect-dependency-array/recommended",
     "airbnb",
     "plugin:eslint-comments/recommended",
     "plugin:import/errors",
@@ -47,6 +48,8 @@
     "no-console": "error",
     "no-func-assign": "error",
     "no-class-assign": "error",
+    "no-await-in-loop": "off",
+    "max-classes-per-file": "off",
     "no-return-await": "off",
     "no-restricted-syntax": [
       "error",
@@ -163,7 +166,8 @@
     "react/jsx-props-no-spreading": "off",
     "react-refresh/only-export-components": "warn",
     "react/react-in-jsx-scope": "off",
-    "react/function-component-definition": "off"
+    "react/function-component-definition": "off",
+    "react/no-array-index-key": "off"
   },
   "overrides": [
     {
@@ -297,7 +301,7 @@
       }
     },
     {
-      // Type deffinition files.
+      // Type definition files.
       "files": ["./**/*.d.ts"],
       "rules": {
         "import/no-default-export": "off"
@@ -309,6 +313,7 @@
       "plugins": ["jest"],
       "extends": ["plugin:jest/recommended", "plugin:testing-library/react"],
       "rules": {
+        "testing-library/no-manual-cleanup": "off",
         "testing-library/no-wait-for-multiple-assertions": "off",
         "jest/expect-expect": "off",
         "import/no-extraneous-dependencies": [
