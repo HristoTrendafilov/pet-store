@@ -1,5 +1,4 @@
 import {
-  fireEvent,
   render,
   screen,
   waitFor,
@@ -35,7 +34,6 @@ const { petId } = petForEdit;
 
 jest.mock('~/infrastructure/reportError');
 
-// Question: Feels like i overdone it with repeating logic in some of the tests...
 describe('Add pet modal', () => {
   test('Modal header is displayed correctly, all the inputs are unlocked with default values + Save and Cancel buttons', async () => {
     const onClose = jest.fn();
@@ -59,15 +57,11 @@ describe('Add pet modal', () => {
     });
     expect(headerCloseButton).toBeInTheDocument();
 
-    const nameInput = await screen.findByLabelText('Name', {
-      selector: 'input',
-    });
+    const nameInput = await screen.findByLabelText('Name');
     expect(nameInput).toBeInTheDocument();
     expect(nameInput).toBeEnabled();
 
-    const kindSelectInput = await screen.findByLabelText('Kind', {
-      selector: 'select',
-    });
+    const kindSelectInput = await screen.findByLabelText('Kind');
     expect(kindSelectInput).toBeInTheDocument();
     expect(kindSelectInput).toBeEnabled();
 
@@ -84,30 +78,21 @@ describe('Add pet modal', () => {
     expect(kindOptions[3]).toHaveValue(petKinds[2].value.toString());
     expect(kindOptions[3]).toHaveTextContent(petKinds[2].displayName);
 
-    const ageInput = await screen.findByLabelText('Age', {
-      selector: 'input',
-    });
+    const ageInput = await screen.findByLabelText('Age');
     expect(ageInput).toBeInTheDocument();
     expect(ageInput).toBeEnabled();
 
     const hasHealthProblemsCheck = await screen.findByLabelText(
-      'Has health problems',
-      {
-        selector: 'input',
-      }
+      'Has health problems'
     );
     expect(hasHealthProblemsCheck).toBeInTheDocument();
     expect(hasHealthProblemsCheck).toBeEnabled();
 
-    const notesInput = await screen.findByLabelText('Notes', {
-      selector: 'textarea',
-    });
+    const notesInput = await screen.findByLabelText('Notes');
     expect(notesInput).toBeInTheDocument();
     expect(notesInput).toBeEnabled();
 
-    const addedDateInput = await screen.findByLabelText('Added date', {
-      selector: 'input',
-    });
+    const addedDateInput = await screen.findByLabelText('Added date');
     expect(addedDateInput).toBeInTheDocument();
     expect(addedDateInput).toBeEnabled();
     expect(addedDateInput).toHaveValue(toInputDate(new Date()));
@@ -139,37 +124,24 @@ describe('Add pet modal', () => {
       />
     );
 
-    const nameInput = await screen.findByLabelText('Name', {
-      selector: 'input',
-    });
+    const nameInput = await screen.findByLabelText('Name');
     await user.type(nameInput, 'Test pet');
 
-    const kindSelectInput = await screen.findByLabelText('Kind', {
-      selector: 'select',
-    });
+    const kindSelectInput = await screen.findByLabelText('Kind');
     await user.selectOptions(kindSelectInput, '1');
 
-    const ageInput = await screen.findByLabelText('Age', {
-      selector: 'input',
-    });
+    const ageInput = await screen.findByLabelText('Age');
     await user.type(ageInput, '5');
 
     const hasHealthProblemsCheck = await screen.findByLabelText(
-      'Has health problems',
-      {
-        selector: 'input',
-      }
+      'Has health problems'
     );
     await user.click(hasHealthProblemsCheck);
 
-    const notesInput = await screen.findByLabelText('Notes', {
-      selector: 'textarea',
-    });
+    const notesInput = await screen.findByLabelText('Notes');
     await user.type(notesInput, 'Test notes');
 
-    const addedDateInput = await screen.findByLabelText('Added date', {
-      selector: 'input',
-    });
+    const addedDateInput = await screen.findByLabelText('Added date');
     await user.clear(addedDateInput);
     const date = new Date();
     date.setDate(date.getDate() + 1);
@@ -303,37 +275,24 @@ describe('View pet modal', () => {
     });
     expect(headerCloseButton).toBeInTheDocument();
 
-    const nameInput = await screen.findByLabelText('Name', {
-      selector: 'input',
-    });
+    const nameInput = await screen.findByLabelText('Name');
     expect(nameInput).toHaveValue(petForEdit.petName);
 
-    const kindSelectInput = await screen.findByLabelText('Kind', {
-      selector: 'select',
-    });
+    const kindSelectInput = await screen.findByLabelText('Kind');
     expect(kindSelectInput).toHaveValue(petForEdit.kind.toString());
 
-    const ageInput = await screen.findByLabelText('Age', {
-      selector: 'input',
-    });
+    const ageInput = await screen.findByLabelText('Age');
     expect(ageInput).toHaveValue(petForEdit.age);
 
     const hasHealthProblemsCheck = await screen.findByLabelText(
-      'Has health problems',
-      {
-        selector: 'input',
-      }
+      'Has health problems'
     );
     expect(hasHealthProblemsCheck).toBeChecked();
 
-    const notesInput = await screen.findByLabelText('Notes', {
-      selector: 'textarea',
-    });
+    const notesInput = await screen.findByLabelText('Notes');
     expect(notesInput).toHaveValue(petForEdit.notes);
 
-    const addedDateInput = await screen.findByLabelText('Added date', {
-      selector: 'input',
-    });
+    const addedDateInput = await screen.findByLabelText('Added date');
     expect(addedDateInput).toHaveValue(petForEdit.addedDate);
 
     const editButton = await screen.findByRole('button', {
@@ -345,87 +304,6 @@ describe('View pet modal', () => {
       name: 'Delete',
     });
     expect(deleteButton).toBeInTheDocument();
-
-    const cancelButton = await screen.findByRole('button', {
-      name: 'Cancel',
-    });
-    expect(cancelButton).toBeInTheDocument();
-  });
-
-  // Question: The logic here is similar to the initial Edit modal test. Maybe i should change things here
-  test('When the Edit button is clicked, the modal state is changed to Edit', async () => {
-    const onClose = jest.fn();
-    const onModified = jest.fn();
-
-    const user = userEvent.setup();
-
-    render(
-      <PetModal
-        petId={petId}
-        petKinds={petKinds}
-        petKindsMap={petKindsMap}
-        onClose={onClose}
-        onModified={onModified}
-      />
-    );
-
-    const editButton = await screen.findByRole('button', {
-      name: 'Edit',
-    });
-    await user.click(editButton);
-
-    const headerText = await screen.findByText('Edit pet #44');
-    expect(headerText).toBeInTheDocument();
-
-    // Question: Do i need to check the input values if i checked them in the test before?
-    const nameInput = await screen.findByLabelText('Name', {
-      selector: 'input',
-    });
-    expect(nameInput).toHaveValue(petForEdit.petName);
-    expect(nameInput).not.toBeDisabled();
-
-    const kindSelectInput = await screen.findByLabelText('Kind', {
-      selector: 'select',
-    });
-    expect(kindSelectInput).toHaveValue(petForEdit.kind.toString());
-    expect(kindSelectInput).toBeDisabled();
-
-    const ageInput = await screen.findByLabelText('Age', {
-      selector: 'input',
-    });
-    expect(ageInput).toHaveValue(petForEdit.age);
-    expect(ageInput).not.toBeDisabled();
-
-    const hasHealthProblemsCheck = await screen.findByLabelText(
-      'Has health problems',
-      {
-        selector: 'input',
-      }
-    );
-    expect(hasHealthProblemsCheck).toBeChecked();
-    expect(hasHealthProblemsCheck).not.toBeDisabled();
-
-    const notesInput = await screen.findByLabelText('Notes', {
-      selector: 'textarea',
-    });
-    expect(notesInput).toHaveValue(petForEdit.notes);
-    expect(notesInput).not.toBeDisabled();
-
-    const addedDateInput = await screen.findByLabelText('Added date', {
-      selector: 'input',
-    });
-    expect(addedDateInput).toHaveValue(petForEdit.addedDate);
-    expect(addedDateInput).toBeDisabled();
-
-    const saveButton = await screen.findByRole('button', {
-      name: 'Save',
-    });
-    expect(saveButton).toBeInTheDocument();
-
-    const lockButton = await screen.findByRole('button', {
-      name: 'Lock',
-    });
-    expect(lockButton).toBeInTheDocument();
 
     const cancelButton = await screen.findByRole('button', {
       name: 'Cancel',
@@ -537,42 +415,29 @@ describe('Edit pet modal', () => {
     const headerText = await screen.findByText('Edit pet #44');
     expect(headerText).toBeInTheDocument();
 
-    const nameInput = await screen.findByLabelText('Name', {
-      selector: 'input',
-    });
+    const nameInput = await screen.findByLabelText('Name');
     expect(nameInput).toHaveValue(petForEdit.petName);
     expect(nameInput).not.toBeDisabled();
 
-    const kindSelectInput = await screen.findByLabelText('Kind', {
-      selector: 'select',
-    });
+    const kindSelectInput = await screen.findByLabelText('Kind');
     expect(kindSelectInput).toHaveValue(petForEdit.kind.toString());
     expect(kindSelectInput).toBeDisabled();
 
-    const ageInput = await screen.findByLabelText('Age', {
-      selector: 'input',
-    });
+    const ageInput = await screen.findByLabelText('Age');
     expect(ageInput).toHaveValue(petForEdit.age);
     expect(ageInput).not.toBeDisabled();
 
     const hasHealthProblemsCheck = await screen.findByLabelText(
-      'Has health problems',
-      {
-        selector: 'input',
-      }
+      'Has health problems'
     );
     expect(hasHealthProblemsCheck).toBeChecked();
     expect(hasHealthProblemsCheck).not.toBeDisabled();
 
-    const notesInput = await screen.findByLabelText('Notes', {
-      selector: 'textarea',
-    });
+    const notesInput = await screen.findByLabelText('Notes');
     expect(notesInput).toHaveValue(petForEdit.notes);
     expect(notesInput).not.toBeDisabled();
 
-    const addedDateInput = await screen.findByLabelText('Added date', {
-      selector: 'input',
-    });
+    const addedDateInput = await screen.findByLabelText('Added date');
     expect(addedDateInput).toHaveValue(petForEdit.addedDate);
     expect(addedDateInput).toBeDisabled();
 
@@ -613,49 +478,30 @@ describe('Edit pet modal', () => {
     });
     await user.click(editButton);
 
-    const nameInput = await screen.findByLabelText('Name', {
-      selector: 'input',
-    });
+    const nameInput = await screen.findByLabelText('Name');
+    await user.clear(nameInput);
     await user.type(nameInput, 'Modified pet');
 
-    const kindSelectInput = await screen.findByLabelText('Kind', {
-      selector: 'select',
-    });
-    await user.selectOptions(kindSelectInput, '1');
-
-    const ageInput = await screen.findByLabelText('Age', {
-      selector: 'input',
-    });
+    const ageInput = await screen.findByLabelText('Age');
+    await user.clear(ageInput);
     await user.type(ageInput, '2');
 
     const hasHealthProblemsCheck = await screen.findByLabelText(
-      'Has health problems',
-      {
-        selector: 'input',
-      }
+      'Has health problems'
     );
     await user.click(hasHealthProblemsCheck);
 
-    const notesInput = await screen.findByLabelText('Notes', {
-      selector: 'textarea',
-    });
+    const notesInput = await screen.findByLabelText('Notes');
+    await user.clear(notesInput);
     await user.type(notesInput, 'Modified notes');
-
-    const addedDateInput = await screen.findByLabelText('Added date', {
-      selector: 'input',
-    });
-    const date = new Date();
-    date.setDate(date.getDate() + 1);
-    fireEvent.change(addedDateInput, {
-      target: {
-        value: toInputDate(date),
-      },
-    });
 
     const lockButton = await screen.findByRole('button', {
       name: 'Lock',
     });
     await user.click(lockButton);
+
+    const kindSelectInput = await screen.findByLabelText('Kind');
+    const addedDateInput = await screen.findByLabelText('Added date');
 
     expect(nameInput).toHaveValue(petForEdit.petName);
     expect(nameInput).toBeDisabled();
@@ -817,7 +663,7 @@ test('Error message is displayed on fail from saving the pet', async () => {
   await user.click(saveButton);
 
   const submitSpinner = await screen.findByRole('alert', {
-    name: 'submitting',
+    name: 'loading',
   });
   waitHandle.release();
   await waitForElementToBeRemoved(submitSpinner);

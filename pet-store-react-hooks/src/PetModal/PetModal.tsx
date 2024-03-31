@@ -256,9 +256,6 @@ export function PetModal(props: PetModalProps) {
           <button
             className="modal-close-header-btn"
             type="button"
-            // Question: This is a button. Should be labeled as such.
-            // I've read https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/button_role
-            // but not quite get what i'm supposed to label it as
             aria-label="close modal"
             disabled={isSubmitting || loading}
             onClick={onClose}
@@ -292,7 +289,7 @@ export function PetModal(props: PetModalProps) {
                   required
                   disabled={isFormLocked || isSubmitting || !!fetchedPet}
                 >
-                  <option aria-label="empty-option" value="" />
+                  <option aria-label="Empty" value="" />
                   {petKinds.map((kind) => (
                     <option key={kind.value} value={kind.value}>
                       {kind.displayName}
@@ -361,7 +358,7 @@ export function PetModal(props: PetModalProps) {
                     {isSubmitting && (
                       <span
                         role="alert"
-                        aria-label="submitting"
+                        aria-label="loading"
                         className="submit-spinner"
                       />
                     )}

@@ -60,8 +60,6 @@ export const handlers = [
         petId,
       };
 
-      // Question: Do i need to modify the list or just return the pet?
-      pets[petIndex] = newPet;
       return HttpResponse.json(newPet);
     }
   ),
@@ -77,10 +75,7 @@ export const handlers = [
       return new HttpResponse(null, { status: 404 });
     }
 
-    // Question: because i'm deleting the pet in previous test and get it in the next one, i't permanently deleted.
-    // Do i leave the delete logic, and just return the pet?
     const pet = pets[petIndex];
-    // pets.splice(petIndex, 1);
 
     return HttpResponse.json(pet);
   }),
