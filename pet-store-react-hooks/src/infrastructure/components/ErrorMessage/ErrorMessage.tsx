@@ -11,7 +11,7 @@ export function ErrorMessage(props: ErrorMessageProps) {
   const { message, style } = props;
 
   return (
-    <div className="system-error-message" style={style}>
+    <div role="alert" className="system-error-message" style={style}>
       {message}
     </div>
   );

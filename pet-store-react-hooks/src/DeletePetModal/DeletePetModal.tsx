@@ -4,6 +4,7 @@ import { deletePetAsync } from '~infrastructure/api-client';
 import type { PetListItem } from '~infrastructure/api-types';
 import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessage';
 import { Modal } from '~infrastructure/components/Modal/Modal';
+import { reportError } from '~infrastructure/reportError';
 import { formatDate } from '~infrastructure/utils';
 
 import './DeletePetModal.css';
@@ -43,7 +44,10 @@ export function DeletePetModal(props: DeletePetModalProps) {
   }, [isDeleting, onClose]);
 
   return (
-    <Modal onBackdropClick={handleModalBackdropClick}>
+    <Modal
+      ariaLabel="Delete pet modal"
+      onBackdropClick={handleModalBackdropClick}
+    >
       <div className="delete-pet-modal-wrapper">
         <div className="modal-header">
           <div>Delete pet #{pet.petId}</div>

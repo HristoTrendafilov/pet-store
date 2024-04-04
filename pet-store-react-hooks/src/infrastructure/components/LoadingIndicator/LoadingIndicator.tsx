@@ -19,12 +19,12 @@ export function LoadingIndicator(props: LoadingIndicatorProps) {
     };
   }, [delay]);
 
-  if (!showIndicator) {
+  if (!showIndicator && process.env.NODE_ENV !== 'test') {
     return null;
   }
 
   return (
-    <div className="spinner-wrapper">
+    <div role="alert" aria-label="loading" className="spinner-wrapper">
       <div className="loading-spinner" />
     </div>
   );

@@ -30,3 +30,8 @@ Object.defineProperties(global, {
   Request: { value: Request },
   Response: { value: Response },
 });
+
+AbortSignal.timeout = () => {
+  const controller = new AbortController();
+  return controller.signal;
+};
