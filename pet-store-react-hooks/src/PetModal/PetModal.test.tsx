@@ -537,7 +537,7 @@ describe('Edit pet modal', () => {
     const user = userEvent.setup();
     const waitHandle = new WaitHandle();
 
-    server.resetHandlers(
+    server.use(
       http.get(`${apiBaseUrl}/pet/:petId`, async () => {
         await waitHandle.wait();
         return HttpResponse.json(petForEdit);
@@ -598,7 +598,7 @@ test('Error message is displayed on fail from fetching the pet', async () => {
 
   const waitHandle = new WaitHandle();
 
-  server.resetHandlers(
+  server.use(
     http.get(`${apiBaseUrl}/pet/:petId`, async () => {
       await waitHandle.wait();
       return new HttpResponse(null, { status: 500 });
@@ -634,7 +634,7 @@ test('Error message is displayed on fail from saving the pet', async () => {
   const waitHandle = new WaitHandle();
   const user = userEvent.setup();
 
-  server.resetHandlers(
+  server.use(
     http.get(`${apiBaseUrl}/pet/:petId`, () => HttpResponse.json(petForEdit)),
     http.put(`${apiBaseUrl}/pet/:petId`, async () => {
       await waitHandle.wait();

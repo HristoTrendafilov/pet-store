@@ -133,7 +133,7 @@ test('Modal is locked while deleting the pet and it is closed when deletion is s
   const user = userEvent.setup();
   const waitHandle = new WaitHandle();
 
-  server.resetHandlers(
+  server.use(
     http.delete(`${apiBaseUrl}/pet/:petId`, async () => {
       await waitHandle.wait();
 
@@ -181,7 +181,7 @@ test('Error message is displayed on fail from deleting pet', async () => {
 
   const user = userEvent.setup();
 
-  server.resetHandlers(
+  server.use(
     http.delete(
       `${apiBaseUrl}/pet/:petId`,
       () => new HttpResponse(null, { status: 500 })
