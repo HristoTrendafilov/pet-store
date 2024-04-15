@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "concurrently \"npm run start:be\" \"npm run start:vanilla-js\" \"npm run start:react-hooks\"",
+    "start": "concurrently \"npm run start:be\" \"npm run start:vanilla-js\" \"npm run start:react-hooks\" \"rpm run start:react-hooks-redux\"",
     "start:be": "node server.js",
     "start:vanilla-js": "browser-sync start --config ./browsersync-config.js",
     "start:react-hooks": "cd ./pet-store-react-hooks && npm run start",
+    "start:react-hooks-redux": "cd ./pet-store-react-hooks-redux && npm run start",
     "format": "prettier --cache --write ."
   },
   "dependencies": {
