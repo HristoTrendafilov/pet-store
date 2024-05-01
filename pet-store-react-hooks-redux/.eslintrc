@@ -1,0 +1,351 @@
+{
+  "root": true,
+  "env": {
+    "es6": true,
+    "browser": true,
+    "node": false
+  },
+  "globals": {
+    "process": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:require-useeffect-dependency-array/recommended",
+    "airbnb",
+    "plugin:eslint-comments/recommended",
+    "plugin:import/errors",
+    "prettier"
+  ],
+  "plugins": [
+    "react-refresh",
+    "react",
+    "eslint-comments",
+    "unused-imports",
+    "new-with-error"
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "generators": true,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "settings": {
+    "import/internal-regex": "^(~|src)",
+    "react": {
+      "version": "detect"
+    }
+  },
+  "reportUnusedDisableDirectives": true,
+  "ignorePatterns": ["package-lock.json", "/dist/", "/coverage/", "/extra/"],
+  "rules": {
+    "no-void": "off",
+    "no-undefined": "off",
+    "linebreak-style": ["error", "unix"],
+    "no-console": "error",
+    "no-func-assign": "error",
+    "no-class-assign": "error",
+    "no-await-in-loop": "off",
+    "max-classes-per-file": "off",
+    "no-return-await": "off",
+    "no-restricted-syntax": [
+      "error",
+      {
+        "selector": "ForInStatement",
+        "message": "for..in loops iterate over the entire prototype chain, which is virtually never what you want. Use Object.{keys,values,entries}, and iterate over the resulting array."
+      },
+      {
+        "selector": "LabeledStatement",
+        "message": "Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand."
+      },
+      {
+        "selector": "WithStatement",
+        "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
+      }
+    ],
+    "no-param-reassign": "off",
+    "lines-between-class-members": "off",
+    "new-with-error/new-with-error": "error",
+    "unused-imports/no-unused-imports": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["../*"],
+            "message": "Usage of relative parent imports is not allowed."
+          }
+        ]
+      }
+    ],
+    "import/prefer-default-export": "off",
+    "import/no-duplicates": ["error", { "prefer-inline": true }],
+    "import/extensions": [
+      "error",
+      "always",
+      {
+        "ignorePackages": true,
+        "pattern": {
+          "js": "never",
+          "jsx": "never"
+        }
+      }
+    ],
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          ["external"],
+          "internal",
+          ["sibling", "parent", "index"],
+          "unknown",
+          "object"
+        ],
+        "newlines-between": "always",
+        "pathGroups": [
+          {
+            "pattern": "~/**",
+            "group": "internal"
+          },
+          {
+            "pattern": "src/**",
+            "group": "internal"
+          },
+          {
+            "pattern": "**/*.+(css|scss)",
+            "patternOptions": { "dot": true, "nocomment": true },
+            "group": "unknown",
+            "position": "after"
+          },
+          {
+            "pattern": "{.,..}/**/*.+(css|scss)",
+            "patternOptions": { "dot": true, "nocomment": true },
+            "group": "unknown",
+            "position": "after"
+          }
+        ],
+        "warnOnUnassignedImports": true,
+        "pathGroupsExcludedImportTypes": ["builtin", "external"],
+        "alphabetize": {
+          "order": "asc",
+          "orderImportKind": "asc"
+        }
+      }
+    ],
+    "import/no-default-export": "error",
+    "import/no-deprecated": "error",
+    "import/no-commonjs": "error",
+    "import/no-empty-named-blocks": "error",
+    "import/no-named-as-default-member": "error",
+    "import/no-nodejs-modules": "error",
+    "import/no-unresolved": "error",
+    "sort-imports": ["error", { "ignoreDeclarationSort": true }],
+    "import/no-restricted-paths": [
+      "error",
+      {
+        "zones": [
+          {
+            "target": "./",
+            "from": "./src/**/+(*.)+(spec|test).+(ts|js)?(x)",
+            "message": "Importing test files in non-test files is not allowed."
+          },
+          {
+            "target": "./",
+            "from": "./src/testing",
+            "message": "Importing testing utilities in non-test files is not allowed."
+          }
+        ]
+      }
+    ],
+    "react-hooks/exhaustive-deps": "error",
+    "react/require-default-props": "off",
+    "react/jsx-props-no-spreading": "off",
+    "react-refresh/only-export-components": "warn",
+    "react/react-in-jsx-scope": "off",
+    "react/function-component-definition": "off",
+    "react/no-array-index-key": "off"
+  },
+  "overrides": [
+    {
+      // All TypeScript files
+      "files": ["**/*.+(ts|tsx)"],
+      "plugins": ["@typescript-eslint", "deprecation"],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module",
+        "ecmaFeatures": {
+          "jsx": true
+        },
+        "project": ["tsconfig.json"]
+      },
+      "settings": {
+        "import/resolver": {
+          "typescript": true
+        }
+      },
+      "extends": [
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:@typescript-eslint/strict",
+        "plugin:import/typescript",
+        "prettier"
+      ],
+      "rules": {
+        "deprecation/deprecation": "error",
+        "@typescript-eslint/consistent-type-imports": [
+          "error",
+          {
+            "prefer": "type-imports",
+            "fixStyle": "inline-type-imports"
+          }
+        ],
+        "@typescript-eslint/no-import-type-side-effects": "error",
+        "@typescript-eslint/consistent-type-exports": [
+          "error",
+          {
+            "fixMixedExportsWithInlineTypeSpecifier": true
+          }
+        ],
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "argsIgnorePattern": "^_",
+            "varsIgnorePattern": "^_",
+            "caughtErrorsIgnorePattern": "^_"
+          }
+        ],
+        "@typescript-eslint/naming-convention": [
+          "error",
+          {
+            "selector": "variable",
+            "format": ["camelCase", "PascalCase", "UPPER_CASE"],
+            "leadingUnderscore": "allow"
+          }
+        ],
+        "@typescript-eslint/no-misused-promises": [
+          "error",
+          {
+            "checksVoidReturn": false
+          }
+        ],
+        "@typescript-eslint/return-await": ["error", "in-try-catch"],
+        "@typescript-eslint/prefer-ts-expect-error": "off",
+        "@typescript-eslint/no-use-before-define": [
+          "error",
+          {
+            "classes": true,
+            "functions": true,
+            "variables": true
+          }
+        ],
+        "@typescript-eslint/no-unused-expressions": [
+          "error",
+          {
+            "allowShortCircuit": false,
+            "allowTaggedTemplates": false,
+            "allowTernary": false,
+            "enforceForJSX": false
+          }
+        ],
+        "@typescript-eslint/no-redeclare": "error",
+        "@typescript-eslint/no-shadow": "error",
+        "@typescript-eslint/no-magic-numbers": "off",
+        "@typescript-eslint/no-loop-func": "error",
+        "@typescript-eslint/no-dupe-class-members": "error",
+        "@typescript-eslint/default-param-last": "error",
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/prefer-nullish-coalescing": "off",
+        "import/no-empty-named-blocks": "error",
+        "import/no-named-as-default-member": "error",
+        "import/no-unresolved": "error",
+        "import/extensions": [
+          "error",
+          "always",
+          {
+            "ignorePackages": true,
+            "pattern": {
+              "js": "never",
+              "jsx": "never",
+              "ts": "never",
+              "tsx": "never"
+            }
+          }
+        ],
+        "linebreak-style": ["error", "unix"],
+        "no-func-assign": "error",
+        "constructor-super": "error",
+        "getter-return": ["error", { "allowImplicit": true }],
+        "import/named": "error",
+        "no-const-assign": "error",
+        "no-dupe-args": "error",
+        "no-dupe-keys": "error",
+        "no-import-assign": "error",
+        "no-new-func": "error",
+        "no-new-symbol": "error",
+        "no-obj-calls": "error",
+        "no-this-before-super": "error",
+        "no-undef": "error",
+        "no-unreachable": "error",
+        "valid-typeof": ["error", { "requireStringLiterals": true }],
+        "react/jsx-filename-extension": [
+          "error",
+          {
+            "extensions": [".jsx", ".tsx"]
+          }
+        ]
+      }
+    },
+    {
+      // Type definition files.
+      "files": ["./**/*.d.ts"],
+      "rules": {
+        "import/no-default-export": "off"
+      }
+    },
+    {
+      // Test files and test related infrastructure
+      "files": ["**/+(*.)+(spec|test).+(ts|js)?(x)", "./src/testing/**"],
+      "plugins": ["jest"],
+      "extends": ["plugin:jest/recommended", "plugin:testing-library/react"],
+      "rules": {
+        "testing-library/no-manual-cleanup": "off",
+        "testing-library/no-wait-for-multiple-assertions": "off",
+        "jest/expect-expect": "off",
+        "import/no-extraneous-dependencies": [
+          "error",
+          {
+            "devDependencies": true,
+            "optionalDependencies": false,
+            "peerDependencies": false
+          }
+        ],
+        "import/no-restricted-paths": ["off", { "zones": [] }]
+      }
+    },
+    {
+      // Root level .js/.ts configuration files
+      "files": ["./*.js", "./*.ts", "./__mocks__/**/*.[j|t]s?(x)"],
+      "env": {
+        "node": true
+      },
+      "rules": {
+        "import/no-default-export": "off",
+        "import/no-commonjs": "off",
+        "import/no-nodejs-modules": "off",
+        "import/no-extraneous-dependencies": [
+          "error",
+          {
+            "devDependencies": true,
+            "optionalDependencies": false,
+            "peerDependencies": false
+          }
+        ]
+      }
+    }
+  ]
+}

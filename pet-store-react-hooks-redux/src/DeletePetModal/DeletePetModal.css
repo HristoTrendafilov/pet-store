@@ -1,0 +1,33 @@
+.delete-pet-modal-wrapper {
+  margin: 272px auto 0;
+  width: 480px;
+}
+
+.delete-pet-modal-wrapper .button-group {
+  display: flex;
+  justify-content: end;
+  gap: 30px;
+  margin-top: 10px;
+}
+
+.delete-pet-modal-wrapper .button-group > button:first-child {
+  flex-basis: 30%;
+}
+
+@media (max-width: 400px) {
+  .pet-modal-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .delete-pet-modal-wrapper .button-group button:first-child {
+    flex: 1;
+  }
+}
+
+@media (max-width: 300px) {
+  .delete-pet-modal-wrapper .button-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

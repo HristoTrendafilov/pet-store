@@ -1,0 +1,123 @@
+.all-pets-card {
+  border: 1px solid black;
+  max-width: 700px;
+  margin: 48px auto;
+  border-radius: 5px;
+}
+
+.all-pets-card > .all-pets-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 15px;
+  background-color: var(--header);
+  color: var(--white);
+}
+
+.all-pets-card > .all-pets-card-body {
+  padding: 10px;
+}
+
+.all-pets-card > div:nth-of-type(1) {
+  font-size: 30px;
+}
+
+/* Table */
+table {
+  width: 100%;
+}
+
+table,
+th,
+td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  font-weight: normal;
+}
+
+th {
+  padding: 1px 0;
+}
+
+td {
+  padding: 3px 10px;
+}
+
+td:nth-child(5) > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+td:nth-child(5) > div > button {
+  width: 100%;
+  font-size: 12px;
+}
+
+tr > th:nth-of-type(1) {
+  width: 5%;
+}
+
+tr > th:nth-of-type(2) {
+  width: 20%;
+}
+
+tr > th:nth-of-type(3) {
+  width: 25%;
+}
+
+tr > th:nth-of-type(4) {
+  width: 15%;
+}
+
+@media (max-width: 705px) {
+  table,
+  thead,
+  tbody,
+  th,
+  td,
+  tr {
+    display: block;
+  }
+
+  thead tr {
+    display: none;
+  }
+
+  tr:not(:last-child) {
+    border-bottom: 1px solid black;
+  }
+
+  td {
+    border: none;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    padding-left: 50%;
+  }
+
+  td:before {
+    position: absolute;
+    left: 6px;
+    width: 45%;
+  }
+
+  td:nth-of-type(1):before {
+    content: '#';
+  }
+  td:nth-of-type(2):before {
+    content: 'Name';
+  }
+  td:nth-of-type(3):before {
+    content: 'Added date';
+  }
+  td:nth-of-type(4):before {
+    content: 'Kind';
+  }
+}
+
+@media (max-width: 476px) {
+  td:nth-child(5) {
+    padding: 5px 15px;
+  }
+}
+/* Table */
