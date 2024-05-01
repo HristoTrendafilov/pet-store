@@ -1,12 +1,14 @@
+import type { PetKindsSignature } from '~infrastructure/api-types';
+
 export const petKinds = [
   { displayName: 'Cat', value: 1 },
   { displayName: 'Dog', value: 2 },
   { displayName: 'Parrot', value: 3 },
 ];
 
-export const petKindsMap = new Map<number, string>();
+export const petKindsSignature: PetKindsSignature = {};
 petKinds.forEach((pet) => {
-  petKindsMap.set(pet.value, pet.displayName);
+  petKindsSignature[pet.value] = pet.displayName;
 });
 
 export const pets = [

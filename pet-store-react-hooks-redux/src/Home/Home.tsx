@@ -4,23 +4,24 @@ import { reportError } from '~/infrastructure/reportError';
 import { DeletePetModal } from '~DeletePetModal/DeletePetModal';
 import { PetModal } from '~PetModal/PetModal';
 import { getAllPetsAsync, getPetKindsAsync } from '~infrastructure/api-client';
-import type { PetKind, PetListItem } from '~infrastructure/api-types';
+import type { PetListItem } from '~infrastructure/api-types';
 import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessage';
 import { LoadingIndicator } from '~infrastructure/components/LoadingIndicator/LoadingIndicator';
+import { useAppDispatch, useAppSelector } from '~infrastructure/redux/hooks';
+import { addPetKinds } from '~infrastructure/redux/pets-slice';
 
 import { PetTableRow } from './PetTableRow';
 
 import './Home.css';
 
 export function Home() {
+  const dispatch = useAppDispatch();
+  const { petKinds, petKindsSignature } = useAppSelector((state) => state.pets);
+
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>();
 
   const [allPets, setAllPets] = useState<PetListItem[] | undefined>();
-  const [allPetKinds, setAllPetKinds] = useState<PetKind[] | undefined>();
-  const [petKindsMap, setPetKindsMap] = useState<
-    Map<number, string> | undefined
-  >();
 
   const [showPetModal, setShowPetModal] = useState<boolean>(false);
   const [petForDelete, setPetForDelete] = useState<PetListItem | undefined>();
@@ -37,14 +38,10 @@ export function Home() {
       const petsPromise = getAllPetsAsync();
 
       if (!hasFetchedPetKinds.current) {
-        const petKinds = await getPetKindsAsync();
-        setAllPetKinds(petKinds);
-
-        const map = new Map<number, string>();
-        for (const kind of petKinds) {
-          map.set(kind.value, kind.displayName);
-        }
-        setPetKindsMap(map);
+        // Question: Should i dispatch the fetched pet kinds here
+        // or create an asyncThunk for this operation?
+        const kinds = await getPetKindsAsync();
+        dispatch(addPetKinds(kinds));
 
         hasFetchedPetKinds.current = true;
       }
@@ -58,7 +55,7 @@ export function Home() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [dispatch]);
 
   const hideDeletePetModal = useCallback(() => {
     setPetForDelete(undefined);
@@ -110,12 +107,12 @@ export function Home() {
           </thead>
           <tbody>
             {allPets &&
-              petKindsMap &&
+              petKindsSignature &&
               allPets.map((pet) => (
                 <PetTableRow
                   key={pet.petId}
                   pet={pet}
-                  petKind={petKindsMap.get(pet.kind)}
+                  petKind={petKindsSignature[pet.kind]}
                   onDelete={setPetForDelete}
                   onEdit={showEditPetModal}
                 />
@@ -126,20 +123,20 @@ export function Home() {
         {loading && <LoadingIndicator />}
       </div>
 
-      {petForDelete && petKindsMap && (
+      {petForDelete && petKindsSignature && (
         <DeletePetModal
           pet={petForDelete}
-          petKind={petKindsMap.get(petForDelete.kind)}
+          petKind={petKindsSignature[petForDelete.kind]}
           onClose={hideDeletePetModal}
           onDeleted={refreshPets}
         />
       )}
 
-      {showPetModal && allPetKinds && petKindsMap && (
+      {showPetModal && petKinds && petKindsSignature && (
         <PetModal
           petId={petIdForEdit}
-          petKinds={allPetKinds}
-          petKindsMap={petKindsMap}
+          petKinds={petKinds}
+          petKindsSignature={petKindsSignature}
           onClose={hidePetModal}
           onModified={refreshPets}
         />

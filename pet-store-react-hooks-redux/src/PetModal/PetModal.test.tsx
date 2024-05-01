@@ -13,7 +13,7 @@ import { PetModal } from '~PetModal/PetModal';
 import { apiBaseUrl } from '~infrastructure/api-client';
 import { toInputDate } from '~infrastructure/utils';
 import { WaitHandle } from '~testing/WaitHandle';
-import { petKinds, petKindsMap, pets } from '~testing/data';
+import { petKinds, petKindsSignature, pets } from '~testing/data';
 import { handlers } from '~testing/handlers';
 
 const server = setupServer(...handlers);
@@ -43,7 +43,7 @@ describe('Add pet modal', () => {
       <PetModal
         petId={undefined}
         petKinds={petKinds}
-        petKindsMap={petKindsMap}
+        petKindsSignature={petKindsSignature}
         onClose={onClose}
         onModified={onModified}
       />
@@ -118,7 +118,7 @@ describe('Add pet modal', () => {
       <PetModal
         petId={undefined}
         petKinds={petKinds}
-        petKindsMap={petKindsMap}
+        petKindsSignature={petKindsSignature}
         onClose={onClose}
         onModified={onModified}
       />
@@ -191,7 +191,7 @@ describe('Add pet modal', () => {
       <PetModal
         petId={undefined}
         petKinds={petKinds}
-        petKindsMap={petKindsMap}
+        petKindsSignature={petKindsSignature}
         onClose={onClose}
         onModified={onModified}
       />
@@ -215,7 +215,7 @@ describe('Add pet modal', () => {
       <PetModal
         petId={undefined}
         petKinds={petKinds}
-        petKindsMap={petKindsMap}
+        petKindsSignature={petKindsSignature}
         onClose={onClose}
         onModified={onModified}
       />
@@ -239,7 +239,7 @@ describe('Add pet modal', () => {
       <PetModal
         petId={undefined}
         petKinds={petKinds}
-        petKindsMap={petKindsMap}
+        petKindsSignature={petKindsSignature}
         onClose={onClose}
         onModified={onModified}
       />
@@ -261,7 +261,7 @@ describe('View pet modal', () => {
       <PetModal
         petId={petId}
         petKinds={petKinds}
-        petKindsMap={petKindsMap}
+        petKindsSignature={petKindsSignature}
         onClose={onClose}
         onModified={onModified}
       />
@@ -321,7 +321,7 @@ describe('View pet modal', () => {
       <PetModal
         petId={petId}
         petKinds={petKinds}
-        petKindsMap={petKindsMap}
+        petKindsSignature={petKindsSignature}
         onClose={onClose}
         onModified={onModified}
       />
@@ -360,7 +360,7 @@ describe('View pet modal', () => {
       <PetModal
         petId={petId}
         petKinds={petKinds}
-        petKindsMap={petKindsMap}
+        petKindsSignature={petKindsSignature}
         onClose={onClose}
         onModified={onModified}
       />
@@ -401,7 +401,7 @@ describe('Edit pet modal', () => {
       <PetModal
         petId={petId}
         petKinds={petKinds}
-        petKindsMap={petKindsMap}
+        petKindsSignature={petKindsSignature}
         onClose={onClose}
         onModified={onModified}
       />
@@ -467,7 +467,7 @@ describe('Edit pet modal', () => {
       <PetModal
         petId={petId}
         petKinds={petKinds}
-        petKindsMap={petKindsMap}
+        petKindsSignature={petKindsSignature}
         onClose={onClose}
         onModified={onModified}
       />
@@ -548,7 +548,7 @@ describe('Edit pet modal', () => {
       <PetModal
         petId={petId}
         petKinds={petKinds}
-        petKindsMap={petKindsMap}
+        petKindsSignature={petKindsSignature}
         onClose={onClose}
         onModified={onModified}
       />
@@ -575,7 +575,7 @@ describe('Edit pet modal', () => {
       <PetModal
         petId={petId}
         petKinds={petKinds}
-        petKindsMap={petKindsMap}
+        petKindsSignature={petKindsSignature}
         onClose={onClose}
         onModified={onModified}
       />
@@ -609,7 +609,7 @@ test('Error message is displayed on fail from fetching the pet', async () => {
     <PetModal
       petId={petId}
       petKinds={petKinds}
-      petKindsMap={petKindsMap}
+      petKindsSignature={petKindsSignature}
       onClose={onClose}
       onModified={onModified}
     />
@@ -646,7 +646,7 @@ test('Error message is displayed on fail from saving the pet', async () => {
     <PetModal
       petId={petId}
       petKinds={petKinds}
-      petKindsMap={petKindsMap}
+      petKindsSignature={petKindsSignature}
       onClose={onClose}
       onModified={onModified}
     />
