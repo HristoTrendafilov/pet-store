@@ -44,7 +44,9 @@ export function Home() {
       const petsPromise = getAllPetsAsync();
 
       if (!hasFetchedPetKinds.current) {
-        dispatch(fetchPetKinds);
+        // Question: So with the error handling of async thunks the best decision to not polute the redux actions with .fulfilled and .rejected state
+        // for now was using the .unwrap() function of dispatch so that the error was thrown here and not in some property of the state
+        await dispatch(fetchPetKinds()).unwrap();
         hasFetchedPetKinds.current = true;
       }
 
