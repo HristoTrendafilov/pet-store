@@ -16,6 +16,6 @@ export function createStore() {
 type Store = ReturnType<typeof createStore>;
 
 export type ApplicationState = ReturnType<Store['getState']>;
-export type ApplicationDispatch = <T>(action: T) => T;
+export type ApplicationDispatch = Store['dispatch'];
 
 export const useAppDispatch: () => ApplicationDispatch = useDispatch;

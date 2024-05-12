@@ -3,12 +3,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { reportError } from '~/infrastructure/reportError';
 import { DeletePetModal } from '~DeletePetModal/DeletePetModal';
 import { PetModal } from '~PetModal/PetModal';
-import { getAllPetsAsync, getPetKindsAsync } from '~infrastructure/api-client';
+import { getAllPetsAsync } from '~infrastructure/api-client';
 import type { PetListItem } from '~infrastructure/api-types';
 import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessage';
 import { LoadingIndicator } from '~infrastructure/components/LoadingIndicator/LoadingIndicator';
 import {
-  addPetKinds,
+  fetchPetKinds,
   usePetKinds,
   usePetKindsMap,
 } from '~infrastructure/redux/pets-slice';
@@ -44,11 +44,7 @@ export function Home() {
       const petsPromise = getAllPetsAsync();
 
       if (!hasFetchedPetKinds.current) {
-        // Question: Should i dispatch the fetched pet kinds here
-        // or create an asyncThunk for this operation?
-        const kinds = await getPetKindsAsync();
-        dispatch(addPetKinds(kinds));
-
+        dispatch(fetchPetKinds);
         hasFetchedPetKinds.current = true;
       }
 

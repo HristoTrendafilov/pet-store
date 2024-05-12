@@ -1,6 +1,7 @@
-import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 
+import { getPetKindsAsync } from '~infrastructure/api-client';
 import type { PetKind, PetKindsMap } from '~infrastructure/api-types';
 
 import type { ApplicationState } from './store';
@@ -15,11 +16,20 @@ const initialState: PetsState = {
   petKindsMap: undefined,
 };
 
+export const fetchPetKinds = createAsyncThunk(
+  'pets/addPetKinds',
+  async (): Promise<PetKind[]> => {
+    const petKinds = await getPetKindsAsync();
+    return petKinds;
+  }
+);
+
 export const petsSlice = createSlice({
   name: 'pets',
   initialState,
-  reducers: {
-    addPetKinds: (state, action: PayloadAction<PetKind[]>) => {
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(fetchPetKinds.fulfilled, (state, action) => {
       const petKinds = action.payload;
       state.petKinds = petKinds;
 
@@ -27,7 +37,7 @@ export const petsSlice = createSlice({
       for (const kind of petKinds) {
         state.petKindsMap[kind.value] = kind.displayName;
       }
-    },
+    });
   },
 });
 
@@ -46,4 +56,3 @@ export function usePetKindsMap() {
 }
 
 export const petsReducer = petsSlice.reducer;
-export const { addPetKinds } = petsSlice.actions;
