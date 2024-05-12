@@ -16,7 +16,7 @@ import type {
   Pet,
   PetFormData,
   PetKind,
-  PetKindsSignature,
+  PetKindsMap,
 } from '~infrastructure/api-types';
 import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessage';
 import { LoadingIndicator } from '~infrastructure/components/LoadingIndicator/LoadingIndicator';
@@ -29,7 +29,7 @@ import './PetModal.css';
 interface PetModalProps {
   petId?: number;
   petKinds: PetKind[];
-  petKindsSignature: PetKindsSignature;
+  petKindsMap: PetKindsMap;
   onClose: () => void;
   onModified: () => void;
 }
@@ -56,7 +56,7 @@ const modalAriaLabels = new Map<ModalState, string>([
 ]);
 
 export function PetModal(props: PetModalProps) {
-  const { petId, petKinds, petKindsSignature, onClose, onModified } = props;
+  const { petId, petKinds, petKindsMap, onClose, onModified } = props;
 
   const [error, setError] = useState<string | undefined>();
   const [loading, setLoading] = useState<boolean>(true);
@@ -417,7 +417,7 @@ export function PetModal(props: PetModalProps) {
       {showDeleteModal && fetchedPet && (
         <DeletePetModal
           pet={fetchedPet}
-          petKind={petKindsSignature[fetchedPet.kind]}
+          petKind={petKindsMap[fetchedPet.kind]}
           onClose={closeDeleteModal}
           onDeleted={handleDeleted}
         />

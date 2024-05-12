@@ -22,4 +22,4 @@ export interface PetKind {
 
 export type PetFormData = Omit<Pet, 'petId'>;
 
-export type PetKindsSignature = { [value: number]: string };
+export type PetKindsMap = { [value: number]: string };

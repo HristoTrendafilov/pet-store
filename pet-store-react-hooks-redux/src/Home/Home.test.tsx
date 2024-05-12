@@ -23,6 +23,8 @@ afterAll(() => server.close());
 
 jest.mock('~/infrastructure/reportError');
 
+// Instead of render, render with the store for the redux store
+
 test('Card header is displayed', () => {
   render(<Home />);
 

@@ -1,17 +1,18 @@
 import { type PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { useSelector } from 'react-redux';
 
-import type { PetKind, PetKindsSignature } from '~infrastructure/api-types';
+import type { PetKind, PetKindsMap } from '~infrastructure/api-types';
 
-// Question: When i use Map() for petKinds, redux says it's not serializable
-// Had to change the type of the kinds in the components, but redux logic is only contained in the <Home/> component
+import type { ApplicationState } from './store';
+
 export type PetsState = {
   petKinds: PetKind[] | undefined;
-  petKindsSignature: PetKindsSignature | undefined;
+  petKindsMap: PetKindsMap | undefined;
 };
 
 const initialState: PetsState = {
   petKinds: undefined,
-  petKindsSignature: undefined,
+  petKindsMap: undefined,
 };
 
 export const petsSlice = createSlice({
@@ -22,13 +23,27 @@ export const petsSlice = createSlice({
       const petKinds = action.payload;
       state.petKinds = petKinds;
 
-      state.petKindsSignature = {};
+      state.petKindsMap = {};
       for (const kind of petKinds) {
-        state.petKindsSignature[kind.value] = kind.displayName;
+        state.petKindsMap[kind.value] = kind.displayName;
       }
     },
   },
 });
+
+export function usePetKinds() {
+  const petKinds = useSelector(
+    (state: ApplicationState) => state.pets.petKinds
+  );
+  return petKinds;
+}
+
+export function usePetKindsMap() {
+  const petKindsMap = useSelector(
+    (state: ApplicationState) => state.pets.petKindsMap
+  );
+  return petKindsMap;
+}
 
 export const petsReducer = petsSlice.reducer;
 export const { addPetKinds } = petsSlice.actions;

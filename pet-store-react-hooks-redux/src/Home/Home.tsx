@@ -7,8 +7,12 @@ import { getAllPetsAsync, getPetKindsAsync } from '~infrastructure/api-client';
 import type { PetListItem } from '~infrastructure/api-types';
 import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessage';
 import { LoadingIndicator } from '~infrastructure/components/LoadingIndicator/LoadingIndicator';
-import { useAppDispatch, useAppSelector } from '~infrastructure/redux/hooks';
-import { addPetKinds } from '~infrastructure/redux/pets-slice';
+import {
+  addPetKinds,
+  usePetKinds,
+  usePetKindsMap,
+} from '~infrastructure/redux/pets-slice';
+import { useAppDispatch } from '~infrastructure/redux/store';
 
 import { PetTableRow } from './PetTableRow';
 
@@ -16,7 +20,9 @@ import './Home.css';
 
 export function Home() {
   const dispatch = useAppDispatch();
-  const { petKinds, petKindsSignature } = useAppSelector((state) => state.pets);
+
+  const petKinds = usePetKinds();
+  const petKindsMap = usePetKindsMap();
 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>();
@@ -107,12 +113,12 @@ export function Home() {
           </thead>
           <tbody>
             {allPets &&
-              petKindsSignature &&
+              petKindsMap &&
               allPets.map((pet) => (
                 <PetTableRow
                   key={pet.petId}
                   pet={pet}
-                  petKind={petKindsSignature[pet.kind]}
+                  petKind={petKindsMap[pet.kind]}
                   onDelete={setPetForDelete}
                   onEdit={showEditPetModal}
                 />
@@ -123,20 +129,20 @@ export function Home() {
         {loading && <LoadingIndicator />}
       </div>
 
-      {petForDelete && petKindsSignature && (
+      {petForDelete && petKindsMap && (
         <DeletePetModal
           pet={petForDelete}
-          petKind={petKindsSignature[petForDelete.kind]}
+          petKind={petKindsMap[petForDelete.kind]}
           onClose={hideDeletePetModal}
           onDeleted={refreshPets}
         />
       )}
 
-      {showPetModal && petKinds && petKindsSignature && (
+      {showPetModal && petKinds && petKindsMap && (
         <PetModal
           petId={petIdForEdit}
           petKinds={petKinds}
-          petKindsSignature={petKindsSignature}
+          petKindsMap={petKindsMap}
           onClose={hidePetModal}
           onModified={refreshPets}
         />

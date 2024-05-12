@@ -1,12 +1,21 @@
 import { configureStore } from '@reduxjs/toolkit';
+import { useDispatch } from 'react-redux';
 
 import { petsReducer } from './pets-slice';
 
-export const store = configureStore({
-  reducer: {
-    pets: petsReducer,
-  },
-});
+export function createStore() {
+  const store = configureStore({
+    reducer: {
+      pets: petsReducer,
+    },
+  });
 
-export type ApplicationState = ReturnType<typeof store.getState>;
-export type ApplicationDispatch = typeof store.dispatch;
+  return store;
+}
+
+type Store = ReturnType<typeof createStore>;
+
+export type ApplicationState = ReturnType<Store['getState']>;
+export type ApplicationDispatch = <T>(action: T) => T;
+
+export const useAppDispatch: () => ApplicationDispatch = useDispatch;

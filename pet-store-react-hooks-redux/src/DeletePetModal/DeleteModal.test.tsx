@@ -6,7 +6,7 @@ import { setupServer } from 'msw/node';
 import { DeletePetModal } from '~/DeletePetModal/DeletePetModal';
 import { apiBaseUrl } from '~/infrastructure/api-client';
 import { WaitHandle } from '~testing/WaitHandle';
-import { petKindsSignature, pets, petsList } from '~testing/data';
+import { petKindsMap, pets, petsList } from '~testing/data';
 import { handlers } from '~testing/handlers';
 
 const server = setupServer(...handlers);
@@ -32,7 +32,7 @@ test('Header and pet information is displayed correctly, Delete and Cancel butto
   render(
     <DeletePetModal
       pet={petForDelete}
-      petKind={petKindsSignature[petForDelete.kind]}
+      petKind={petKindsMap[petForDelete.kind]}
       onClose={onClose}
       onDeleted={onDeleted}
     />
@@ -72,7 +72,7 @@ test('onClose is called on header close button click', async () => {
   render(
     <DeletePetModal
       pet={petForDelete}
-      petKind={petKindsSignature[petForDelete.kind]}
+      petKind={petKindsMap[petForDelete.kind]}
       onClose={onClose}
       onDeleted={onDeleted}
     />
@@ -93,7 +93,7 @@ test('onClose is called on body Cancel button click', async () => {
   render(
     <DeletePetModal
       pet={petForDelete}
-      petKind={petKindsSignature[petForDelete.kind]}
+      petKind={petKindsMap[petForDelete.kind]}
       onClose={onClose}
       onDeleted={onDeleted}
     />
@@ -114,7 +114,7 @@ test('onClose is called on modal backdrop click', async () => {
   render(
     <DeletePetModal
       pet={petForDelete}
-      petKind={petKindsSignature[petForDelete.kind]}
+      petKind={petKindsMap[petForDelete.kind]}
       onClose={onClose}
       onDeleted={onDeleted}
     />
@@ -145,7 +145,7 @@ test('Modal is locked while deleting the pet and it is closed when deletion is s
   render(
     <DeletePetModal
       pet={petForDelete}
-      petKind={petKindsSignature[petForDelete.kind]}
+      petKind={petKindsMap[petForDelete.kind]}
       onClose={onClose}
       onDeleted={onDeleted}
     />
@@ -191,7 +191,7 @@ test('Error message is displayed on fail from deleting pet', async () => {
   render(
     <DeletePetModal
       pet={petForDelete}
-      petKind={petKindsSignature[petForDelete.kind]}
+      petKind={petKindsMap[petForDelete.kind]}
       onClose={onClose}
       onDeleted={onDeleted}
     />
