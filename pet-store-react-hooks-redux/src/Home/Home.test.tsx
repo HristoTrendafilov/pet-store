@@ -1,5 +1,4 @@
 import {
-  render,
   screen,
   waitFor,
   waitForElementToBeRemoved,
@@ -14,6 +13,7 @@ import { apiBaseUrl } from '~/infrastructure/api-client';
 import { WaitHandle } from '~testing/WaitHandle';
 import { petKinds, pets, petsList } from '~testing/data';
 import { handlers } from '~testing/handlers';
+import { wrapWithRedux } from '~testing/test-utils';
 
 const server = setupServer(...handlers);
 
@@ -23,10 +23,8 @@ afterAll(() => server.close());
 
 jest.mock('~/infrastructure/reportError');
 
-// Instead of render, render with the store for the redux store
-
 test('Card header is displayed', () => {
-  render(<Home />);
+  wrapWithRedux(<Home />);
 
   const cardHeader = screen.getByText('Pet store');
   expect(cardHeader).toBeInTheDocument();
@@ -43,7 +41,7 @@ test('Add pet button is disabled while fetching pets and then enabled', async ()
     http.get(`${apiBaseUrl}/pet/all`, () => HttpResponse.json(pets))
   );
 
-  render(<Home />);
+  wrapWithRedux(<Home />);
 
   const addPetButton = await screen.findByRole('button', { name: 'Add pet' });
   expect(addPetButton).toBeDisabled();
@@ -58,7 +56,7 @@ test('Add pet button is disabled while fetching pets and then enabled', async ()
 });
 
 test('The table is displayed, columns count and text inside of them is correct', async () => {
-  render(<Home />);
+  wrapWithRedux(<Home />);
 
   const table = await screen.findByRole('table');
   expect(table).toBeInTheDocument();
@@ -86,7 +84,7 @@ test('All table rows are rendered, cell values are visualized correctly and each
     })
   );
 
-  render(<Home />);
+  wrapWithRedux(<Home />);
 
   const loadingIndicator = await screen.findByRole('alert', {
     name: 'loading',
@@ -112,7 +110,7 @@ test('All table rows are rendered, cell values are visualized correctly and each
 
 test('New pet modal is shown on Add pet button click and then closed', async () => {
   const user = userEvent.setup();
-  render(<Home />);
+  wrapWithRedux(<Home />);
 
   const addPetButton = await screen.findByRole('button', { name: 'Add pet' });
   await user.click(addPetButton);
@@ -134,7 +132,7 @@ test('New pet modal is shown on Add pet button click and then closed', async () 
 
 test('View/Edit pet modal is shown on row button click and then closed', async () => {
   const user = userEvent.setup();
-  render(<Home />);
+  wrapWithRedux(<Home />);
 
   const editPetButton = await screen.findAllByRole('button', {
     name: 'View / Edit',
@@ -158,7 +156,7 @@ test('View/Edit pet modal is shown on row button click and then closed', async (
 
 test('Delete pet modal is shown on row button click and then closed', async () => {
   const user = userEvent.setup();
-  render(<Home />);
+  wrapWithRedux(<Home />);
 
   const deletePetButton = await screen.findAllByRole('button', {
     name: 'Delete',
@@ -191,7 +189,7 @@ test('Error message is displayed on fail from fetching pets', async () => {
     })
   );
 
-  render(<Home />);
+  wrapWithRedux(<Home />);
 
   const loadingIndicator = await screen.findByRole('alert', {
     name: 'loading',
@@ -216,7 +214,7 @@ test('Error message is displayed on fail from fetching pet kinds', async () => {
     http.get(`${apiBaseUrl}/pet/all`, () => HttpResponse.json(pets))
   );
 
-  render(<Home />);
+  wrapWithRedux(<Home />);
 
   const loadingIndicator = await screen.findByRole('alert', {
     name: 'loading',
