@@ -1,16 +1,18 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
-import { reportError } from '~/infrastructure/reportError';
 import { DeletePetModal } from '~DeletePetModal/DeletePetModal';
 import { PetModal } from '~PetModal/PetModal';
-import { getAllPetsAsync } from '~infrastructure/api-client';
 import type { PetListItem } from '~infrastructure/api-types';
 import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessage';
 import { LoadingIndicator } from '~infrastructure/components/LoadingIndicator/LoadingIndicator';
 import {
-  fetchPetKinds,
-  usePetKinds,
-  usePetKindsMap,
+  allPetsSelector,
+  errorSelector,
+  loadingSelector,
+  petKindsMapSelector,
+  petKindsSelector,
+  refreshPetsThunk,
 } from '~infrastructure/redux/pets-slice';
 import { useAppDispatch } from '~infrastructure/redux/store';
 
@@ -21,44 +23,18 @@ import './Home.css';
 export function Home() {
   const dispatch = useAppDispatch();
 
-  const petKinds = usePetKinds();
-  const petKindsMap = usePetKindsMap();
-
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | undefined>();
-
-  const [allPets, setAllPets] = useState<PetListItem[] | undefined>();
+  const allPets = useSelector(allPetsSelector);
+  const petKinds = useSelector(petKindsSelector);
+  const petKindsMap = useSelector(petKindsMapSelector);
+  const loading = useSelector(loadingSelector);
+  const error = useSelector(errorSelector);
 
   const [showPetModal, setShowPetModal] = useState<boolean>(false);
   const [petForDelete, setPetForDelete] = useState<PetListItem | undefined>();
   const [petIdForEdit, setPetIdForEdit] = useState<number | undefined>();
 
-  const hasFetchedPetKinds = useRef<boolean>(false);
-
-  const refreshPets = useCallback(async () => {
-    setLoading(true);
-    setError(undefined);
-    setAllPets(undefined);
-
-    try {
-      const petsPromise = getAllPetsAsync();
-
-      if (!hasFetchedPetKinds.current) {
-        // Question: So with the error handling of async thunks the best decision to not polute the redux actions with .fulfilled and .rejected state
-        // for now was using the .unwrap() function of dispatch so that the error was thrown here and not in some property of the state
-        await dispatch(fetchPetKinds()).unwrap();
-        hasFetchedPetKinds.current = true;
-      }
-
-      const pets = await petsPromise;
-      pets.sort((x, y) => y.petId - x.petId);
-      setAllPets(pets);
-    } catch (err) {
-      reportError(err);
-      setError('System error. Please contact the system administrator.');
-    } finally {
-      setLoading(false);
-    }
+  const refreshPets = useCallback(() => {
+    void dispatch(refreshPetsThunk());
   }, [dispatch]);
 
   const hideDeletePetModal = useCallback(() => {
