@@ -78,7 +78,7 @@ export const petsSlice = createSlice({
       state.loading = true;
     });
     builder.addCase(refreshPetsThunk.rejected, (state, action) => {
-      reportError(action.payload);
+      reportError(action.error);
       state.error = systemErrorMessage;
     });
   },
