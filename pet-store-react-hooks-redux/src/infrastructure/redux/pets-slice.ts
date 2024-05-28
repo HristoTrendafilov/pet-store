@@ -1,4 +1,8 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+} from '@reduxjs/toolkit';
 
 import { getAllPetsAsync, getPetKindsAsync } from '~infrastructure/api-client';
 import type {
@@ -8,22 +12,22 @@ import type {
 } from '~infrastructure/api-types';
 import { reportError } from '~infrastructure/reportError';
 
-import type { ApplicationState } from './store';
+import type { ApplicationDispatch, ApplicationState } from './store';
 
 export type PetsState = {
   petKinds: PetKind[] | undefined;
   petKindsMap: PetKindsMap | undefined;
   allPets: PetListItem[] | undefined;
-  loading: boolean;
-  error: string | undefined;
+  refreshPetsLoading: boolean;
+  refreshPetsError: string | undefined;
 };
 
 const initialState: PetsState = {
   petKinds: undefined,
   petKindsMap: undefined,
   allPets: undefined,
-  loading: false,
-  error: undefined,
+  refreshPetsLoading: false,
+  refreshPetsError: undefined,
 };
 
 interface RefreshPetsResponse {
@@ -34,11 +38,15 @@ interface RefreshPetsResponse {
 export const systemErrorMessage =
   'System error. Please contact the system administrator.';
 
-export const refreshPetsThunk = createAsyncThunk(
+const createAppAsyncThunk = createAsyncThunk.withTypes<{
+  state: ApplicationState;
+  dispatch: ApplicationDispatch;
+}>();
+
+export const refreshPetsThunk = createAppAsyncThunk(
   'pets/refreshPets',
   async (_, thunkAPI): Promise<RefreshPetsResponse> => {
-    // Question: Dont like the casting to ApplicationState. There must be some way to know about its type
-    const state = thunkAPI.getState() as ApplicationState;
+    const state = thunkAPI.getState();
 
     const petsPromise = getAllPetsAsync();
 
@@ -71,25 +79,49 @@ export const petsSlice = createSlice({
         }
       }
 
-      state.loading = false;
+      state.refreshPetsLoading = false;
+      state.refreshPetsError = undefined;
     });
     builder.addCase(refreshPetsThunk.pending, (state) => {
       state.allPets = undefined;
-      state.loading = true;
+      state.refreshPetsError = undefined;
+      state.refreshPetsLoading = true;
     });
     builder.addCase(refreshPetsThunk.rejected, (state, action) => {
       reportError(action.error);
-      state.error = systemErrorMessage;
+      state.refreshPetsError = systemErrorMessage;
+      state.refreshPetsLoading = false;
     });
   },
 });
 
-export const allPetsSelector = (state: ApplicationState) => state.pets.allPets;
-export const petKindsSelector = (state: ApplicationState) =>
-  state.pets.petKinds;
-export const petKindsMapSelector = (state: ApplicationState) =>
-  state.pets.petKindsMap;
-export const loadingSelector = (state: ApplicationState) => state.pets.loading;
-export const errorSelector = (state: ApplicationState) => state.pets.error;
+export const petKindsSelector = createSelector(
+  [
+    (state: ApplicationState) => state.pets.petKinds,
+    (state: ApplicationState) => state.pets.petKindsMap,
+  ],
+  (petKinds, petKindsMap) => ({
+    petKinds,
+    petKindsMap,
+  })
+);
 
-export const petsReducer = petsSlice.reducer;
+// Question: When i select only allPets from the state and return them i get this warning:
+// The result function returned its own inputs without modification. e.g
+// `createSelector([state => state.todos], todos => todos)`
+// This could lead to inefficient memoization and unnecessary re-renders.
+export const allPetsSelector = createSelector(
+  [(state: ApplicationState) => state.pets.allPets],
+  (allPets) => ({ allPets })
+);
+
+export const refreshPetsStateSelector = createSelector(
+  [
+    (state: ApplicationState) => state.pets.refreshPetsLoading,
+    (state: ApplicationState) => state.pets.refreshPetsError,
+  ],
+  (refreshPetsLoading, refreshPetsError) => ({
+    refreshPetsLoading,
+    refreshPetsError,
+  })
+);

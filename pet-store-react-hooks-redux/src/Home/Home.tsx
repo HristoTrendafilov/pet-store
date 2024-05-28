@@ -8,10 +8,8 @@ import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessa
 import { LoadingIndicator } from '~infrastructure/components/LoadingIndicator/LoadingIndicator';
 import {
   allPetsSelector,
-  errorSelector,
-  loadingSelector,
-  petKindsMapSelector,
   petKindsSelector,
+  refreshPetsStateSelector,
   refreshPetsThunk,
 } from '~infrastructure/redux/pets-slice';
 import { useAppDispatch } from '~infrastructure/redux/store';
@@ -23,11 +21,11 @@ import './Home.css';
 export function Home() {
   const dispatch = useAppDispatch();
 
-  const allPets = useSelector(allPetsSelector);
-  const petKinds = useSelector(petKindsSelector);
-  const petKindsMap = useSelector(petKindsMapSelector);
-  const loading = useSelector(loadingSelector);
-  const error = useSelector(errorSelector);
+  const { allPets } = useSelector(allPetsSelector);
+  const { petKinds, petKindsMap } = useSelector(petKindsSelector);
+  const { refreshPetsLoading, refreshPetsError } = useSelector(
+    refreshPetsStateSelector
+  );
 
   const [showPetModal, setShowPetModal] = useState<boolean>(false);
   const [petForDelete, setPetForDelete] = useState<PetListItem | undefined>();
@@ -67,13 +65,13 @@ export function Home() {
           onClick={showNewPetModal}
           type="button"
           className="btn btn-success"
-          disabled={loading}
+          disabled={refreshPetsLoading}
         >
           Add pet
         </button>
       </div>
       <div className="all-pets-card-body">
-        {error && <ErrorMessage message={error} />}
+        {refreshPetsError && <ErrorMessage message={refreshPetsError} />}
 
         <table>
           <thead>
@@ -100,7 +98,7 @@ export function Home() {
           </tbody>
         </table>
 
-        {loading && <LoadingIndicator />}
+        {refreshPetsLoading && <LoadingIndicator />}
       </div>
 
       {petForDelete && petKindsMap && (

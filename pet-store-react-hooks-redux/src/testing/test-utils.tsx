@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import {
   type ApplicationState,
   type Store,
-  createStore,
+  createStoreWithState,
 } from '~infrastructure/redux/store';
 
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
@@ -17,7 +17,7 @@ export function wrapWithRedux(
   ui: React.ReactElement,
   {
     preloadedState = {},
-    store = createStore(preloadedState),
+    store = createStoreWithState(preloadedState),
     ...renderOptions
   }: ExtendedRenderOptions = {}
 ) {
