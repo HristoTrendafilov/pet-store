@@ -95,33 +95,14 @@ export const petsSlice = createSlice({
   },
 });
 
-export const petKindsSelector = createSelector(
-  [
-    (state: ApplicationState) => state.pets.petKinds,
-    (state: ApplicationState) => state.pets.petKindsMap,
-  ],
-  (petKinds, petKindsMap) => ({
-    petKinds,
-    petKindsMap,
-  })
-);
-
-// Question: When i select only allPets from the state and return them i get this warning:
-// The result function returned its own inputs without modification. e.g
-// `createSelector([state => state.todos], todos => todos)`
-// This could lead to inefficient memoization and unnecessary re-renders.
-export const allPetsSelector = createSelector(
-  [(state: ApplicationState) => state.pets.allPets],
-  (allPets) => ({ allPets })
-);
-
-export const refreshPetsStateSelector = createSelector(
-  [
-    (state: ApplicationState) => state.pets.refreshPetsLoading,
-    (state: ApplicationState) => state.pets.refreshPetsError,
-  ],
-  (refreshPetsLoading, refreshPetsError) => ({
-    refreshPetsLoading,
-    refreshPetsError,
+const petListRootSelector = (state: ApplicationState) => state[petsSlice.name];
+export const petListSelector = createSelector(
+  [petListRootSelector],
+  (petList) => ({
+    petKinds: petList.petKinds,
+    petKindsMap: petList.petKindsMap,
+    allPets: petList.allPets,
+    loading: petList.refreshPetsLoading,
+    error: petList.refreshPetsError,
   })
 );
