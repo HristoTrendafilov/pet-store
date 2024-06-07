@@ -4,7 +4,11 @@ import {
   createSlice,
 } from '@reduxjs/toolkit';
 
-import { getAllPetsAsync, getPetKindsAsync } from '~infrastructure/api-client';
+import {
+  deletePetAsync,
+  getAllPetsAsync,
+  getPetKindsAsync,
+} from '~infrastructure/api-client';
 import type {
   PetKind,
   PetKindsMap,
@@ -14,20 +18,29 @@ import { reportError } from '~infrastructure/reportError';
 
 import type { ApplicationDispatch, ApplicationState } from './store';
 
+// Question: Is every api call going to be stated here or should i split things into different slices?
 export type PetsState = {
+  // pet list
   petKinds: PetKind[] | undefined;
   petKindsMap: PetKindsMap | undefined;
   allPets: PetListItem[] | undefined;
   refreshPetsLoading: boolean;
   refreshPetsError: string | undefined;
+  // delete pet
+  deletePetLoading: boolean;
+  deletePetError: string | undefined;
 };
 
 const initialState: PetsState = {
+  // pet list
   petKinds: undefined,
   petKindsMap: undefined,
   allPets: undefined,
   refreshPetsLoading: false,
   refreshPetsError: undefined,
+  // delete pet
+  deletePetLoading: false,
+  deletePetError: undefined,
 };
 
 interface RefreshPetsResponse {
@@ -61,11 +74,19 @@ export const refreshPetsThunk = createAppAsyncThunk(
   }
 );
 
+export const deletePetThunk = createAppAsyncThunk(
+  'pets/deletePet',
+  async (petId: number) => {
+    await deletePetAsync(petId);
+  }
+);
+
 export const petsSlice = createSlice({
   name: 'pets',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    // pet list
     builder.addCase(refreshPetsThunk.fulfilled, (state, action) => {
       const pets = action.payload.pets.sort((x, y) => y.petId - x.petId);
       state.allPets = pets;
@@ -92,17 +113,33 @@ export const petsSlice = createSlice({
       state.refreshPetsError = systemErrorMessage;
       state.refreshPetsLoading = false;
     });
+    // delete pet
+    builder.addCase(deletePetThunk.fulfilled, (state) => {
+      state.deletePetLoading = false;
+      state.deletePetError = undefined;
+    });
+    builder.addCase(deletePetThunk.pending, (state) => {
+      state.deletePetLoading = true;
+      state.deletePetError = undefined;
+    });
+    builder.addCase(deletePetThunk.rejected, (state, action) => {
+      reportError(action.error);
+      state.deletePetError = systemErrorMessage;
+      state.deletePetLoading = false;
+    });
   },
 });
 
-const petListRootSelector = (state: ApplicationState) => state[petsSlice.name];
-export const petListSelector = createSelector(
-  [petListRootSelector],
-  (petList) => ({
-    petKinds: petList.petKinds,
-    petKindsMap: petList.petKindsMap,
-    allPets: petList.allPets,
-    loading: petList.refreshPetsLoading,
-    error: petList.refreshPetsError,
-  })
-);
+const petsRootSelector = (state: ApplicationState) => state[petsSlice.name];
+export const petListSelector = createSelector([petsRootSelector], (pets) => ({
+  petKinds: pets.petKinds,
+  petKindsMap: pets.petKindsMap,
+  allPets: pets.allPets,
+  loading: pets.refreshPetsLoading,
+  error: pets.refreshPetsError,
+}));
+
+export const deletePetSelector = createSelector([petsRootSelector], (pets) => ({
+  loading: pets.deletePetLoading,
+  error: pets.deletePetError,
+}));

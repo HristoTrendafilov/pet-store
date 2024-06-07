@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { HttpResponse, http } from 'msw';
 import { setupServer } from 'msw/node';
@@ -8,6 +8,7 @@ import { apiBaseUrl } from '~/infrastructure/api-client';
 import { WaitHandle } from '~testing/WaitHandle';
 import { petKindsMap, pets, petsList } from '~testing/data';
 import { handlers } from '~testing/handlers';
+import { wrapWithRedux } from '~testing/test-utils';
 
 const server = setupServer(...handlers);
 
@@ -29,7 +30,7 @@ test('Header and pet information is displayed correctly, Delete and Cancel butto
   const onClose = jest.fn();
   const onDeleted = jest.fn();
 
-  render(
+  wrapWithRedux(
     <DeletePetModal
       pet={petForDelete}
       petKind={petKindsMap[petForDelete.kind]}
@@ -69,7 +70,7 @@ test('onClose is called on header close button click', async () => {
 
   const user = userEvent.setup();
 
-  render(
+  wrapWithRedux(
     <DeletePetModal
       pet={petForDelete}
       petKind={petKindsMap[petForDelete.kind]}
@@ -90,7 +91,7 @@ test('onClose is called on body Cancel button click', async () => {
 
   const user = userEvent.setup();
 
-  render(
+  wrapWithRedux(
     <DeletePetModal
       pet={petForDelete}
       petKind={petKindsMap[petForDelete.kind]}
@@ -111,7 +112,7 @@ test('onClose is called on modal backdrop click', async () => {
 
   const user = userEvent.setup();
 
-  render(
+  wrapWithRedux(
     <DeletePetModal
       pet={petForDelete}
       petKind={petKindsMap[petForDelete.kind]}
@@ -142,7 +143,7 @@ test('Modal is locked while deleting the pet and it is closed when deletion is s
     })
   );
 
-  render(
+  wrapWithRedux(
     <DeletePetModal
       pet={petForDelete}
       petKind={petKindsMap[petForDelete.kind]}
@@ -188,7 +189,7 @@ test('Error message is displayed on fail from deleting pet', async () => {
     )
   );
 
-  render(
+  wrapWithRedux(
     <DeletePetModal
       pet={petForDelete}
       petKind={petKindsMap[petForDelete.kind]}
