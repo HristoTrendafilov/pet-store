@@ -5,10 +5,12 @@ import type { PetListItem } from '~infrastructure/api-types';
 import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessage';
 import { Modal } from '~infrastructure/components/Modal/Modal';
 import {
+  clearDeletePetError,
   deletePetSelector,
   deletePetThunk,
 } from '~infrastructure/redux/pets-slice';
 import { useAppDispatch } from '~infrastructure/redux/store';
+import { reportError } from '~infrastructure/reportError';
 import { formatDate } from '~infrastructure/utils';
 
 import './DeletePetModal.css';
@@ -21,36 +23,35 @@ type DeletePetModalProps = {
 };
 
 export function DeletePetModal(props: DeletePetModalProps) {
-  // Question: I don`t think it`s necessary any more to pass petKinds as prop
-  // as there is selector for the pet kinds and i can get the value of it from there
-  // but as the petKindsMap can be undefined i will have to do a check and visualize kind under the condition of it existing
-  // By this point i know there are going to be kinds in the redux state
-  // Reference for row: 74
   const { pet, petKind, onClose, onDeleted } = props;
 
   const dispatch = useAppDispatch();
 
   const { loading, error } = useSelector(deletePetSelector);
 
-  // Question: The dispatch may end up rejected and i should not call onDeleted() and onClose()
-  // Is this OK check for the state of the dispatch or should i use result.meta.requestStatus === 'fulfilled'
-  const handleDeletePet = useCallback(async () => {
-    const result = await dispatch(deletePetThunk(pet.petId));
-    if (deletePetThunk.fulfilled.match(result)) {
-      onDeleted();
-      onClose();
+  const handleOnClose = useCallback(() => {
+    if (error) {
+      dispatch(clearDeletePetError());
     }
-  }, [onClose, onDeleted, pet.petId, dispatch]);
+
+    onClose();
+  }, [dispatch, onClose, error]);
+
+  const handleDeletePet = useCallback(async () => {
+    try {
+      await dispatch(deletePetThunk(pet.petId)).unwrap();
+      onDeleted();
+      handleOnClose();
+    } catch (err) {
+      reportError(err);
+    }
+  }, [handleOnClose, onDeleted, pet.petId, dispatch]);
 
   const handleModalBackdropClick = useCallback(() => {
     if (!loading) {
-      onClose();
+      handleOnClose();
     }
-  }, [loading, onClose]);
-
-  // Question: if the thunk operation is rejected, the state has the error in it
-  // When i close and open the modal, the error persists
-  // Should i use some useEffect with cleanup for the error so its removed on modal close?
+  }, [loading, handleOnClose]);
 
   return (
     <Modal
@@ -64,7 +65,7 @@ export function DeletePetModal(props: DeletePetModalProps) {
             className="modal-close-header-btn"
             type="button"
             disabled={loading}
-            onClick={onClose}
+            onClick={handleOnClose}
           >
             X
           </button>
@@ -87,7 +88,7 @@ export function DeletePetModal(props: DeletePetModalProps) {
               className="btn btn-secondary"
               type="button"
               disabled={loading}
-              onClick={onClose}
+              onClick={handleOnClose}
             >
               Cancel
             </button>

@@ -18,7 +18,6 @@ import { reportError } from '~infrastructure/reportError';
 
 import type { ApplicationDispatch, ApplicationState } from './store';
 
-// Question: Is every api call going to be stated here or should i split things into different slices?
 export type PetsState = {
   // pet list
   petKinds: PetKind[] | undefined;
@@ -84,7 +83,11 @@ export const deletePetThunk = createAppAsyncThunk(
 export const petsSlice = createSlice({
   name: 'pets',
   initialState,
-  reducers: {},
+  reducers: {
+    clearDeletePetError: (state) => {
+      state.deletePetError = undefined;
+    },
+  },
   extraReducers: (builder) => {
     // pet list
     builder.addCase(refreshPetsThunk.fulfilled, (state, action) => {
@@ -122,8 +125,7 @@ export const petsSlice = createSlice({
       state.deletePetLoading = true;
       state.deletePetError = undefined;
     });
-    builder.addCase(deletePetThunk.rejected, (state, action) => {
-      reportError(action.error);
+    builder.addCase(deletePetThunk.rejected, (state) => {
       state.deletePetError = systemErrorMessage;
       state.deletePetLoading = false;
     });
@@ -143,3 +145,5 @@ export const deletePetSelector = createSelector([petsRootSelector], (pets) => ({
   loading: pets.deletePetLoading,
   error: pets.deletePetError,
 }));
+
+export const { clearDeletePetError } = petsSlice.actions;
