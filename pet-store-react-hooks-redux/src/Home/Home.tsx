@@ -108,8 +108,6 @@ export function Home() {
       {showPetModal && petKinds && petKindsMap && (
         <PetModal
           petId={petIdForEdit}
-          petKinds={petKinds}
-          petKindsMap={petKindsMap}
           onClose={hidePetModal}
           onModified={refreshPets}
         />

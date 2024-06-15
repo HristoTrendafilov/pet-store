@@ -8,7 +8,7 @@ import {
   createStoreWithState,
 } from '~infrastructure/redux/store';
 
-interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
+export interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
   preloadedState?: Partial<ApplicationState>;
   store?: Store;
 }

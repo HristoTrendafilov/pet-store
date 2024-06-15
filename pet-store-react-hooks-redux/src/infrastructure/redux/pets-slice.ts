@@ -5,11 +5,15 @@ import {
 } from '@reduxjs/toolkit';
 
 import {
+  addPetAsync,
   deletePetAsync,
+  editPetAsync,
   getAllPetsAsync,
+  getPetAsync,
   getPetKindsAsync,
 } from '~infrastructure/api-client';
 import type {
+  PetFormData,
   PetKind,
   PetKindsMap,
   PetListItem,
@@ -28,9 +32,14 @@ export type PetsState = {
   // delete pet
   deletePetLoading: boolean;
   deletePetError: string | undefined;
+  // get pet
+  getPetLoading: boolean;
+  // save pet
+  petFormSubmitting: boolean;
+  petFormError: string | undefined;
 };
 
-const initialState: PetsState = {
+export const initialState: PetsState = {
   // pet list
   petKinds: undefined,
   petKindsMap: undefined,
@@ -40,6 +49,11 @@ const initialState: PetsState = {
   // delete pet
   deletePetLoading: false,
   deletePetError: undefined,
+  // get pet
+  getPetLoading: false,
+  // save pet
+  petFormSubmitting: false,
+  petFormError: undefined,
 };
 
 interface RefreshPetsResponse {
@@ -77,6 +91,34 @@ export const deletePetThunk = createAppAsyncThunk(
   'pets/deletePet',
   async (petId: number) => {
     await deletePetAsync(petId);
+  }
+);
+
+export const getPetThunk = createAppAsyncThunk(
+  'pets/getPet',
+  async (petId: number) => {
+    const pet = await getPetAsync(petId);
+    return pet;
+  }
+);
+
+export const addPetThunk = createAppAsyncThunk(
+  'pets/addPet',
+  async (formData: PetFormData) => {
+    const pet = await addPetAsync(formData);
+    return pet;
+  }
+);
+
+interface EditPetThunkProps {
+  formData: PetFormData;
+  petId: number;
+}
+export const editPetThunk = createAppAsyncThunk(
+  'pets/editPet',
+  async (props: EditPetThunkProps) => {
+    const pet = await editPetAsync(props.formData, props.petId);
+    return pet;
   }
 );
 
@@ -129,6 +171,44 @@ export const petsSlice = createSlice({
       state.deletePetError = systemErrorMessage;
       state.deletePetLoading = false;
     });
+    // get pet
+    builder.addCase(getPetThunk.fulfilled, (state) => {
+      state.getPetLoading = false;
+      state.petFormError = undefined;
+    });
+    builder.addCase(getPetThunk.pending, (state) => {
+      state.getPetLoading = true;
+      state.petFormError = undefined;
+    });
+    builder.addCase(getPetThunk.rejected, (state) => {
+      state.petFormError = systemErrorMessage;
+      state.getPetLoading = false;
+    });
+    // save pet
+    builder.addCase(addPetThunk.fulfilled, (state) => {
+      state.petFormSubmitting = false;
+      state.petFormError = undefined;
+    });
+    builder.addCase(addPetThunk.pending, (state) => {
+      state.petFormSubmitting = true;
+      state.petFormError = undefined;
+    });
+    builder.addCase(addPetThunk.rejected, (state) => {
+      state.petFormError = systemErrorMessage;
+      state.petFormSubmitting = false;
+    });
+    builder.addCase(editPetThunk.fulfilled, (state) => {
+      state.petFormSubmitting = false;
+      state.petFormError = undefined;
+    });
+    builder.addCase(editPetThunk.pending, (state) => {
+      state.petFormSubmitting = true;
+      state.petFormError = undefined;
+    });
+    builder.addCase(editPetThunk.rejected, (state) => {
+      state.petFormError = systemErrorMessage;
+      state.petFormSubmitting = false;
+    });
   },
 });
 
@@ -144,6 +224,12 @@ export const petListSelector = createSelector([petsRootSelector], (pets) => ({
 export const deletePetSelector = createSelector([petsRootSelector], (pets) => ({
   loading: pets.deletePetLoading,
   error: pets.deletePetError,
+}));
+
+export const petFormSelector = createSelector([petsRootSelector], (pets) => ({
+  loadingPet: pets.getPetLoading,
+  submitting: pets.petFormSubmitting,
+  error: pets.petFormError,
 }));
 
 export const { clearDeletePetError } = petsSlice.actions;

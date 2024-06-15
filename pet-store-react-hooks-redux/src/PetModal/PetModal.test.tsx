@@ -1,5 +1,4 @@
 import {
-  render,
   screen,
   waitFor,
   waitForElementToBeRemoved,
@@ -11,10 +10,12 @@ import { setupServer } from 'msw/node';
 
 import { PetModal } from '~PetModal/PetModal';
 import { apiBaseUrl } from '~infrastructure/api-client';
+import { initialState } from '~infrastructure/redux/pets-slice';
 import { toInputDate } from '~infrastructure/utils';
 import { WaitHandle } from '~testing/WaitHandle';
 import { petKinds, petKindsMap, pets } from '~testing/data';
 import { handlers } from '~testing/handlers';
+import { type ExtendedRenderOptions, wrapWithRedux } from '~testing/test-utils';
 
 const server = setupServer(...handlers);
 
@@ -32,6 +33,10 @@ if (!petForEdit) {
 
 const { petId } = petForEdit;
 
+const preloadedState: ExtendedRenderOptions['preloadedState'] = {
+  pets: { ...initialState, petKinds, petKindsMap },
+};
+
 jest.mock('~/infrastructure/reportError');
 
 describe('Add pet modal', () => {
@@ -39,14 +44,9 @@ describe('Add pet modal', () => {
     const onClose = jest.fn();
     const onModified = jest.fn();
 
-    render(
-      <PetModal
-        petId={undefined}
-        petKinds={petKinds}
-        petKindsMap={petKindsMap}
-        onClose={onClose}
-        onModified={onModified}
-      />
+    wrapWithRedux(
+      <PetModal petId={undefined} onClose={onClose} onModified={onModified} />,
+      { preloadedState }
     );
 
     const headerText = await screen.findByText('Add pet');
@@ -114,14 +114,9 @@ describe('Add pet modal', () => {
 
     const user = userEvent.setup();
 
-    render(
-      <PetModal
-        petId={undefined}
-        petKinds={petKinds}
-        petKindsMap={petKindsMap}
-        onClose={onClose}
-        onModified={onModified}
-      />
+    wrapWithRedux(
+      <PetModal petId={undefined} onClose={onClose} onModified={onModified} />,
+      { preloadedState }
     );
 
     const nameInput = await screen.findByLabelText('Name');
@@ -187,14 +182,8 @@ describe('Add pet modal', () => {
 
     const user = userEvent.setup();
 
-    render(
-      <PetModal
-        petId={undefined}
-        petKinds={petKinds}
-        petKindsMap={petKindsMap}
-        onClose={onClose}
-        onModified={onModified}
-      />
+    wrapWithRedux(
+      <PetModal petId={undefined} onClose={onClose} onModified={onModified} />
     );
 
     const headerCloseButton = await screen.findByRole('button', {
@@ -211,14 +200,8 @@ describe('Add pet modal', () => {
 
     const user = userEvent.setup();
 
-    render(
-      <PetModal
-        petId={undefined}
-        petKinds={petKinds}
-        petKindsMap={petKindsMap}
-        onClose={onClose}
-        onModified={onModified}
-      />
+    wrapWithRedux(
+      <PetModal petId={undefined} onClose={onClose} onModified={onModified} />
     );
 
     const cancelButton = await screen.findByRole('button', {
@@ -235,14 +218,8 @@ describe('Add pet modal', () => {
 
     const user = userEvent.setup();
 
-    render(
-      <PetModal
-        petId={undefined}
-        petKinds={petKinds}
-        petKindsMap={petKindsMap}
-        onClose={onClose}
-        onModified={onModified}
-      />
+    wrapWithRedux(
+      <PetModal petId={undefined} onClose={onClose} onModified={onModified} />
     );
 
     const modalBackdrop = await screen.findByLabelText('modal backdrop');
@@ -257,14 +234,9 @@ describe('View pet modal', () => {
     const onClose = jest.fn();
     const onModified = jest.fn();
 
-    render(
-      <PetModal
-        petId={petId}
-        petKinds={petKinds}
-        petKindsMap={petKindsMap}
-        onClose={onClose}
-        onModified={onModified}
-      />
+    wrapWithRedux(
+      <PetModal petId={petId} onClose={onClose} onModified={onModified} />,
+      { preloadedState }
     );
 
     const headerText = await screen.findByText('View pet #44');
@@ -317,14 +289,9 @@ describe('View pet modal', () => {
 
     const user = userEvent.setup();
 
-    render(
-      <PetModal
-        petId={petId}
-        petKinds={petKinds}
-        petKindsMap={petKindsMap}
-        onClose={onClose}
-        onModified={onModified}
-      />
+    wrapWithRedux(
+      <PetModal petId={petId} onClose={onClose} onModified={onModified} />,
+      { preloadedState }
     );
 
     const deleteButton = await screen.findByRole('button', {
@@ -356,14 +323,9 @@ describe('View pet modal', () => {
 
     const user = userEvent.setup();
 
-    render(
-      <PetModal
-        petId={petId}
-        petKinds={petKinds}
-        petKindsMap={petKindsMap}
-        onClose={onClose}
-        onModified={onModified}
-      />
+    wrapWithRedux(
+      <PetModal petId={petId} onClose={onClose} onModified={onModified} />,
+      { preloadedState }
     );
 
     const deleteButton = await screen.findByRole('button', {
@@ -397,14 +359,9 @@ describe('Edit pet modal', () => {
 
     const user = userEvent.setup();
 
-    render(
-      <PetModal
-        petId={petId}
-        petKinds={petKinds}
-        petKindsMap={petKindsMap}
-        onClose={onClose}
-        onModified={onModified}
-      />
+    wrapWithRedux(
+      <PetModal petId={petId} onClose={onClose} onModified={onModified} />,
+      { preloadedState }
     );
 
     const editButton = await screen.findByRole('button', {
@@ -463,14 +420,9 @@ describe('Edit pet modal', () => {
 
     const user = userEvent.setup();
 
-    render(
-      <PetModal
-        petId={petId}
-        petKinds={petKinds}
-        petKindsMap={petKindsMap}
-        onClose={onClose}
-        onModified={onModified}
-      />
+    wrapWithRedux(
+      <PetModal petId={petId} onClose={onClose} onModified={onModified} />,
+      { preloadedState }
     );
 
     const editButton = await screen.findByRole('button', {
@@ -544,14 +496,8 @@ describe('Edit pet modal', () => {
       })
     );
 
-    render(
-      <PetModal
-        petId={petId}
-        petKinds={petKinds}
-        petKindsMap={petKindsMap}
-        onClose={onClose}
-        onModified={onModified}
-      />
+    wrapWithRedux(
+      <PetModal petId={petId} onClose={onClose} onModified={onModified} />
     );
 
     const modalBackdrop = await screen.findByLabelText('modal backdrop');
@@ -571,14 +517,8 @@ describe('Edit pet modal', () => {
 
     const user = userEvent.setup();
 
-    render(
-      <PetModal
-        petId={petId}
-        petKinds={petKinds}
-        petKindsMap={petKindsMap}
-        onClose={onClose}
-        onModified={onModified}
-      />
+    wrapWithRedux(
+      <PetModal petId={petId} onClose={onClose} onModified={onModified} />
     );
 
     const editButton = await screen.findByRole('button', {
@@ -605,14 +545,8 @@ test('Error message is displayed on fail from fetching the pet', async () => {
     })
   );
 
-  render(
-    <PetModal
-      petId={petId}
-      petKinds={petKinds}
-      petKindsMap={petKindsMap}
-      onClose={onClose}
-      onModified={onModified}
-    />
+  wrapWithRedux(
+    <PetModal petId={petId} onClose={onClose} onModified={onModified} />
   );
 
   const loadingIndicator = await screen.findByRole('alert', {
@@ -642,14 +576,8 @@ test('Error message is displayed on fail from saving the pet', async () => {
     })
   );
 
-  render(
-    <PetModal
-      petId={petId}
-      petKinds={petKinds}
-      petKindsMap={petKindsMap}
-      onClose={onClose}
-      onModified={onModified}
-    />
+  wrapWithRedux(
+    <PetModal petId={petId} onClose={onClose} onModified={onModified} />
   );
 
   const editButton = await screen.findByRole('button', {

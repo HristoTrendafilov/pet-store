@@ -5,22 +5,21 @@ import {
   useEffect,
   useState,
 } from 'react';
+import { useSelector } from 'react-redux';
 
 import { DeletePetModal } from '~DeletePetModal/DeletePetModal';
-import {
-  addPetAsync,
-  editPetAsync,
-  getPetAsync,
-} from '~infrastructure/api-client';
-import type {
-  Pet,
-  PetFormData,
-  PetKind,
-  PetKindsMap,
-} from '~infrastructure/api-types';
+import type { Pet, PetFormData } from '~infrastructure/api-types';
 import { ErrorMessage } from '~infrastructure/components/ErrorMessage/ErrorMessage';
 import { LoadingIndicator } from '~infrastructure/components/LoadingIndicator/LoadingIndicator';
 import { Modal } from '~infrastructure/components/Modal/Modal';
+import {
+  addPetThunk,
+  editPetThunk,
+  getPetThunk,
+  petFormSelector,
+  petListSelector,
+} from '~infrastructure/redux/pets-slice';
+import { useAppDispatch } from '~infrastructure/redux/store';
 import { reportError } from '~infrastructure/reportError';
 import { toInputDate } from '~infrastructure/utils';
 
@@ -28,8 +27,6 @@ import './PetModal.css';
 
 interface PetModalProps {
   petId?: number;
-  petKinds: PetKind[];
-  petKindsMap: PetKindsMap;
   onClose: () => void;
   onModified: () => void;
 }
@@ -56,15 +53,16 @@ const modalAriaLabels = new Map<ModalState, string>([
 ]);
 
 export function PetModal(props: PetModalProps) {
-  const { petId, petKinds, petKindsMap, onClose, onModified } = props;
+  const { petId, onClose, onModified } = props;
 
-  const [error, setError] = useState<string | undefined>();
-  const [loading, setLoading] = useState<boolean>(true);
+  const dispatch = useAppDispatch();
+
+  const { petKinds, petKindsMap } = useSelector(petListSelector);
+  const { loadingPet, submitting, error } = useSelector(petFormSelector);
 
   const [fetchedPet, setFetchedPet] = useState<Pet | undefined>();
   const [formValues, setFormValues] = useState<PetFormValues>(initialPetValues);
 
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [isFormLocked, setIsFormLocked] = useState<boolean>(true);
 
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
@@ -116,21 +114,16 @@ export function PetModal(props: PetModalProps) {
 
   const fetchPet = useCallback(
     async (propsPetId: number) => {
-      setLoading(true);
-
       try {
-        const pet = await getPetAsync(propsPetId);
+        const pet = await dispatch(getPetThunk(propsPetId)).unwrap();
 
         setFetchedPet(pet);
         setPetToFormValues(pet);
       } catch (err) {
         reportError(err);
-        setError('System error. Please contact the system administrator.');
-      } finally {
-        setLoading(false);
       }
     },
-    [setPetToFormValues]
+    [setPetToFormValues, dispatch]
   );
 
   useEffect(() => {
@@ -138,15 +131,14 @@ export function PetModal(props: PetModalProps) {
       void fetchPet(petId);
     } else {
       setIsFormLocked(false);
-      setLoading(false);
     }
   }, [petId, fetchPet]);
 
   const handleModalBackdropClick = useCallback(() => {
-    if (!isSubmitting && !loading && modalState !== 'Edit') {
+    if (!submitting && !loadingPet && modalState !== 'Edit') {
       onClose();
     }
-  }, [isSubmitting, loading, modalState, onClose]);
+  }, [submitting, loadingPet, modalState, onClose]);
 
   const handleLockButtonClick = useCallback(() => {
     lockForm(fetchedPet);
@@ -173,17 +165,16 @@ export function PetModal(props: PetModalProps) {
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = useCallback(
     async (e) => {
       e.preventDefault();
-      setIsSubmitting(true);
 
       let pet: Pet;
       try {
+        const petFormValues = getPetFromFormValues(formValues);
         if (fetchedPet) {
-          pet = await editPetAsync(
-            getPetFromFormValues(formValues),
-            fetchedPet.petId
-          );
+          pet = await dispatch(
+            editPetThunk({ formData: petFormValues, petId: fetchedPet.petId })
+          ).unwrap();
         } else {
-          pet = await addPetAsync(getPetFromFormValues(formValues));
+          pet = await dispatch(addPetThunk(petFormValues)).unwrap();
         }
 
         setFetchedPet(pet);
@@ -193,9 +184,6 @@ export function PetModal(props: PetModalProps) {
         onModified();
       } catch (err) {
         reportError(err);
-        setError('System error. Please contact the system administrator.');
-      } finally {
-        setIsSubmitting(false);
       }
     },
     [
@@ -205,6 +193,7 @@ export function PetModal(props: PetModalProps) {
       setPetToFormValues,
       formValues,
       fetchedPet,
+      dispatch,
     ]
   );
 
@@ -262,7 +251,7 @@ export function PetModal(props: PetModalProps) {
             className="modal-close-header-btn"
             type="button"
             aria-label="close modal"
-            disabled={isSubmitting || loading}
+            disabled={submitting || loadingPet}
             onClick={onClose}
           >
             X
@@ -270,9 +259,9 @@ export function PetModal(props: PetModalProps) {
         </div>
 
         <div className="pet-modal-body">
-          {loading && <LoadingIndicator />}
+          {loadingPet && <LoadingIndicator />}
 
-          {formValues && !loading && (
+          {!loadingPet && (
             <form className="pet-modal-form" onSubmit={handleFormSubmit}>
               <label className="form-row" htmlFor="petName">
                 Name
@@ -282,7 +271,7 @@ export function PetModal(props: PetModalProps) {
                   id="petName"
                   required
                   type="text"
-                  disabled={isFormLocked || isSubmitting}
+                  disabled={isFormLocked || submitting}
                 />
               </label>
               <label className="form-row" htmlFor="kind">
@@ -292,14 +281,15 @@ export function PetModal(props: PetModalProps) {
                   onChange={setFormPetKind}
                   id="kind"
                   required
-                  disabled={isFormLocked || isSubmitting || !!fetchedPet}
+                  disabled={isFormLocked || submitting || !!fetchedPet}
                 >
                   <option aria-label="Empty" value="" />
-                  {petKinds.map((kind) => (
-                    <option key={kind.value} value={kind.value}>
-                      {kind.displayName}
-                    </option>
-                  ))}
+                  {petKinds &&
+                    petKinds.map((kind) => (
+                      <option key={kind.value} value={kind.value}>
+                        {kind.displayName}
+                      </option>
+                    ))}
                 </select>
               </label>
               <label className="form-row" htmlFor="age">
@@ -311,7 +301,7 @@ export function PetModal(props: PetModalProps) {
                   required
                   min="0"
                   type="number"
-                  disabled={isFormLocked || isSubmitting}
+                  disabled={isFormLocked || submitting}
                 />
               </label>
               <div>
@@ -321,7 +311,7 @@ export function PetModal(props: PetModalProps) {
                     onChange={setFormPetHealthProblems}
                     id="healthProblems"
                     type="checkbox"
-                    disabled={isFormLocked || isSubmitting}
+                    disabled={isFormLocked || submitting}
                   />
                   Has health problems
                 </label>
@@ -333,7 +323,7 @@ export function PetModal(props: PetModalProps) {
                   onChange={setFormPetNotes}
                   id="notes"
                   rows={5}
-                  disabled={isFormLocked || isSubmitting}
+                  disabled={isFormLocked || submitting}
                 />
               </label>
               <label className="form-row" htmlFor="addedDate">
@@ -344,7 +334,7 @@ export function PetModal(props: PetModalProps) {
                   id="addedDate"
                   required
                   type="date"
-                  disabled={isFormLocked || isSubmitting || !!fetchedPet}
+                  disabled={isFormLocked || submitting || !!fetchedPet}
                 />
               </label>
 
@@ -357,10 +347,10 @@ export function PetModal(props: PetModalProps) {
                   <button
                     className="btn btn-primary"
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={submitting}
                   >
-                    Save{' '}
-                    {isSubmitting && (
+                    Save
+                    {submitting && (
                       <span
                         role="alert"
                         aria-label="loading"
@@ -394,7 +384,7 @@ export function PetModal(props: PetModalProps) {
                     className="btn btn-warning"
                     type="button"
                     onClick={handleLockButtonClick}
-                    disabled={isSubmitting}
+                    disabled={submitting}
                   >
                     Lock
                   </button>
@@ -404,7 +394,7 @@ export function PetModal(props: PetModalProps) {
                   className="btn btn-secondary"
                   type="button"
                   onClick={onClose}
-                  disabled={isSubmitting}
+                  disabled={submitting}
                 >
                   Cancel
                 </button>
@@ -414,7 +404,7 @@ export function PetModal(props: PetModalProps) {
         </div>
       </div>
 
-      {showDeleteModal && fetchedPet && (
+      {showDeleteModal && fetchedPet && petKindsMap && (
         <DeletePetModal
           pet={fetchedPet}
           petKind={petKindsMap[fetchedPet.kind]}
