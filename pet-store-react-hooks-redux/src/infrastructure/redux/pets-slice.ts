@@ -129,6 +129,9 @@ export const petsSlice = createSlice({
     clearDeletePetError: (state) => {
       state.deletePetError = undefined;
     },
+    clearPetFormError: (state) => {
+      state.petFormError = undefined;
+    },
   },
   extraReducers: (builder) => {
     // pet list
@@ -232,4 +235,4 @@ export const petFormSelector = createSelector([petsRootSelector], (pets) => ({
   error: pets.petFormError,
 }));
 
-export const { clearDeletePetError } = petsSlice.actions;
+export const { clearDeletePetError, clearPetFormError } = petsSlice.actions;

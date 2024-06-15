@@ -14,6 +14,7 @@ import { LoadingIndicator } from '~infrastructure/components/LoadingIndicator/Lo
 import { Modal } from '~infrastructure/components/Modal/Modal';
 import {
   addPetThunk,
+  clearPetFormError,
   editPetThunk,
   getPetThunk,
   petFormSelector,
@@ -94,6 +95,14 @@ export function PetModal(props: PetModalProps) {
     return newPet;
   }, []);
 
+  const handleOnClose = useCallback(() => {
+    if (error) {
+      dispatch(clearPetFormError());
+    }
+
+    onClose();
+  }, [dispatch, onClose, error]);
+
   const unlockForm = useCallback(() => {
     setIsFormLocked(false);
     setModalState('Edit');
@@ -136,9 +145,9 @@ export function PetModal(props: PetModalProps) {
 
   const handleModalBackdropClick = useCallback(() => {
     if (!submitting && !loadingPet && modalState !== 'Edit') {
-      onClose();
+      handleOnClose();
     }
-  }, [submitting, loadingPet, modalState, onClose]);
+  }, [submitting, loadingPet, modalState, handleOnClose]);
 
   const handleLockButtonClick = useCallback(() => {
     lockForm(fetchedPet);
@@ -158,9 +167,9 @@ export function PetModal(props: PetModalProps) {
 
   const handleDeleted = useCallback(() => {
     setShowDeleteModal(false);
-    onClose();
+    handleOnClose();
     onModified();
-  }, [onClose, onModified]);
+  }, [handleOnClose, onModified]);
 
   const handleFormSubmit: FormEventHandler<HTMLFormElement> = useCallback(
     async (e) => {
@@ -252,7 +261,7 @@ export function PetModal(props: PetModalProps) {
             type="button"
             aria-label="close modal"
             disabled={submitting || loadingPet}
-            onClick={onClose}
+            onClick={handleOnClose}
           >
             X
           </button>
@@ -393,7 +402,7 @@ export function PetModal(props: PetModalProps) {
                 <button
                   className="btn btn-secondary"
                   type="button"
-                  onClick={onClose}
+                  onClick={handleOnClose}
                   disabled={submitting}
                 >
                   Cancel
