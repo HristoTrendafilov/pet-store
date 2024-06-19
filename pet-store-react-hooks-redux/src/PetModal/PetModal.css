@@ -1,0 +1,45 @@
+.pet-modal-wrapper {
+  margin-top: 160px;
+  width: 480px;
+}
+
+.pet-modal-wrapper .pet-modal-body {
+  background-color: #fefefe;
+  margin: auto;
+  border: 1px solid #888;
+  max-width: 30rem;
+}
+
+.pet-modal-wrapper .pet-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+}
+
+.pet-modal-wrapper .form-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.pet-modal-wrapper .form-row input {
+  flex-basis: 100%;
+}
+
+.pet-modal-wrapper .pet-modal-buttons {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.pet-modal-wrapper .pet-modal-buttons > button:nth-child(1) {
+  flex-basis: 50%;
+}
+
+@media (max-width: 400px) {
+  .pet-modal-wrapper .pet-modal-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
